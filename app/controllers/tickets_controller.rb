@@ -1,4 +1,5 @@
 class TicketsController < ApplicationController
+  protect_from_forgery with: :null_session
   before_action :set_ticket, only: %i[ show update destroy ]
 
   # GET /tickets
