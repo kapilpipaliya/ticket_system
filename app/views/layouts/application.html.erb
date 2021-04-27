@@ -1,19 +1,38 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <title>Ticketsystemwebpackreact</title>
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <%= csrf_meta_tags %>
-    <%= csp_meta_tag %>
+<html lang="en">
+<head>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title><%= content_for?(:title) ? yield(:title) : "Ticket System" %></title>
+  <meta name="description" content="<%= content_for?(:description) ? yield(:description) : "About Sharks" %>">
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
 
-    <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
-    <%= javascript_pack_tag 'application', 'data-turbolinks-track': 'reload' %>
-  </head>
+  <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+  <%= javascript_pack_tag 'application', 'data-turbolinks-track': 'reload' %>
+</head>
 
-  <body>
-  <p class="notice"><%= notice %></p>
-  <p class="alert"><%= alert %></p>
+<body>
+<header>
+  <%= render 'layouts/header' %>
+</header>
 
-  <%= yield %>
-  </body>
+<p class="notice"><%= notice %></p>
+<p class="alert"><%= alert %></p>
+
+<main role="main">
+  <% if content_for?(:content) %>
+    <%= yield(:content) %>
+  <% else %>
+    <div class="container">
+      <div class="row">
+        <div class="col">
+          <%= yield %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</main>
+
+<%= render 'layouts/footer' %>
+</body>
 </html>
