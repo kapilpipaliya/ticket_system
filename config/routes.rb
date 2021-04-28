@@ -1,7 +1,15 @@
 Rails.application.routes.draw do
   devise_for :users
-  root 'pages#index'
-  resources :tickets
-  resources :comments, only: [:create, :destroy]
-  # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
+
+  authenticated :user do
+    root "pages#tickets", as: :authenticated_root
+    resources :tickets
+    resources :comments, only: [:create, :destroy]
+  end
+
+  unauthenticated do
+    root 'pages#index'
+    get '/new_ticket', to: 'pages#new_ticket'
+
+  end
 end
