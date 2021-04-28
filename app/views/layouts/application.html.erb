@@ -16,31 +16,20 @@
   <%= render 'layouts/header' %>
 </header>
 
-
 <main role="main">
   <% if content_for?(:content) %>
     <%= yield(:content) %>
   <% else %>
+    <%= render 'layouts/flash'%>
     <div class="container">
       <div class="row">
         <div class="col">
-          <% if !notice.blank? %>
-            <div class="alert alert-primary" role="alert">
-              <%= notice %>
-            </div>
-          <% end %>
-          <% if !alert.blank? %>
-            <div class="alert alert-secondary" role="alert">
-              <%= alert %>
-            </div>
-          <% end %>
           <%= yield %>
         </div>
       </div>
     </div>
   <% end %>
 </main>
-
 <%= render 'layouts/footer' %>
 </body>
 </html>
