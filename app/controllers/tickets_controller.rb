@@ -8,7 +8,8 @@ class TicketsController < ApplicationController
   def index
     @tickets = Ticket.all
   end
-
+  def new
+  end
   # GET /tickets/1
   # GET /tickets/1.json
   def show
@@ -50,6 +51,6 @@ class TicketsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def ticket_params
-      params.require(:ticket).permit(:title, :body, :email_of_submitter, :name_of_submitter)
+      params.require(:ticket).permit(:subject, :description, :email_of_submitter, :name_of_submitter)
     end
 end

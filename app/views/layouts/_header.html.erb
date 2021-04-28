@@ -1,19 +1,21 @@
-<div class="container mb-4">
-  <div class="row">
-    <div class="col pt-3">
-      <div class="float-right">
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-5">
+  <div class="container-fluid">
+    <%= link_to "Ticket System", root_path, class: "navbar-brand" %>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+      <ul class="navbar-nav">
         <% if user_signed_in? %>
-          <%= link_to "Tickets", tickets_path, class: "btn btn-light" %>
-          <%= link_to "Edit Profile", edit_user_registration_path, class: "btn btn-light" %>
-          <%= link_to "Sign Out", destroy_user_session_path, method: :delete, class: "btn btn-danger" %>
+          <li class="nav-item"><%= link_to "Tickets", tickets_path, class: "nav-link" %></li>
+          <li class="nav-item"><%= link_to "Edit Profile", edit_user_registration_path, class: "nav-link" %></li>
+          <li class="nav-item"><%= link_to 'Logout', destroy_user_session_path, method: :delete, class: "nav-link" %></li>
         <% else %>
-          <%= link_to "Sign In", new_user_session_path, class: "btn btn-light" %>
-          <%= link_to "Sign Up", new_user_registration_path, class: "btn btn-success" %>
+          <li class="nav-item"><%= link_to 'New Ticket', new_ticket_path, class: "nav-link" %>
+          <li class="nav-item"><%= link_to 'Login', new_user_session_path, class: "nav-link" %>
+          <li class="nav-item"><%= link_to "Sign Up", new_user_registration_path, class: "nav-link" %></li>
         <% end %>
-      </div>
-      <span>
-          <%= link_to "Ticket System", root_path, class: "text-dark h4" %>
-        </span>
+      </ul>
     </div>
   </div>
-</div>
+</nav>

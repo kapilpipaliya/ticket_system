@@ -2,16 +2,16 @@
 # The data can then be loaded with the bin/rails db:seed command (or created alongside the database with db:setup).
 #
 tickets = Ticket.create([
-                          { title: "Theme customisation issue",
-                            body: "just remove those things and also in option button add",
+                          { subject: "Theme customisation issue",
+                            description: "just remove those things and also in option button add",
                             email_of_submitter: "John@gmail.com",
                             name_of_submitter: "John lui" },
-                          { title: "Theme customisation issue",
-                            body: "you need to create toolbar-options div only once in a page in your code",
+                          { subject: "Theme customisation issue",
+                            description: "you need to create toolbar-options div only once in a page in your code",
                             email_of_submitter: "Amy@gmail.com",
                             name_of_submitter: "Amy Carson" },
-                          { title: "Theme customisation issue",
-                            body: "this div fill found every td tag in your page,",
+                          { subject: "Theme customisation issue",
+                            description: "this div fill found every td tag in your page,",
                             email_of_submitter: "Velma@gmail.com",
                             name_of_submitter: "Velma Wilkins" },
                         ])

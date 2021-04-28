@@ -25,8 +25,8 @@ ActiveRecord::Schema.define(version: 2021_04_27_121446) do
   end
 
   create_table "tickets", force: :cascade do |t|
-    t.string "title"
-    t.text "body"
+    t.string "subject"
+    t.text "description"
     t.string "email_of_submitter"
     t.string "name_of_submitter"
     t.datetime "created_at", precision: 6, null: false
