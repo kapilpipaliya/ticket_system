@@ -24,3 +24,6 @@ comments = Comment.create([{
                              description: "We shipped your order. please confirm the status",
                              ticket: tickets.first
                            }])
+2.times do |i|
+  User.create(first_name: "user-#{i + 1}", last_name: "Taron-#{i + 1}", email: "user-#{i+1}@example.com", password: "password", password_confirmation: "password")
+end
