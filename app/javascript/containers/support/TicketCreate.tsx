@@ -7,7 +7,7 @@ import {IJodit} from "jodit";
 import JoditEditor from "jodit-react";
 // import {TopNavBar} from "./NavBar";
 
-export const CreateTicket = () => {
+export const TicketCreate = () => {
     const [isSuccess, setIsSuccess] = useState(null);
     const subjectRef = useRef<HTMLInputElement>(null);
     const nameOfSubmitterRef = useRef<HTMLInputElement>(null);
@@ -92,7 +92,7 @@ export const CreateTicket = () => {
                                         </Form.Group>
                                     </Col>
                                     <Col sm={12}>
-                                        <Form.Group controlId="formEmail">
+                                        <Form.Group controlId="formDescription">
                                             <Form.Label>Description</Form.Label>
                                             <JoditEditor key={2} value={description} config={config as any}
                                                          onBlur={setDescription}/>

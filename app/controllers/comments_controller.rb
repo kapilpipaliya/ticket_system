@@ -8,6 +8,11 @@ class CommentsController < ApplicationController
   def index
     @comments = Comment.all
   end
+  def by_ticket
+    ticket = Ticket.find(params[:id])
+    @comments = ticket.comments
+    render :index
+  end
 
   # GET /comments/1
   # GET /comments/1.json

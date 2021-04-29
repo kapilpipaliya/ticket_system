@@ -10,6 +10,8 @@ class TicketsController < ApplicationController
   end
   def new
   end
+  def edit
+  end
   # GET /tickets/1
   # GET /tickets/1.json
   def show

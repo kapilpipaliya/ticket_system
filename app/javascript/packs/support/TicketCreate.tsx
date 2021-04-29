@@ -1,10 +1,10 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom'
 
-import {CreateTicket} from "../../containers/support/CreateTicket";
+import {TicketCreate} from "../../containers/support/TicketCreate";
 document.addEventListener('DOMContentLoaded', () => {
     ReactDOM.render(
-        <CreateTicket/>,
+        <TicketCreate/>,
         document.body.appendChild(document.createElement('div')),
     )
 })
