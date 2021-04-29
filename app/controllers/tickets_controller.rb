@@ -1,12 +1,18 @@
 class TicketsController < ApplicationController
   protect_from_forgery with: :null_session
-  before_action :authenticate_user!, only: %i[ index update destroy ]
+  before_action :authenticate_user!, only: %i[ index show update destroy ]
   before_action :set_ticket, only: %i[ show update destroy ]
 
   # GET /tickets
   # GET /tickets.json
   def index
-    @tickets = Ticket.all
+    if current_user.role == "customer"
+      @tickets = Ticket.all # cheeck logged in using api and pass current user and save on db
+    elsif current_user.role === "admin"
+      @tickets = Ticket.all
+    else
+      @tickets = []
+    end
   end
   def new
   end

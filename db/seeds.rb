@@ -25,5 +25,5 @@ comments = Comment.create([{
                              ticket: tickets.first
                            }])
 2.times do |i|
-  User.create(first_name: "user-#{i + 1}", last_name: "Taron-#{i + 1}", email: "user-#{i+1}@example.com", password: "password", password_confirmation: "password")
+  User.create(first_name: "Support-#{i + 1}", last_name: "Taron-#{i + 1}", role: "support", email: "support#{i+1}@example.com", password: "password", password_confirmation: "password")
 end
