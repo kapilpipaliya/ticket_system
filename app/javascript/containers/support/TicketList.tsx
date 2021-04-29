@@ -1,6 +1,6 @@
 import * as React from "react";
 import {useEffect, useState} from "react";
-import {Button, Card, Col, Modal, Row, Table} from 'react-bootstrap';
+import {Button, Card, Col, Container, Modal, Row, Table} from 'react-bootstrap';
 import {Edit, Plus, Trash2, Trello} from 'react-feather';
 import {Ticket} from "./TicketTypes";
 
@@ -108,7 +108,7 @@ export const TicketList = () => {
         });
     }, []);
     return (
-        <>
+        <Container>
             <Row>
                 <Col sm={12}>
                     <Card className="shadow-none">
@@ -177,7 +177,7 @@ export const TicketList = () => {
                     <AddNewTicketModal show={isOpen} onHide={() => setIsOpen(false)}/>
                 </Col>
             </Row>
-        </>
+        </Container>
     );
 };
 export default TicketList;

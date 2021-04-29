@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Row, Col, Card, Form, Button} from 'react-bootstrap';
+import {Row, Col, Card, Form, Button, Container} from 'react-bootstrap';
 import {useEffect, useRef, useState} from "react";
 import {Comment, Ticket} from "./TicketTypes";
 import {
@@ -110,11 +110,11 @@ export const TicketEdit = () => {
         deleteComment().then(r => {
         })
     }
-    const handleDeleteTicket = () =>{
+    const handleDeleteTicket = () => {
         // Todo
     }
     return (
-        <>
+        <Container>
             <Row>
                 <Col lg={8}>
                     <Card>
@@ -135,27 +135,7 @@ export const TicketEdit = () => {
                                 </Col>
                             </Row>
                         </Card.Body>
-                        <div className="bg-light p-3">
-                            <Row className="align-items-center">
-                                <Col>
-                                    <button type="button" className="btn btn-secondary text-uppercase"
-                                            onClick={() => {
-                                                setIsReplyEditorOpen(!isReplyEditorOpen)
-                                            }}>
-                                        <MessageSquare className={'mr-2'}/>
-                                        Post a reply
-                                    </button>
-                                    <button type="button" className="btn btn-secondary text-uppercase">
-                                        <Edit className={'mr-2'}/>
-                                        Post a Note
-                                    </button>
-                                    <button type="button" className="btn btn-secondary text-uppercase">
-                                        <UserCheck className={'mr-2'}/>
-                                        Customer Notes
-                                    </button>
-                                </Col>
-                            </Row>
-                        </div>
+
                         {comments.map(comment => <Card.Body key={comment.id}
                                                             className="hd-detail hdd-admin border-bottom">
                             <Row>
@@ -193,29 +173,44 @@ export const TicketEdit = () => {
                                 </Col>
                             </Row>
                         </Card.Body>)}
-
-                        {isReplyEditorOpen && <Form>
-                            <h3>Reply:</h3>
-                            <Row>
-                                <Col sm={12}>
-                                    <Form.Group controlId="formSubject">
-                                        <Form.Label>Subject</Form.Label>
-                                        <Form.Control type="text" placeholder="Subject" ref={replySubjectRef}
-                                        />
-                                    </Form.Group>
-                                </Col>
-                                <Col sm={12}>
-                                    <Form.Group controlId="formReply">
-                                        <Form.Label>Description:</Form.Label>
-                                        <JoditEditor key={2} value={description} config={config as any}
-                                                     onBlur={setDescription}/>
-                                    </Form.Group>
+                        <div className="bg-light p-3">
+                            <Row className="align-items-center">
+                                <Col>
+                                    <Button variant="secondary" className={'text-uppercase'} onClick={() => {
+                                        setIsReplyEditorOpen(!isReplyEditorOpen)
+                                    }}><MessageSquare className={'mr-2'}/>Post a reply</Button>
                                 </Col>
                             </Row>
-                            <div><Button variant="success" onClick={handleSendReply}>Send</Button>{' '}
-                                <Button variant="secondary"
-                                        onClick={() => setIsReplyEditorOpen(!isReplyEditorOpen)}>Cancel</Button>
-                            </div>
+                        </div>
+                        {isReplyEditorOpen && <Form>
+                            <Card>
+                                <Card.Body>
+                                    <Card.Title>Reply:</Card.Title>
+                                    <Row>
+                                        <Col sm={12}>
+                                            <Form.Group controlId="formSubject">
+                                                <Form.Label>Subject</Form.Label>
+                                                <Form.Control type="text" placeholder="Subject" ref={replySubjectRef}
+                                                />
+                                            </Form.Group>
+                                        </Col>
+                                        <Col sm={12}>
+                                            <Form.Group controlId="formReply">
+                                                <Form.Label>Description:</Form.Label>
+                                                <JoditEditor key={2} value={description} config={config as any}
+                                                             onBlur={setDescription}/>
+                                            </Form.Group>
+                                        </Col>
+                                    </Row>
+                                    <div>
+                                        <Button variant="success" onClick={handleSendReply}>Send</Button>{' '}
+                                        <Button variant="secondary"
+                                                onClick={() => setIsReplyEditorOpen(!isReplyEditorOpen)}>Cancel</Button>
+                                    </div>
+                                </Card.Body>
+                            </Card>
+
+
                         </Form>}
 
                     </Card>
@@ -312,7 +307,7 @@ export const TicketEdit = () => {
                     </Card>
                 </Col>
             </Row>
-        </>
+        </Container>
     );
 };
 export default TicketEdit;
