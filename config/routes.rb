@@ -2,6 +2,7 @@ Rails.application.routes.draw do
   devise_for :users
 
   authenticated :user do
+    resource :user, only: :show
     root "tickets#index", as: :authenticated_root
     resources :tickets
     resources :comments, only: [:create, :destroy]
@@ -9,6 +10,7 @@ Rails.application.routes.draw do
   end
 
   unauthenticated do
+    resource :user, only: :show
     root 'pages#index'
     resources :tickets, only: [:new, :create]
     get '/new_ticket', to: 'pages#new_ticket'

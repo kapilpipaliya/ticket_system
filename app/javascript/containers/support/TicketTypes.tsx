@@ -18,3 +18,12 @@ export interface Comment {
     updated_at: string;
     url: string;
 }
+export interface CurrentUser {
+    id: number;
+    first_name: string;
+    last_name: string;
+    role: string;
+    email: string;
+    created_at: string;
+    updated_at: string;
+}

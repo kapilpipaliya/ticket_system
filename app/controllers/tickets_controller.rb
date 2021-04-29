@@ -7,9 +7,9 @@ class TicketsController < ApplicationController
   # GET /tickets.json
   def index
     if current_user.role == "customer"
-      @tickets = Ticket.all # cheeck logged in using api and pass current user and save on db
-    elsif current_user.role === "admin"
-      @tickets = Ticket.all
+      @tickets = Ticket.where(created_by: current_user.id).order(created_at: :asc)
+    elsif current_user.role === "support"
+      @tickets = Ticket.all.order(created_at: :asc)
     else
       @tickets = []
     end
@@ -59,6 +59,6 @@ class TicketsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def ticket_params
-      params.require(:ticket).permit(:subject, :description, :email_of_submitter, :name_of_submitter)
+      params.require(:ticket).permit(:subject, :description, :email_of_submitter, :name_of_submitter, :created_by_id, :assigned_to_id)
     end
 end

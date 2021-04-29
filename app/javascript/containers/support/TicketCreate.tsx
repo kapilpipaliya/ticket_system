@@ -1,15 +1,17 @@
 import * as React from "react";
-import {useRef, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {Alert, Breadcrumb, Button, Card, Col, Container, Form, Row} from "react-bootstrap";
 import 'jodit';
 import 'jodit/build/jodit.min.css';
 import {IJodit} from "jodit";
 import JoditEditor from "jodit-react";
+import {CurrentUser} from "./TicketTypes";
+
 // import {TopNavBar} from "./NavBar";
 
-function DisplayError(props: {errors?: string[]}) {
+function DisplayError(props: { errors?: string[] }) {
     return <>
-        {props.errors && props.errors.map(error=>{
+        {props.errors && props.errors.map(error => {
             return <Form.Text key={error} className="text-muted">
                 {error}
             </Form.Text>
@@ -23,49 +25,72 @@ export const TicketCreate = () => {
     const nameOfSubmitterRef = useRef<HTMLInputElement>(null);
     const emailOfSubmitterRef = useRef<HTMLInputElement>(null);
     const [description, setDescription] = useState('');
+    const [currentUser, setCurrentUser] = useState<CurrentUser|null>(null);
     const config: Partial<IJodit['options']> = {
         readonly: false
     };
     const [errors, setErrors] = useState({
         subject: [] as string[],
-        name_of_submitter: []as string[],
-        email_of_submitter: []as string[],
-        description: []as string[]
+        name_of_submitter: [] as string[],
+        email_of_submitter: [] as string[],
+        description: [] as string[]
     });
-    const submitForm = async () => {
-        const csrfToken = (document.querySelector('[name=csrf-token]') as HTMLMetaElement).content
-        try {
-            const response = await fetch('/tickets', {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': csrfToken,
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                },
-                body: JSON.stringify({
-                    subject: subjectRef.current.value,
-                    name_of_submitter: nameOfSubmitterRef.current.value,
-                    email_of_submitter: emailOfSubmitterRef.current.value,
-                    description
-                })
-            });
-            const result = await response.json();
-            if (result.id) {
-                subjectRef.current.value = '';
-                nameOfSubmitterRef.current.value = '';
-                emailOfSubmitterRef.current.value = '';
-                setDescription('')
-                setIsSuccess(true);
-                setTimeout(()=>setIsSuccess(false), 5000)
-            } else {
-                setErrors(result);
+    useEffect(() => {
+        const getCurrentUser = async () => {
+            const csrfToken = (document.querySelector('[name=csrf-token]') as HTMLMetaElement).content
+            try {
+                const response = await fetch('/user', {
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                    }
+                });
+                const result = await response.json();
+                setCurrentUser(result)
+            } catch (err) {
+                alert(err);
             }
-        } catch (err) {
-            alert(err);
         }
-    }
+        getCurrentUser().then(() => {
+        });
+    },[])
+
     const handleSubmitForm = (e) => {
         e.preventDefault();
+        const submitForm = async () => {
+            const csrfToken = (document.querySelector('[name=csrf-token]') as HTMLMetaElement).content
+            try {
+                const response = await fetch('/tickets', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        subject: subjectRef.current.value,
+                        name_of_submitter: nameOfSubmitterRef.current.value,
+                        email_of_submitter: emailOfSubmitterRef.current.value,
+                        description,
+                        created_by_id: currentUser ? currentUser.id : currentUser
+                    })
+                });
+                const result = await response.json();
+                if (result.id) {
+                    subjectRef.current.value = '';
+                    nameOfSubmitterRef.current.value = '';
+                    emailOfSubmitterRef.current.value = '';
+                    setDescription('')
+                    setIsSuccess(true);
+                    setTimeout(() => setIsSuccess(false), 5000)
+                } else {
+                    setErrors(result);
+                }
+            } catch (err) {
+                alert(err);
+            }
+        }
         submitForm().then(() => {
         });
     }
@@ -112,7 +137,8 @@ export const TicketCreate = () => {
                                     <Col sm={12}>
                                         <Form.Group controlId="formDescription">
                                             <Form.Label>Description</Form.Label>
-                                            <JoditEditor key={2} value={description} config={config as any} onBlur={setDescription}/>
+                                            <JoditEditor key={2} value={description} config={config as any}
+                                                         onBlur={setDescription}/>
                                             <DisplayError errors={errors.description}/>
                                         </Form.Group>
                                     </Col>

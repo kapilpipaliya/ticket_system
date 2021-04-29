@@ -29,10 +29,12 @@ ActiveRecord::Schema.define(version: 2021_04_27_090514) do
     t.text "description"
     t.string "email_of_submitter"
     t.string "name_of_submitter"
-    t.bigint "user_id"
+    t.bigint "created_by_id"
+    t.bigint "assigned_to_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["user_id"], name: "index_tickets_on_user_id"
+    t.index ["assigned_to_id"], name: "index_tickets_on_assigned_to_id"
+    t.index ["created_by_id"], name: "index_tickets_on_created_by_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -65,5 +67,6 @@ ActiveRecord::Schema.define(version: 2021_04_27_090514) do
   end
 
   add_foreign_key "comments", "tickets"
-  add_foreign_key "tickets", "users"
+  add_foreign_key "tickets", "users", column: "assigned_to_id"
+  add_foreign_key "tickets", "users", column: "created_by_id"
 end
