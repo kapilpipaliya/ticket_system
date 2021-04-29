@@ -7,6 +7,16 @@ import {IJodit} from "jodit";
 import JoditEditor from "jodit-react";
 // import {TopNavBar} from "./NavBar";
 
+function DisplayError(props: {errors?: string[]}) {
+    return <>
+        {props.errors && props.errors.map(error=>{
+            return <Form.Text key={error} className="text-muted">
+                {error}
+            </Form.Text>
+        })}
+    </>;
+}
+
 export const TicketCreate = () => {
     const [isSuccess, setIsSuccess] = useState(null);
     const subjectRef = useRef<HTMLInputElement>(null);
@@ -16,6 +26,12 @@ export const TicketCreate = () => {
     const config: Partial<IJodit['options']> = {
         readonly: false
     };
+    const [errors, setErrors] = useState({
+        subject: [] as string[],
+        name_of_submitter: []as string[],
+        email_of_submitter: []as string[],
+        description: []as string[]
+    });
     const submitForm = async () => {
         const csrfToken = (document.querySelector('[name=csrf-token]') as HTMLMetaElement).content
         try {
@@ -41,6 +57,8 @@ export const TicketCreate = () => {
                 setDescription('')
                 setIsSuccess(true);
                 setTimeout(()=>setIsSuccess(false), 5000)
+            } else {
+                setErrors(result);
             }
         } catch (err) {
             alert(err);
@@ -73,29 +91,29 @@ export const TicketCreate = () => {
                                     <Col sm={6}>
                                         <Form.Group controlId="formSubject">
                                             <Form.Label>Subject</Form.Label>
-                                            <Form.Control type="text" placeholder="Subject" ref={subjectRef}
-                                            />
+                                            <Form.Control type="text" placeholder="Subject" ref={subjectRef}/>
+                                            <DisplayError errors={errors.subject}/>
                                         </Form.Group>
                                     </Col>
                                     <Col sm={6}>
                                         <Form.Group controlId="formName">
                                             <Form.Label>Name</Form.Label>
-                                            <Form.Control type="text" placeholder="Name" ref={nameOfSubmitterRef}
-                                            />
+                                            <Form.Control type="text" placeholder="Name" ref={nameOfSubmitterRef}/>
+                                            <DisplayError errors={errors.name_of_submitter}/>
                                         </Form.Group>
                                     </Col>
                                     <Col sm={12}>
                                         <Form.Group controlId="formEmail">
                                             <Form.Label>Email</Form.Label>
-                                            <Form.Control type="email" placeholder="Email" ref={emailOfSubmitterRef}
-                                            />
+                                            <Form.Control type="email" placeholder="Email" ref={emailOfSubmitterRef}/>
+                                            <DisplayError errors={errors.email_of_submitter}/>
                                         </Form.Group>
                                     </Col>
                                     <Col sm={12}>
                                         <Form.Group controlId="formDescription">
                                             <Form.Label>Description</Form.Label>
-                                            <JoditEditor key={2} value={description} config={config as any}
-                                                         onBlur={setDescription}/>
+                                            <JoditEditor key={2} value={description} config={config as any} onBlur={setDescription}/>
+                                            <DisplayError errors={errors.description}/>
                                         </Form.Group>
                                     </Col>
                                     {/*<Col sm={12}>
