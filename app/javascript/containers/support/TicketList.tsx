@@ -1,183 +1,289 @@
-import * as React from "react";
-import {useEffect, useState} from "react";
-import {Button, Card, Col, Container, Modal, Row, Table} from 'react-bootstrap';
-import {Edit, Plus, Trash2, Trello} from 'react-feather';
-import {Ticket} from "./TicketTypes";
+import * as React from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { Button, Card, Col, Container, Form, Modal, Row, Table } from 'react-bootstrap';
+import { Edit, Plus, Trash2, Trello } from 'react-feather';
+import { CurrentUser, Ticket } from './TicketTypes';
+import { DisplayFormError } from './DisplayFormError';
+import 'jodit';
+import 'jodit/build/jodit.min.css';
+import { IJodit } from 'jodit';
+import JoditEditor from 'jodit-react';
+import { fetchAllTicketData, ticketCreate, ticketDelete } from './serviceTicket';
+import { fetchCurrentUser } from './serviceUser';
+import { ToastNotification } from './ToastNotification';
+import { ConfirmationDialog } from './ConfirmationDialog';
 
 interface TicketProps {
-    ticket: Ticket
+  ticket: Ticket;
+  onDelete: () => Promise<void>;
 }
 
 export const TicketItem = (props: TicketProps) => {
-    return (
-        <>
-            <td>{props.ticket.name_of_submitter}</td>
-            <td>{props.ticket.email_of_submitter}</td>
-            <td>{props.ticket.subject}</td>
-            <td>{props.ticket.description}</td>
-            <td>{props.ticket.assigned_to}</td>
-            <td>{props.ticket.created_at}</td>
-            <td>{props.ticket.updated_at}</td>
-            {/*<td>Url: {props.ticket.url}</td>*/}
-            <td><a href={`tickets/${props.ticket.id}/edit?id=${props.ticket.id}`} className="text-muted">
-                <Edit className={'mr-1'}/>
-            </a>
-                <a href={"#"} className="text-muted">
-                    <Trash2/>
-                </a></td>
-        </>
-    )
+  return (
+    <>
+      <td>{props.ticket.name_of_submitter}</td>
+      <td>{props.ticket.email_of_submitter}</td>
+      <td>{props.ticket.subject}</td>
+      <td>{props.ticket.description}</td>
+      <td>{props.ticket.assigned_to_name}</td>
+      <td>{new Date(props.ticket.created_at).toUTCString()}</td>
+      <td>{new Date(props.ticket.updated_at).toUTCString()}</td>
+      {/*<td>Url: {props.ticket.url}</td>*/}
+      <td style={{ display: 'flex', flexWrap: 'nowrap' }}>
+        <a href={`tickets/${props.ticket.id}/edit?id=${props.ticket.id}`} className="text-muted">
+          <Edit className={'mr-1'} />
+        </a>
+
+        <Trash2 style={{ cursor: 'pointer' }} onClick={props.onDelete} />
+      </td>
+    </>
+  );
+};
+
+interface NewTicketModal {
+  show: boolean;
+  onHide: () => void;
+  onNewTicket: (ticket: Ticket) => void;
 }
 
-const AddNewTicketModal = (props: { show: boolean, onHide: () => void }) => {
-    return <Modal show={props.show} onHide={props.onHide}>
-        <Modal.Header closeButton>
-            <Modal.Title as="h5">
-                <Trello/>
-                 Add Ticket
-            </Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-            <Row>
-                <Col sm={6}>
-                    <div className="form-group fill">
-                        <label className="floating-label" htmlFor="Name">
-                            Name
-                        </label>
-                        <input type="text" className="form-control" id="Name" placeholder="Name"/>
-                    </div>
-                </Col>
-                <Col sm={6}>
-                    <div className="form-group fill">
-                        <label className="floating-label" htmlFor="Email">
-                            Email
-                        </label>
-                        <input type="email" className="form-control" id="Email" placeholder="Email"/>
-                    </div>
-                </Col>
-                <Col sm={12}>
-                    <div className="form-group fill">
-                        <label className="floating-label" htmlFor="Subject">
-                            Subject
-                        </label>
-                        <input type="text" className="form-control" id="Subject" placeholder="Subject"/>
-                    </div>
-                </Col>
-                <Col sm={12}>
-                    <div className="form-group fill">
-                        <label className="floating-label" htmlFor="Description">
-                            Description
-                        </label>
-                        <textarea className="form-control" id="Description" rows={3} placeholder="Description"/>
-                    </div>
-                </Col>
-                <Col sm={12}>
-                    <div className="form-group fill">
-                        <label className="floating-label" htmlFor="Icon">
-                            Image
-                        </label>
-                        <input type="file" className="form-control" id="Icon"
-                               placeholder="Image"/>
-                    </div>
-                </Col>
-            </Row>
-        </Modal.Body>
-        <Modal.Footer>
-            <Button variant="danger" onClick={props.onHide}>
-                Clear
-            </Button>
-            <Button variant="primary">Submit</Button>
-        </Modal.Footer>
-    </Modal>;
-}
+const AddNewTicketModal = (props: NewTicketModal) => {
+  const [isSuccess, setIsSuccess] = useState(null);
+  const subjectRef = useRef<HTMLInputElement>(null);
+  const nameOfSubmitterRef = useRef<HTMLInputElement>(null);
+  const emailOfSubmitterRef = useRef<HTMLInputElement>(null);
+  const [description, setDescription] = useState('');
+  const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
+  const config: Partial<IJodit['options']> = {
+    readonly: false,
+  };
+  const [errors, setErrors] = useState({
+    subject: [] as string[],
+    name_of_submitter: [] as string[],
+    email_of_submitter: [] as string[],
+    description: [] as string[],
+  });
+  useEffect(() => {
+    fetchCurrentUser().then(resp => setCurrentUser(resp));
+  }, []);
+  const handleSubmitForm = e => {
+    e.preventDefault();
+    const submitForm = async () => {
+      const result = await ticketCreate({
+        subject: subjectRef.current.value,
+        name_of_submitter: nameOfSubmitterRef.current.value,
+        email_of_submitter: emailOfSubmitterRef.current.value,
+        description,
+        created_by_id: currentUser ? currentUser.id : currentUser,
+      });
+      if (result.id) {
+        subjectRef.current.value = '';
+        nameOfSubmitterRef.current.value = '';
+        emailOfSubmitterRef.current.value = '';
+        setDescription('');
+        setIsSuccess(true);
+        setTimeout(() => setIsSuccess(false), 5000);
+        props.onHide();
+        props.onNewTicket(result);
+      } else {
+        setErrors(result);
+      }
+    };
+    submitForm().then(() => {});
+  };
+  const onClear = () => {
+    subjectRef.current.value = '';
+    nameOfSubmitterRef.current.value = '';
+    emailOfSubmitterRef.current.value = '';
+    setDescription('');
+    props.onHide();
+  };
+  return (
+    <Modal show={props.show} onHide={props.onHide} size={'lg'}>
+      <Modal.Header closeButton>
+        <Modal.Title as="h5">
+          <Trello />
+          Add Ticket
+        </Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <Row>
+          <Col sm={6}>
+            <Form.Group controlId="formName">
+              <Form.Label>Name</Form.Label>
+              <Form.Control type="text" placeholder="Name" ref={nameOfSubmitterRef} />
+              <DisplayFormError errors={errors.name_of_submitter} />
+            </Form.Group>
+          </Col>
+          <Col sm={6}>
+            <Form.Group controlId="formEmail">
+              <Form.Label>Email</Form.Label>
+              <Form.Control type="email" placeholder="Email" ref={emailOfSubmitterRef} />
+              <DisplayFormError errors={errors.email_of_submitter} />
+            </Form.Group>
+          </Col>
+          <Col sm={12}>
+            <Form.Group controlId="formSubject">
+              <Form.Label>Subject</Form.Label>
+              <Form.Control type="text" placeholder="Subject" ref={subjectRef} />
+              <DisplayFormError errors={errors.subject} />
+            </Form.Group>
+          </Col>
+          <Col sm={12}>
+            <Form.Group controlId="formDescription">
+              <Form.Label>Description</Form.Label>
+              <JoditEditor key={2} value={description} config={config as any} onBlur={setDescription} />
+              <DisplayFormError errors={errors.description} />
+            </Form.Group>
+          </Col>
+          <Col sm={12}>
+            <div className="form-group fill">
+              <label className="floating-label" htmlFor="Icon">
+                Image
+              </label>
+              <input type="file" className="form-control" id="Icon" placeholder="Image" />
+            </div>
+          </Col>
+        </Row>
+      </Modal.Body>
+      <Modal.Footer>
+        <Button variant="danger" onClick={onClear}>
+          Clear
+        </Button>
+        <Button onClick={handleSubmitForm}>Submit</Button>
+      </Modal.Footer>
+    </Modal>
+  );
+};
 
 export const TicketList = () => {
-    const [isOpen, setIsOpen] = useState(false);
-    const [ticketData, setTicketData] = useState([]);
-    useEffect(() => {
-        const fetchTicketData = async () => {
-            try {
-                const response = await fetch('/tickets.json')
-                const tickets = await response.json();
-                setTicketData(tickets);
-            } catch (err) {
-                alert(err);
-            }
-        }
-        fetchTicketData().then(() => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [ticketData, setTicketData] = useState([]);
+  const [deleteConfirmationData, setDeleteConfirmationData] = useState({ show: false, ticketId: 0 });
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+  useEffect(() => {
+    fetchAllTicketData().then(resp => setTicketData(resp));
+  }, []);
+  const onTicketDeleteConfirm = ticketId => async () => {
+    setDeleteConfirmationData(prevState => {
+      return { ...prevState, show: true, ticketId };
+    });
+  };
+  const setShowTicketDeleteConfirm = (show: boolean) => {
+    setDeleteConfirmationData(prevState => {
+      return { ...prevState, show };
+    });
+  };
+  const onTicketConfirmCancel = () => {
+    setShowTicketDeleteConfirm(false);
+  };
+  const onTicketDelete = async () => {
+    setShowTicketDeleteConfirm(false);
+    await ticketDelete(deleteConfirmationData.ticketId).then(resp => {
+      if (!resp.error) {
+        setTicketData(prevState => {
+          return prevState.filter(ticket => ticket.id !== deleteConfirmationData.ticketId);
         });
-    }, []);
-    return (
-        <Container>
-            <Row>
-                <Col sm={12}>
-                    <Card className="shadow-none">
-                        <Card.Header>
-                            <h5>All Tickets</h5>
-                            <div className="card-header-right">
-                                <Button variant="success" className="btn-sm btn-round has-ripple"
-                                        onClick={() => setIsOpen(true)}>
-                                    <Plus/> Add Ticket
-                                </Button>
-                            </div>
-                        </Card.Header>
-                        <Card.Body className="shadow border-0">
-                            <Table responsive hover>
-                                <thead>
-                                <tr>
-                                    <th className="border-top-0">Name</th>
-                                    <th className="border-top-0">Email</th>
-                                    <th className="border-top-0">Subject</th>
-                                    <th className="border-top-0">Description</th>
-                                    <th className="border-top-0">Assigned to</th>
-                                    <th className="border-top-0">Created</th>
-                                    <th className="border-top-0">Updated</th>
-                                    <th className="border-top-0"/>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                {ticketData.map(item => {
-                                    return (<tr key={item.id}><TicketItem ticket={item}/></tr>)
-                                })}
-                                </tbody>
-                            </Table>
-                            <div className="pagination-block text-center">
-                                <nav aria-label="Page navigation example" className="d-inline-block">
-                                    <ul className="pagination">
-                                        <li className="page-item">
-                                            <a className="page-link" href={"#"}>
-                                                Previous
-                                            </a>
-                                        </li>
-                                        <li className="page-item">
-                                            <a className="page-link" href={"#"}>
-                                                1
-                                            </a>
-                                        </li>
-                                        <li className="page-item active">
-                                            <a className="page-link" href={"#"}>
-                                                2
-                                            </a>
-                                        </li>
-                                        <li className="page-item">
-                                            <a className="page-link" href={"#"}>
-                                                3
-                                            </a>
-                                        </li>
-                                        <li className="page-item">
-                                            <a className="page-link" href={"#"}>
-                                                Next
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </nav>
-                            </div>
-                        </Card.Body>
-                    </Card>
-                    <AddNewTicketModal show={isOpen} onHide={() => setIsOpen(false)}/>
-                </Col>
-            </Row>
-        </Container>
-    );
+        setToastMessage('Ticket deleted successfully');
+        setShowToast(true);
+      }
+    });
+  };
+  const onNewTicket = (ticket: Ticket) => {
+    setTicketData(prevState => {
+      return [...prevState, ticket];
+    });
+    setToastMessage('Ticket created successfully');
+    setShowToast(true);
+  };
+  return (
+    <Container>
+      <ToastNotification show={showToast} setShow={setShowToast} message={toastMessage} />
+      <ConfirmationDialog
+        show={deleteConfirmationData.show}
+        setShow={setShowTicketDeleteConfirm}
+        onCancel={onTicketConfirmCancel}
+        onSubmit={onTicketDelete}
+        title={'Are you sure?'}
+        body={'Ticket and its comments will be deleted permanently.'}
+        okButtonLabel={'Confirm'}
+      />
+      <AddNewTicketModal show={isOpen} onHide={() => setIsOpen(false)} onNewTicket={onNewTicket} />
+      <Row>
+        <Col sm={12}>
+          <Card className="shadow-none">
+            <Card.Header>
+              <h5>All Tickets</h5>
+              <div className="card-header-right">
+                <Button variant="success" className="btn-sm btn-round has-ripple" onClick={() => setIsOpen(true)}>
+                  <Plus /> Add Ticket
+                </Button>
+              </div>
+            </Card.Header>
+            <Card.Body className="shadow border-0">
+              <Table responsive hover>
+                <thead>
+                  <tr>
+                    <th className="border-top-0">Name</th>
+                    <th className="border-top-0">Email</th>
+                    <th className="border-top-0">Subject</th>
+                    <th className="border-top-0">Description</th>
+                    <th className="border-top-0" style={{ whiteSpace: 'nowrap' }}>
+                      Assigned to
+                    </th>
+                    <th className="border-top-0">Created</th>
+                    <th className="border-top-0" style={{ whiteSpace: 'nowrap' }}>
+                      Last Activity
+                    </th>
+                    <th className="border-top-0">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {ticketData.map(item => {
+                    return (
+                      <tr key={item.id}>
+                        <TicketItem ticket={item} onDelete={onTicketDeleteConfirm(item.id)} />
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </Table>
+              <div className="pagination-block text-center">
+                <nav aria-label="Page navigation example" className="d-inline-block">
+                  <ul className="pagination">
+                    <li className="page-item">
+                      <a className="page-link" href={'#'}>
+                        Previous
+                      </a>
+                    </li>
+                    <li className="page-item">
+                      <a className="page-link" href={'#'}>
+                        1
+                      </a>
+                    </li>
+                    <li className="page-item active">
+                      <a className="page-link" href={'#'}>
+                        2
+                      </a>
+                    </li>
+                    <li className="page-item">
+                      <a className="page-link" href={'#'}>
+                        3
+                      </a>
+                    </li>
+                    <li className="page-item">
+                      <a className="page-link" href={'#'}>
+                        Next
+                      </a>
+                    </li>
+                  </ul>
+                </nav>
+              </div>
+            </Card.Body>
+          </Card>
+        </Col>
+      </Row>
+    </Container>
+  );
 };
 export default TicketList;

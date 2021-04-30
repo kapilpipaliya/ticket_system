@@ -14,10 +14,16 @@ class TicketsController < ApplicationController
       @tickets = []
     end
   end
+  def all_status
+    render json: [{ "id" => 'open', label: 'Open' }, { "id" => 'close', label: 'Close' }, { "id" => 'closed_forever', label: 'Closed Forever' }]
+  end
+
   def new
   end
+
   def edit
   end
+
   # GET /tickets/1
   # GET /tickets/1.json
   def show
@@ -48,17 +54,27 @@ class TicketsController < ApplicationController
   # DELETE /tickets/1
   # DELETE /tickets/1.json
   def destroy
-    @ticket.destroy
+    if current_user.role === "support"
+      @ticket.destroy
+      error = { "error" => false }
+      render json: error
+    else
+      error = { "error" => "only support member can delete ticket" }
+      render json: error, status: :unprocessable_entity
+    end
   end
 
-  private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_ticket
-      @ticket = Ticket.find(params[:id])
-    end
 
-    # Only allow a list of trusted parameters through.
-    def ticket_params
-      params.require(:ticket).permit(:subject, :description, :email_of_submitter, :name_of_submitter, :created_by_id, :assigned_to_id)
-    end
+
+  private
+
+  # Use callbacks to share common setup or constraints between actions.
+  def set_ticket
+    @ticket = Ticket.find(params[:id])
+  end
+
+  # Only allow a list of trusted parameters through.
+  def ticket_params
+    params.require(:ticket).permit(:subject, :description, :email_of_submitter, :name_of_submitter,:status, :created_by_id, :assigned_to_id)
+  end
 end

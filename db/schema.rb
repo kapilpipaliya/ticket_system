@@ -19,8 +19,10 @@ ActiveRecord::Schema.define(version: 2021_04_27_090514) do
     t.string "title"
     t.text "description"
     t.bigint "ticket_id", null: false
+    t.bigint "commented_by_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.index ["commented_by_id"], name: "index_comments_on_commented_by_id"
     t.index ["ticket_id"], name: "index_comments_on_ticket_id"
   end
 
@@ -29,6 +31,7 @@ ActiveRecord::Schema.define(version: 2021_04_27_090514) do
     t.text "description"
     t.string "email_of_submitter"
     t.string "name_of_submitter"
+    t.string "status", default: "open"
     t.bigint "created_by_id"
     t.bigint "assigned_to_id"
     t.datetime "created_at", precision: 6, null: false
@@ -67,6 +70,7 @@ ActiveRecord::Schema.define(version: 2021_04_27_090514) do
   end
 
   add_foreign_key "comments", "tickets"
+  add_foreign_key "comments", "users", column: "commented_by_id"
   add_foreign_key "tickets", "users", column: "assigned_to_id"
   add_foreign_key "tickets", "users", column: "created_by_id"
 end

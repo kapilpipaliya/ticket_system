@@ -3,10 +3,13 @@ Rails.application.routes.draw do
 
   authenticated :user do
     resource :user, only: :show
+    get '/tickets/all_status', to: 'tickets#all_status'
     root "tickets#index", as: :authenticated_root
     resources :tickets
     resources :comments, only: [:create, :destroy]
     get '/comments/by_ticket/:id', to: 'comments#by_ticket'
+    get '/users/all', to: 'users#all'
+
   end
 
   unauthenticated do
@@ -14,5 +17,7 @@ Rails.application.routes.draw do
     root 'pages#index'
     resources :tickets, only: [:new, :create]
     get '/new_ticket', to: 'pages#new_ticket'
+    get '/tickets/all_status', to: 'tickets#all_status'
+    get '/users/all', to: 'users#all'
   end
 end

@@ -1,313 +1,313 @@
 import * as React from 'react';
-import {Row, Col, Card, Form, Button, Container} from 'react-bootstrap';
-import {useEffect, useRef, useState} from "react";
-import {Comment, Ticket} from "./TicketTypes";
-import {
-    Lock,
-    Star,
-    MessageSquare,
-    Edit,
-    UserCheck,
-    Edit2,
-    Trash2,
-    CheckCircle,
-    Mail,
-    Calendar,
-    Clock,
-    ThumbsUp
-} from 'react-feather';
-import {IJodit} from "jodit";
-import JoditEditor from "jodit-react";
+import { useEffect, useRef, useState } from 'react';
+import { Button, Card, Col, Container, Form, Row } from 'react-bootstrap';
+import { Comment, CurrentUser, Ticket } from './TicketTypes';
+import { CheckCircle, Edit2, FileText, MessageSquare, Save, Trash2 } from 'react-feather';
+import { IJodit } from 'jodit';
+import JoditEditor from 'jodit-react';
+import { fetchAllTicketStatus, fetchTicketData, getInitialTicketState, ticketDelete, ticketUpdate } from './serviceTicket';
+import { deleteComment, fetchCommentData, submitTicketReply } from './serviceComment';
+import { fetchAllUsers, fetchCurrentUser } from './serviceUser';
+import { ToastNotification } from './ToastNotification';
+import { ConfirmationDialog } from './ConfirmationDialog';
 
 export const TicketEdit = () => {
-    const [ticket, setTicket] = useState<Ticket>({
-        id: 0,
-        subject: '',
-        description: '',
-        email_of_submitter: '',
-        name_of_submitter: '',
-        assigned_to: '',
-        created_at: '',
-        updated_at: '',
-        url: ''
+  const [ticket, setTicket] = useState<Ticket>(getInitialTicketState());
+  const replySubjectRef = useRef<HTMLInputElement>(null);
+  const [isReplyEditorOpen, setIsReplyEditorOpen] = useState(false);
+  const [comments, setComments] = useState<Comment[]>([]);
+  const [description, setDescription] = useState('');
+  const [allStatus, setAllStatus] = useState([]);
+  const [allUsers, setAllUsers] = useState([]);
+  const [newStatus, setNewStatus] = useState('open');
+  const [newAssignedToID, setNewAssignedToID] = useState<'' | number>('');
+  const [deleteConfirmationData, setDeleteConfirmationData] = useState({ show: false, ticketId: 0 });
+  const [showToast, setShowToast] = useState(false);
+  const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
+  const [toastMessage, setToastMessage] = useState('');
+  const config: Partial<IJodit['options']> = {
+    readonly: false,
+  };
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const ticketId = urlParams.get('id');
+    fetchCurrentUser().then(resp => setCurrentUser(resp));
+    fetchTicketData(ticketId).then(resp => {
+      setTicket(resp);
+      setNewStatus(resp.status);
+      setNewAssignedToID(resp.assigned_to_id || '');
     });
-    const replySubjectRef = useRef<HTMLInputElement>(null);
-    const [isReplyEditorOpen, setIsReplyEditorOpen] = useState(false);
-    const [comments, setComments] = useState<Comment[]>([]);
-    const [description, setDescription] = useState('');
-    const config: Partial<IJodit['options']> = {
-        readonly: false
+    fetchCommentData(ticketId).then(resp => setComments(resp));
+    fetchAllTicketStatus().then(resp => setAllStatus(resp));
+    fetchAllUsers().then(resp => setAllUsers(resp));
+  }, []);
+  const handleSendReply = () => {
+    const submitComment = async () => {
+      const result = await submitTicketReply({
+        title: replySubjectRef.current.value,
+        description,
+        ticket_id: ticket.id,
+        commented_by_id: currentUser ? currentUser.id : currentUser,
+      });
+      if (result && result.id) {
+        replySubjectRef.current.value = '';
+        setDescription('');
+        setIsReplyEditorOpen(false);
+        setComments(prev => {
+          return [...prev, result];
+        });
+      } else {
+        alert('Reply submit error');
+      }
     };
-    useEffect(() => {
-        const fetchTicketData = async () => {
-            const urlParams = new URLSearchParams(window.location.search);
-            const id = urlParams.get('id');
-            try {
-                const response = await fetch(`/tickets/${id}.json`)
-                const ticket = await response.json();
-                setTicket(ticket);
-                const responseComments = await fetch(`/comments/by_ticket/${id}.json`)
-                const comments = await responseComments.json();
-                setComments(comments);
-            } catch (err) {
-                alert(err);
-            }
-        }
-        fetchTicketData().then(r => {
-        })
-    }, [])
-    const handleSendReply = () => {
-        const submitComment = async () => {
-            const csrfToken = (document.querySelector('[name=csrf-token]') as HTMLMetaElement).content
-            try {
-                const response = await fetch('/comments', {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': csrfToken,
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        title: replySubjectRef.current.value,
-                        description,
-                        ticket_id: ticket.id
-                    })
-                });
-                const result = await response.json();
-                if (result.id) {
-                    setIsReplyEditorOpen(false);
-                    setComments((prev) => {
-                        return [...prev, result];
-                    })
-                }
-            } catch (err) {
-                alert(err);
-            }
-        }
-        submitComment().then(r => {
-        })
+    submitComment().then(r => {});
+  };
+  const handleDeleteComment = commentId => async () => {
+    await deleteComment(commentId);
+    setComments(prev => {
+      return prev.filter(x => x.id !== commentId);
+    });
+  };
+  const handleUpdateTicket = async () => {
+    const result = await ticketUpdate(ticket.id, { status: newStatus, assigned_to_id: newAssignedToID });
+    if (result.id) {
+      setTicket(result);
+      setToastMessage('Ticket updated successfully');
+      setShowToast(true);
     }
-    const handleDeleteComment = (commentId) => () => {
-        const deleteComment = async () => {
-            const csrfToken = (document.querySelector('[name=csrf-token]') as HTMLMetaElement).content
-            try {
-                const response = await fetch(`/comments/${commentId}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'X-CSRF-TOKEN': csrfToken,
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json',
-                    }
-                });
-                const result = await response.text();
-                setComments((prev) => {
-                    return prev.filter(x => x.id !== commentId)
-                })
-            } catch (err) {
-                alert(err);
-            }
-        }
-        deleteComment().then(r => {
-        })
-    }
-    const handleDeleteTicket = () => {
-        // Todo
-    }
-    return (
-        <Container>
-            <Row>
-                <Col lg={8}>
-                    <Card>
-                        <Card.Header>
-                            <h5>
-                                <Lock className={'mr-1'}/>
-                                {ticket.subject}
-                            </h5>
-                        </Card.Header>
-                        <Card.Body className="topic-name">
-                            <Row className="align-items-center">
-                                <Col md={8}>
-                                    <h6 className="d-inline-block mb-0"
-                                        dangerouslySetInnerHTML={{__html: ticket.description}}/>
-                                </Col>
-                                <Col md={4}>
-
-                                </Col>
-                            </Row>
-                        </Card.Body>
-
-                        {comments.map(comment => <Card.Body key={comment.id}
-                                                            className="hd-detail hdd-admin border-bottom">
-                            <Row>
-                                <Col sm="auto">
-
-                                    <p>
-                                        <i className="fas fa-thumbs-up mr-1 text-primary"/>#{comment.id}
-                                    </p>
-                                </Col>
-                                <Col>
-                                    <div className="comment-top">
-                                        <h4>
-                                            You <small className="text-muted f-w-400">replied</small>
-                                        </h4>
-                                        <p>{comment.created_at}</p>
-                                    </div>
-                                    <div dangerouslySetInnerHTML={{__html: comment.description}}></div>
-                                </Col>
-                                <Col sm="auto" className="pl-0 col-right">
-                                    <Card.Body className="text-center">
-                                        <ul className="list-unstyled mb-0 edit-del">
-                                            <li className="d-inline-block f-20 mr-1">
-                                                <a href={'#'}>
-                                                    <Edit2 className={'text-muted'}/>
-                                                </a>
-                                            </li>
-                                            <li className="d-inline-block f-20">
-                                                <a href={'#'}>
-                                                    <Trash2 className={'text-muted'}
-                                                            onClick={handleDeleteComment(comment.id)}/>
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </Card.Body>
-                                </Col>
-                            </Row>
-                        </Card.Body>)}
-                        <div className="bg-light p-3">
-                            <Row className="align-items-center">
-                                <Col>
-                                    <Button variant="secondary" className={'text-uppercase'} onClick={() => {
-                                        setIsReplyEditorOpen(!isReplyEditorOpen)
-                                    }}><MessageSquare className={'mr-2'}/>Post a reply</Button>
-                                </Col>
-                            </Row>
-                        </div>
-                        {isReplyEditorOpen && <Form>
-                            <Card>
-                                <Card.Body>
-                                    <Card.Title>Reply:</Card.Title>
-                                    <Row>
-                                        <Col sm={12}>
-                                            <Form.Group controlId="formSubject">
-                                                <Form.Label>Subject</Form.Label>
-                                                <Form.Control type="text" placeholder="Subject" ref={replySubjectRef}
-                                                />
-                                            </Form.Group>
-                                        </Col>
-                                        <Col sm={12}>
-                                            <Form.Group controlId="formReply">
-                                                <Form.Label>Description:</Form.Label>
-                                                <JoditEditor key={2} value={description} config={config as any}
-                                                             onBlur={setDescription}/>
-                                            </Form.Group>
-                                        </Col>
-                                    </Row>
-                                    <div>
-                                        <Button variant="success" onClick={handleSendReply}>Send</Button>{' '}
-                                        <Button variant="secondary"
-                                                onClick={() => setIsReplyEditorOpen(!isReplyEditorOpen)}>Cancel</Button>
-                                    </div>
-                                </Card.Body>
-                            </Card>
-
-
-                        </Form>}
-
-                    </Card>
+  };
+  const onTicketDeleteConfirm = ticketId => async () => {
+    setDeleteConfirmationData(prevState => {
+      return { ...prevState, show: true, ticketId };
+    });
+  };
+  const setShowTicketDeleteConfirm = (show: boolean) => {
+    setDeleteConfirmationData(prevState => {
+      return { ...prevState, show };
+    });
+  };
+  const onTicketConfirmCancel = () => {
+    setShowTicketDeleteConfirm(false);
+  };
+  const onTicketDelete = async () => {
+    setShowTicketDeleteConfirm(false);
+    await ticketDelete(deleteConfirmationData.ticketId).then(resp => {
+      if (!resp.error) {
+        setToastMessage('Ticket deleted successfully');
+        setShowToast(true);
+        window.history.back();
+      }
+    });
+  };
+  return (
+    <Container>
+      <ToastNotification show={showToast} setShow={setShowToast} message={toastMessage} />
+      <ConfirmationDialog
+        show={deleteConfirmationData.show}
+        setShow={setShowTicketDeleteConfirm}
+        onCancel={onTicketConfirmCancel}
+        onSubmit={onTicketDelete}
+        title={'Are you sure?'}
+        body={'Ticket and its comments will be deleted permanently.'}
+        okButtonLabel={'Confirm'}
+      />
+      <Row>
+        <Col lg={8}>
+          <Card>
+            <Card.Header>
+              <h5>
+                <FileText className={'mr-1'} />
+                {ticket.subject}
+              </h5>
+            </Card.Header>
+            <Card.Body className="border-bottom">
+              <Row className="align-items-center">
+                <Col md={8}>
+                  <h6 className="d-inline-block mb-0" dangerouslySetInnerHTML={{ __html: ticket.description }} />
                 </Col>
-                <Col lg={4}>
-                    <Card className="hdd-right-inner">
-                        <Card.Header>
-                            <h5>Ticket Details</h5>
-                        </Card.Header>
-                        <Card.Body>
-                            {!!comments.length &&
-                            <div className="alert alert-success d-block text-center text-uppercase">
-                                <CheckCircle className={'mr-2'}/>
-                                Replied
-                            </div>}
-                            <div className="select-block">
-                                <select className="js-status-multiple col-sm-12 form-control">
-                                    <option>Open</option>
-                                    <option>Close</option>
-                                    <option>CLosed Forever</option>
-                                </select>
-                                <select className="js-assigned-multiple col-sm-12 form-control">
-                                    <option value="avatar-5">Jack Pall</option>
-                                    <option value="avatar-4">Liza Mac</option>
-                                    <option value="avatar-3">Lina Hop</option>
-                                    <option value="avatar-2">Sam Hunk</option>
-                                    <option value="avatar-1">Jhon White</option>
-                                </select>
-                            </div>
-                        </Card.Body>
-                        <ul className="list-group list-group-flush">
-                            <li className="list-group-item">
-                                <div className="media align-items-center">
-                                    <label className="mb-0 wid-100">Name:</label>
-                                    <div className="media-body">
-                                        <p className="mb-0">
+                <Col md={4}></Col>
+              </Row>
+            </Card.Body>
 
-                                            <a href={'#'}>{ticket.name_of_submitter}</a>
-                                        </p>
-                                    </div>
-                                </div>
-                            </li>
-                            <li className="list-group-item">
-                                <div className="media align-items-center">
-                                    <label className="mb-0 wid-100">Email:</label>
-                                    <div className="media-body">
-                                        <p className="mb-0">
-                                            <Mail className={'mr-1'}/>
-                                            <a href={'#'}>{ticket.email_of_submitter}</a>
-                                        </p>
-                                    </div>
-                                </div>
-                            </li>
-                            <li className="list-group-item">
-                                <div className="media align-items-center">
-                                    <label className="mb-0 wid-100">Assigned To:</label>
-                                    <div className="media-body">
-                                        <p className="mb-0">
-
-                                            <a href={'#'}>{ticket.assigned_to}</a>
-                                        </p>
-                                    </div>
-                                </div>
-                            </li>
-                            <li className="list-group-item">
-                                <div className="media align-items-center">
-                                    <label className="mb-0 wid-100">Created:</label>
-                                    <div className="media-body">
-                                        <p className="mb-0">
-                                            <Calendar className={'mr-1'}/>
-                                            <label className="mb-0">{ticket.created_at}</label>
-                                        </p>
-                                    </div>
-                                </div>
-                            </li>
-                            <li className="list-group-item">
-                                <div className="media align-items-center">
-                                    <label className="mb-0 wid-100">Response:</label>
-                                    <div className="media-body">
-                                        <p className="mb-0">
-                                            <Clock className={'mr-1'}/>
-                                            <label className="mb-0">{ticket.updated_at}</label>
-                                        </p>
-                                    </div>
-                                </div>
-                            </li>
-                            <li className="list-group-item py-3">
-                                <button type="button" className="btn btn-danger">
-                                    <Trash2 className={'mr-2'} onClick={handleDeleteTicket}/>
-                                    Delete Ticket
-                                </button>
-                            </li>
-                        </ul>
-                    </Card>
+            {comments.map(comment => (
+              <Card.Body key={comment.id} className="hd-detail hdd-admin border-bottom">
+                <Row>
+                  <Col sm="auto">
+                    <p>
+                      <i className="fas fa-thumbs-up mr-1 text-primary" />#{comment.id}
+                    </p>
+                  </Col>
+                  <Col>
+                    <div className="comment-top">
+                      <h4>
+                        {comment.commented_by_name} <small className="text-muted f-w-400">replied</small>
+                      </h4>
+                      <p>{new Date(comment.created_at).toUTCString()}</p>
+                    </div>
+                    <div dangerouslySetInnerHTML={{ __html: comment.description }}></div>
+                  </Col>
+                  <Col sm="auto" className="pl-0 col-right">
+                    <Card.Body className="text-center">
+                      <ul className="list-unstyled mb-0 edit-del">
+                        <li className="d-inline-block f-20 mr-1">
+                          <a href={'#'}>
+                            <Edit2 className={'text-muted'} />
+                          </a>
+                        </li>
+                        <li className="d-inline-block f-20">
+                          <a href={'#'}>
+                            <Trash2 className={'text-muted'} onClick={handleDeleteComment(comment.id)} />
+                          </a>
+                        </li>
+                      </ul>
+                    </Card.Body>
+                  </Col>
+                </Row>
+              </Card.Body>
+            ))}
+            <div className="bg-light p-3">
+              <Row className="align-items-center">
+                <Col>
+                  <Button
+                    variant="secondary"
+                    className={'text-uppercase'}
+                    onClick={() => {
+                      setIsReplyEditorOpen(!isReplyEditorOpen);
+                    }}
+                  >
+                    <MessageSquare className={'mr-2'} />
+                    Post a reply
+                  </Button>
                 </Col>
-            </Row>
-        </Container>
-    );
+              </Row>
+            </div>
+            {isReplyEditorOpen && (
+              <Form>
+                <Card>
+                  <Card.Body>
+                    <Card.Title>Reply:</Card.Title>
+                    <Row>
+                      <Col sm={12}>
+                        <Form.Group controlId="formSubject">
+                          <Form.Label>Subject</Form.Label>
+                          <Form.Control type="text" placeholder="Subject" ref={replySubjectRef} />
+                        </Form.Group>
+                      </Col>
+                      <Col sm={12}>
+                        <Form.Group controlId="formReply">
+                          <Form.Label>Description:</Form.Label>
+                          <JoditEditor key={2} value={description} config={config as any} onBlur={setDescription} />
+                        </Form.Group>
+                      </Col>
+                    </Row>
+                    <div>
+                      <Button variant="success" onClick={handleSendReply}>
+                        Send
+                      </Button>{' '}
+                      <Button variant="secondary" onClick={() => setIsReplyEditorOpen(!isReplyEditorOpen)}>
+                        Cancel
+                      </Button>
+                    </div>
+                  </Card.Body>
+                </Card>
+              </Form>
+            )}
+          </Card>
+        </Col>
+        <Col lg={4}>
+          <Card className="hdd-right-inner">
+            <Card.Header>
+              <h5>Ticket Details</h5>
+            </Card.Header>
+            <Card.Body>
+              {!!comments.length && (
+                <div className="alert alert-success d-block text-center text-uppercase">
+                  <CheckCircle className={'mr-2'} />
+                  Replied
+                </div>
+              )}
+              <Form.Group controlId="ticketEdit.changeStatus">
+                <Form.Label>Status</Form.Label>
+                <Form.Control as="select" custom value={newStatus} onChange={event => setNewStatus(event.target.value)}>
+                  {allStatus.map(op => {
+                    return (
+                      <option key={op.id} value={op.id}>
+                        {op.label}
+                      </option>
+                    );
+                  })}
+                </Form.Control>
+              </Form.Group>
+              <Form.Group controlId="ticketEdit.changeAssignedTo">
+                <Form.Label>Assigned To</Form.Label>
+                <Form.Control as="select" custom value={newAssignedToID} onChange={event => setNewAssignedToID(event.target.value)}>
+                  {allUsers.map(user => {
+                    return (
+                      <option key={user.id} value={user.id}>
+                        {user.first_name} {user.last_name}
+                      </option>
+                    );
+                  })}
+                </Form.Control>
+              </Form.Group>
+            </Card.Body>
+            <ul className="list-group list-group-flush">
+              <li className="list-group-item">
+                <div className="media align-items-center">
+                  <label className="mb-0 wid-100 mr-2">Name of submitter:</label>
+                  <div className="media-body">
+                    <p className="mb-0">
+                      <a href={'#'}>{ticket.name_of_submitter}</a>
+                    </p>
+                  </div>
+                </div>
+              </li>
+              <li className="list-group-item">
+                <div className="media align-items-center">
+                  <label className="mb-0 wid-100 mr-2">Email of submitter:</label>
+                  <div className="media-body">
+                    <p className="mb-0">
+                      <a href={'#'}>{ticket.email_of_submitter}</a>
+                    </p>
+                  </div>
+                </div>
+              </li>
+              <li className="list-group-item">
+                <div className="media align-items-center">
+                  <label className="mb-0 wid-100 mr-2">Created:</label>
+                  <div className="media-body">
+                    <p className="mb-0">
+                      <label className="mb-0">{new Date(ticket.created_at).toUTCString()}</label>
+                    </p>
+                  </div>
+                </div>
+              </li>
+              <li className="list-group-item">
+                <div className="media align-items-center">
+                  <label className="mb-0 wid-100 mr-2">Response:</label>
+                  <div className="media-body">
+                    <p className="mb-0">
+                      <label className="mb-0">{new Date(ticket.updated_at).toUTCString()}</label>
+                    </p>
+                  </div>
+                </div>
+              </li>
+              <li className="list-group-item py-3">
+                <Button variant="primary" onClick={handleUpdateTicket}>
+                  <Save className={'mr-2'} />
+                  Update
+                </Button>{' '}
+                <Button variant="danger" onClick={onTicketDeleteConfirm(ticket.id)}>
+                  {' '}
+                  <Trash2 className={'mr-2'} />
+                  Delete Ticket
+                </Button>
+              </li>
+            </ul>
+          </Card>
+        </Col>
+      </Row>
+    </Container>
+  );
 };
 export default TicketEdit;
