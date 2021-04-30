@@ -1,4 +1,5 @@
 class TicketsController < ApplicationController
+  include Pagy::Backend
   protect_from_forgery with: :null_session
   before_action :authenticate_user!, only: %i[ index edit show update destroy ]
   before_action :set_ticket, only: %i[ edit show update destroy ]
@@ -7,12 +8,13 @@ class TicketsController < ApplicationController
   # GET /tickets.json
   def index
     if current_user.role == "customer"
-      @tickets = Ticket.where(created_by: current_user.id).order(created_at: :asc)
+      @pagy, @tickets = pagy(Ticket.where(created_by: current_user.id).order(created_at: :asc))
     elsif current_user.role === "support"
-      @tickets = Ticket.all.order(created_at: :asc)
+      @pagy, @tickets = pagy(Ticket.all.order(created_at: :asc))
     else
       @tickets = []
     end
+    @pagy_meta = pagy_metadata(@pagy)
   end
   def all_status
     render json: [{ "id" => 'open', label: 'Open' }, { "id" => 'close', label: 'Close' }, { "id" => 'closed_forever', label: 'Closed Forever' }]
@@ -74,8 +76,6 @@ class TicketsController < ApplicationController
       render json: error, status: :unprocessable_entity
     end
   end
-
-
 
   private
 

@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
-import { Button, Card, Col, Container, Form, Modal, Row, Table } from 'react-bootstrap';
+import { Button, Card, Col, Container, Form, Modal, Pagination, Row, Table } from 'react-bootstrap';
 import { Edit, Plus, Trash2, Trello } from 'react-feather';
-import { CurrentUser, Ticket } from './TicketTypes';
+import { CurrentUser, Pagy, Ticket } from './TicketTypes';
 import { DisplayFormError } from './DisplayFormError';
 import 'jodit';
 import 'jodit/build/jodit.min.css';
@@ -161,9 +161,16 @@ export const TicketList = () => {
   const [deleteConfirmationData, setDeleteConfirmationData] = useState({ show: false, ticketId: 0 });
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
-  useEffect(() => {
-    fetchAllTicketData().then(resp => setTicketData(resp));
-  }, []);
+  const [pagy, setPagy] = useState<Pagy>({} as Pagy);
+  const [pageNo, setPageNo] = useState<number | string>(1);
+
+  const getTicketData = page_number => {
+    fetchAllTicketData(page_number).then(resp => {
+      setTicketData(resp.data);
+      setPagy(resp.pagy);
+    });
+  };
+  useEffect(() => getTicketData(pageNo), []);
   const onTicketDeleteConfirm = ticketId => async () => {
     setDeleteConfirmationData(prevState => {
       return { ...prevState, show: true, ticketId };
@@ -195,6 +202,10 @@ export const TicketList = () => {
     });
     setToastMessage('Ticket created successfully');
     setShowToast(true);
+  };
+  const handlePageChange = (page_number: number | string) => () => {
+    setPageNo(page_number);
+    getTicketData(page_number);
   };
   return (
     <Container>
@@ -250,33 +261,32 @@ export const TicketList = () => {
               </Table>
               <div className="pagination-block text-center">
                 <nav aria-label="Page navigation example" className="d-inline-block">
-                  <ul className="pagination">
-                    <li className="page-item">
-                      <a className="page-link" href={'#'}>
-                        Previous
-                      </a>
-                    </li>
-                    <li className="page-item">
-                      <a className="page-link" href={'#'}>
-                        1
-                      </a>
-                    </li>
-                    <li className="page-item active">
-                      <a className="page-link" href={'#'}>
-                        2
-                      </a>
-                    </li>
-                    <li className="page-item">
-                      <a className="page-link" href={'#'}>
-                        3
-                      </a>
-                    </li>
-                    <li className="page-item">
-                      <a className="page-link" href={'#'}>
-                        Next
-                      </a>
-                    </li>
-                  </ul>
+                  <Pagination>
+                    {/*@ts-ignore*/}
+                    <Pagination.First onClick={handlePageChange(1)} />
+                    {/*@ts-ignore*/}
+                    <Pagination.Prev onClick={handlePageChange(pagy.prev)} disabled={!pagy.prev} />
+                    {(pagy.series || []).map(x => {
+                      if (typeof x == 'string' && x != 'gap')
+                        return (
+                          <Pagination.Item key={x} active onClick={handlePageChange(x)}>
+                            {x}
+                          </Pagination.Item>
+                        );
+                      if (typeof x == 'number')
+                        return (
+                          <Pagination.Item key={x} onClick={handlePageChange(x)}>
+                            {x}
+                          </Pagination.Item>
+                        );
+                      if (x == 'gap') return <Pagination.Ellipsis key={x} disabled />;
+                      return <div key={x}>Error</div>;
+                    })}
+                    {/*@ts-ignore*/}
+                    <Pagination.Next onClick={handlePageChange(pagy.next)} disabled={!pagy.next} />
+                    {/*@ts-ignore*/}
+                    <Pagination.Last onClick={handlePageChange(pagy.last)} disabled={!pagy.last} />
+                  </Pagination>
                 </nav>
               </div>
             </Card.Body>

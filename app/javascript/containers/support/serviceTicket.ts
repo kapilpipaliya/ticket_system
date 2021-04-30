@@ -1,12 +1,12 @@
-import { Ticket, TicketStatus } from './TicketTypes';
+import { Pagy, Ticket, TicketStatus } from './TicketTypes';
 
-export const fetchAllTicketData = async (): Promise<Ticket[]> => {
+export const fetchAllTicketData = async (page_number: number | string): Promise<{ data: Ticket[]; pagy: Pagy }> => {
   try {
-    const response = await fetch('/tickets.json');
+    const response = await fetch(`/tickets.json?page=${page_number}`);
     return await response.json();
   } catch (err) {
     alert(err);
-    return [];
+    return { data: [], pagy: {} as Pagy };
   }
 };
 export const ticketCreate = async (data: { [key: string]: any }) => {

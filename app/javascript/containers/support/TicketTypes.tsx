@@ -42,3 +42,39 @@ export interface User {
   first_name: string;
   last_name: string;
 }
+
+interface PagyParams {}
+interface PagyVars {
+  page: number;
+  items: number;
+  outset: number;
+  size: number[];
+  page_param: string;
+  params: PagyParams;
+  fragment: string;
+  link_extra: string;
+  i18n_key: string;
+  cycle: boolean;
+  metadata: string[];
+  count: number;
+}
+
+export interface Pagy {
+  scaffold_url: string;
+  first_url: string;
+  prev_url: string;
+  page_url: string;
+  next_url: string;
+  last_url: string;
+  count: number;
+  page: number;
+  items: number;
+  vars: PagyVars;
+  pages: number;
+  last: number;
+  from: number;
+  to: number;
+  prev: number;
+  next: number;
+  series: (number | string)[];
+}
