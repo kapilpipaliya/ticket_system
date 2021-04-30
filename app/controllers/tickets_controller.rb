@@ -1,7 +1,7 @@
 class TicketsController < ApplicationController
   protect_from_forgery with: :null_session
-  before_action :authenticate_user!, only: %i[ index show update destroy ]
-  before_action :set_ticket, only: %i[ show update destroy ]
+  before_action :authenticate_user!, only: %i[ index edit show update destroy ]
+  before_action :set_ticket, only: %i[ edit show update destroy ]
 
   # GET /tickets
   # GET /tickets.json
@@ -22,11 +22,17 @@ class TicketsController < ApplicationController
   end
 
   def edit
+    if current_user.role == "customer" &&  @ticket.created_by_id != current_user.id
+        render plain: "Error"
+    end
   end
 
   # GET /tickets/1
   # GET /tickets/1.json
   def show
+    if current_user.role == "customer" &&  @ticket.created_by_id != current_user.id
+      render plain: "Error"
+    end
   end
 
   # POST /tickets
@@ -35,6 +41,7 @@ class TicketsController < ApplicationController
     @ticket = Ticket.new(ticket_params)
 
     if @ticket.save
+      TicketMailer.with(ticket: @ticket).new_ticket_email.deliver_later
       render :show, status: :created, location: @ticket
     else
       render json: @ticket.errors, status: :unprocessable_entity
@@ -44,7 +51,11 @@ class TicketsController < ApplicationController
   # PATCH/PUT /tickets/1
   # PATCH/PUT /tickets/1.json
   def update
+    sendStatusChangeEmail = @ticket.status != params[:status]
     if @ticket.update(ticket_params)
+      if sendStatusChangeEmail
+        TicketMailer.with(ticket: @ticket).ticket_status_change_email.deliver_later
+      end
       render :show, status: :ok, location: @ticket
     else
       render json: @ticket.errors, status: :unprocessable_entity
