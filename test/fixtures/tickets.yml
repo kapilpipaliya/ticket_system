@@ -3,11 +3,11 @@
 one:
   title: MyString
   body: MyText
-  email_of_submitter: MyString
-  name_of_submitter: MyString
+  email: MyString
+  name: MyString
 
 two:
   title: MyString
   body: MyText
-  email_of_submitter: MyString
-  name_of_submitter: MyString
+  email: MyString
+  name: MyString

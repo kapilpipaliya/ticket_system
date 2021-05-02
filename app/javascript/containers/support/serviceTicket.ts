@@ -32,15 +32,15 @@ export const getInitialTicketState = (): Ticket => {
     id: 0,
     subject: '',
     description: '',
-    email_of_submitter: '',
-    name_of_submitter: '',
-    assigned_to_id: null,
-    created_by_id: null,
+    email: '',
+    name: '',
+    assignee_id: null,
+    creator_id: null,
     status: 'open',
     created_at: '',
     updated_at: '',
     url: '',
-    assigned_to_name: '',
+    assignee_name: '',
   };
 };
 export const fetchTicketData = async (ticketId: string): Promise<Ticket> => {

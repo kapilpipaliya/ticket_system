@@ -19,8 +19,8 @@ tickets = []
   tickets.push Ticket.create!(
                           { subject: Faker::Hipster.sentence,
                             description: Faker::Hipster.paragraph,
-                            email_of_submitter: Faker::Internet.email,
-                            name_of_submitter: Faker::Name.name_with_middle }
+                            email: Faker::Internet.email,
+                            name: Faker::Name.name_with_middle }
                         )
 end
 
@@ -30,11 +30,11 @@ end
                                title: "Thanks for Ticket.",
                                description: Faker::Hipster.paragraph,
                                ticket: tickets[c],
-                               commented_by: supporter
+                               commenter: supporter
                              }, {
                                title: "Your order has been processed",
                                description: Faker::Hipster.paragraph,
                                ticket: tickets[c],
-                               commented_by: supporter
+                               commenter: supporter
                              }])
 end

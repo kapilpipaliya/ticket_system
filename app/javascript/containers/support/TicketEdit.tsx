@@ -35,7 +35,7 @@ export const TicketEdit = () => {
     fetchTicketData(ticketId).then(resp => {
       setTicket(resp);
       setNewStatus(resp.status);
-      setNewAssignedToID(resp.assigned_to_id || '');
+      setNewAssignedToID(resp.assignee_id || '');
     });
     fetchCommentData(ticketId).then(resp => setComments(resp));
     fetchAllTicketStatus().then(resp => setAllStatus(resp));
@@ -47,7 +47,7 @@ export const TicketEdit = () => {
         title: replySubjectRef.current.value,
         description,
         ticket_id: ticket.id,
-        commented_by_id: currentUser ? currentUser.id : currentUser,
+        commenter_id: currentUser ? currentUser.id : currentUser,
       });
       if (result && result.id) {
         replySubjectRef.current.value = '';
@@ -69,7 +69,7 @@ export const TicketEdit = () => {
     });
   };
   const handleUpdateTicket = async () => {
-    const result = await ticketUpdate(ticket.id, { status: newStatus, assigned_to_id: newAssignedToID });
+    const result = await ticketUpdate(ticket.id, { status: newStatus, assignee_id: newAssignedToID });
     if (result.id) {
       setTicket(result);
       setToastMessage('Ticket updated successfully');
@@ -140,7 +140,7 @@ export const TicketEdit = () => {
                   <Col>
                     <div className="comment-top">
                       <h4>
-                        {comment.commented_by_name} <small className="text-muted f-w-400">replied</small>
+                        {comment.commenter_name} <small className="text-muted f-w-400">replied</small>
                       </h4>
                       <p>{new Date(comment.created_at).toUTCString()}</p>
                     </div>
@@ -257,7 +257,7 @@ export const TicketEdit = () => {
                   <label className="mb-0 wid-100 mr-2">Name of submitter:</label>
                   <div className="media-body">
                     <p className="mb-0">
-                      <a href={'#'}>{ticket.name_of_submitter}</a>
+                      <a href={'#'}>{ticket.name}</a>
                     </p>
                   </div>
                 </div>
@@ -267,7 +267,7 @@ export const TicketEdit = () => {
                   <label className="mb-0 wid-100 mr-2">Email of submitter:</label>
                   <div className="media-body">
                     <p className="mb-0">
-                      <a href={'#'}>{ticket.email_of_submitter}</a>
+                      <a href={'#'}>{ticket.email}</a>
                     </p>
                   </div>
                 </div>

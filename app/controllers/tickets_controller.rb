@@ -8,7 +8,7 @@ class TicketsController < ApplicationController
   # GET /tickets.json
   def index
     if current_user.role == 'customer'
-      @pagy, @tickets = pagy(Ticket.where(created_by: current_user.id).order(created_at: :asc))
+      @pagy, @tickets = pagy(Ticket.where(creator: current_user.id).order(created_at: :asc))
     elsif current_user.role === 'support'
       @pagy, @tickets = pagy(Ticket.all.order(created_at: :asc))
     else
@@ -24,13 +24,13 @@ class TicketsController < ApplicationController
   def new; end
 
   def edit
-    render plain: 'Error' if current_user.role == 'customer' && @ticket.created_by_id != current_user.id
+    render plain: 'Error' if current_user.role == 'customer' && @ticket.creator_id != current_user.id
   end
 
   # GET /tickets/1
   # GET /tickets/1.json
   def show
-    render plain: 'Error' if current_user.role == 'customer' && @ticket.created_by_id != current_user.id
+    render plain: 'Error' if current_user.role == 'customer' && @ticket.creator_id != current_user.id
   end
 
   # POST /tickets
@@ -80,6 +80,6 @@ class TicketsController < ApplicationController
 
   # Only allow a list of trusted parameters through.
   def ticket_params
-    params.require(:ticket).permit(:subject, :description, :email_of_submitter, :name_of_submitter, :status, :created_by_id, :assigned_to_id)
+    params.require(:ticket).permit(:subject, :description, :email, :name, :status, :creator_id, :assignee_id)
   end
 end

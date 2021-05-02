@@ -21,11 +21,11 @@ interface TicketProps {
 export const TicketItem = (props: TicketProps) => {
   return (
     <>
-      <td>{props.ticket.name_of_submitter}</td>
-      <td>{props.ticket.email_of_submitter}</td>
+      <td>{props.ticket.name}</td>
+      <td>{props.ticket.email}</td>
       <td>{props.ticket.subject}</td>
       <td>{props.ticket.description}</td>
-      <td>{props.ticket.assigned_to_name}</td>
+      <td>{props.ticket.assignee_name}</td>
       <td>{new Date(props.ticket.created_at).toUTCString()}</td>
       <td>{new Date(props.ticket.updated_at).toUTCString()}</td>
       {/*<td>Url: {props.ticket.url}</td>*/}
@@ -58,8 +58,8 @@ const AddNewTicketModal = (props: NewTicketModal) => {
   };
   const [errors, setErrors] = useState({
     subject: [] as string[],
-    name_of_submitter: [] as string[],
-    email_of_submitter: [] as string[],
+    name: [] as string[],
+    email: [] as string[],
     description: [] as string[],
   });
   useEffect(() => {
@@ -70,10 +70,10 @@ const AddNewTicketModal = (props: NewTicketModal) => {
     const submitForm = async () => {
       const result = await ticketCreate({
         subject: subjectRef.current.value,
-        name_of_submitter: nameOfSubmitterRef.current.value,
-        email_of_submitter: emailOfSubmitterRef.current.value,
+        name: nameOfSubmitterRef.current.value,
+        email: emailOfSubmitterRef.current.value,
         description,
-        created_by_id: currentUser ? currentUser.id : currentUser,
+        creator_id: currentUser ? currentUser.id : currentUser,
       });
       if (result.id) {
         subjectRef.current.value = '';
@@ -111,14 +111,14 @@ const AddNewTicketModal = (props: NewTicketModal) => {
             <Form.Group controlId="formName">
               <Form.Label>Name</Form.Label>
               <Form.Control type="text" placeholder="Name" ref={nameOfSubmitterRef} />
-              <DisplayFormError errors={errors.name_of_submitter} />
+              <DisplayFormError errors={errors.name} />
             </Form.Group>
           </Col>
           <Col sm={6}>
             <Form.Group controlId="formEmail">
               <Form.Label>Email</Form.Label>
               <Form.Control type="email" placeholder="Email" ref={emailOfSubmitterRef} />
-              <DisplayFormError errors={errors.email_of_submitter} />
+              <DisplayFormError errors={errors.email} />
             </Form.Group>
           </Col>
           <Col sm={12}>

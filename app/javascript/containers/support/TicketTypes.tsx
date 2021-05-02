@@ -3,14 +3,14 @@ export interface Ticket {
   subject: string;
   description: string;
   status: string;
-  email_of_submitter: string;
-  name_of_submitter: string;
-  assigned_to_id: '' | number;
-  created_by_id: null | number;
+  email: string;
+  name: string;
+  assignee_id: '' | number;
+  creator_id: null | number;
   created_at: string;
   updated_at: string;
   url: string;
-  assigned_to_name: string;
+  assignee_name: string;
 }
 export interface Comment {
   id: number;
@@ -20,8 +20,8 @@ export interface Comment {
   created_at: string;
   updated_at: string;
   url: string;
-  commented_by_id: number;
-  commented_by_name: string;
+  commenter_id: number;
+  commenter_name: string;
 }
 export interface CurrentUser {
   id: number;

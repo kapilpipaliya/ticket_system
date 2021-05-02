@@ -24,8 +24,8 @@ export const TicketCreate = () => {
   };
   const [errors, setErrors] = useState({
     subject: [] as string[],
-    name_of_submitter: [] as string[],
-    email_of_submitter: [] as string[],
+    name: [] as string[],
+    email: [] as string[],
     description: [] as string[],
   });
   useEffect(() => {
@@ -37,10 +37,10 @@ export const TicketCreate = () => {
     const submitForm = async () => {
       const result = await ticketCreate({
         subject: subjectRef.current.value,
-        name_of_submitter: nameOfSubmitterRef.current.value,
-        email_of_submitter: emailOfSubmitterRef.current.value,
+        name: nameOfSubmitterRef.current.value,
+        email: emailOfSubmitterRef.current.value,
         description,
-        created_by_id: currentUser ? currentUser.id : currentUser,
+        creator_id: currentUser ? currentUser.id : currentUser,
       });
       if (result.id) {
         subjectRef.current.value = '';
@@ -86,14 +86,14 @@ export const TicketCreate = () => {
                       <Form.Group controlId="formName">
                         <Form.Label>Name</Form.Label>
                         <Form.Control type="text" placeholder="Name" ref={nameOfSubmitterRef} />
-                        <DisplayFormError errors={errors.name_of_submitter} />
+                        <DisplayFormError errors={errors.name} />
                       </Form.Group>
                     </Col>
                     <Col sm={12}>
                       <Form.Group controlId="formEmail">
                         <Form.Label>Email</Form.Label>
                         <Form.Control type="email" placeholder="Email" ref={emailOfSubmitterRef} />
-                        <DisplayFormError errors={errors.email_of_submitter} />
+                        <DisplayFormError errors={errors.email} />
                       </Form.Group>
                     </Col>
                     <Col sm={12}>

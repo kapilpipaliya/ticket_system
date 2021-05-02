@@ -19,25 +19,25 @@ ActiveRecord::Schema.define(version: 2021_04_27_090514) do
     t.string "title"
     t.text "description"
     t.bigint "ticket_id", null: false
-    t.bigint "commented_by_id"
+    t.bigint "commenter_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["commented_by_id"], name: "index_comments_on_commented_by_id"
+    t.index ["commenter_id"], name: "index_comments_on_commenter_id"
     t.index ["ticket_id"], name: "index_comments_on_ticket_id"
   end
 
   create_table "tickets", force: :cascade do |t|
     t.string "subject"
     t.text "description"
-    t.string "email_of_submitter"
-    t.string "name_of_submitter"
+    t.string "email"
+    t.string "name"
     t.string "status", default: "open"
-    t.bigint "created_by_id"
-    t.bigint "assigned_to_id"
+    t.bigint "creator_id"
+    t.bigint "assignee_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["assigned_to_id"], name: "index_tickets_on_assigned_to_id"
-    t.index ["created_by_id"], name: "index_tickets_on_created_by_id"
+    t.index ["assignee_id"], name: "index_tickets_on_assignee_id"
+    t.index ["creator_id"], name: "index_tickets_on_creator_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -70,7 +70,7 @@ ActiveRecord::Schema.define(version: 2021_04_27_090514) do
   end
 
   add_foreign_key "comments", "tickets"
-  add_foreign_key "comments", "users", column: "commented_by_id"
-  add_foreign_key "tickets", "users", column: "assigned_to_id"
-  add_foreign_key "tickets", "users", column: "created_by_id"
+  add_foreign_key "comments", "users", column: "commenter_id"
+  add_foreign_key "tickets", "users", column: "assignee_id"
+  add_foreign_key "tickets", "users", column: "creator_id"
 end
