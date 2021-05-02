@@ -1,13 +1,14 @@
 class CommentsController < ApplicationController
   protect_from_forgery with: :null_session
-  before_action :authenticate_user!, only: %i[ index update destroy ]
-  before_action :set_comment, only: %i[ show update destroy ]
+  before_action :authenticate_user!, only: %i[index update destroy]
+  before_action :set_comment, only: %i[show update destroy]
 
   # GET /comments
   # GET /comments.json
   def index
     @comments = Comment.all
   end
+
   def by_ticket
     ticket = Ticket.find(params[:id])
     @comments = ticket.comments
@@ -16,8 +17,7 @@ class CommentsController < ApplicationController
 
   # GET /comments/1
   # GET /comments/1.json
-  def show
-  end
+  def show; end
 
   # POST /comments
   # POST /comments.json
@@ -48,13 +48,14 @@ class CommentsController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_comment
-      @comment = Comment.find(params[:id])
-    end
 
-    # Only allow a list of trusted parameters through.
-    def comment_params
-      params.require(:comment).permit(:title, :description, :ticket_id, :commented_by_id)
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_comment
+    @comment = Comment.find(params[:id])
+  end
+
+  # Only allow a list of trusted parameters through.
+  def comment_params
+    params.require(:comment).permit(:title, :description, :ticket_id, :commented_by_id)
+  end
 end
