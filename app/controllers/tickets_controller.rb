@@ -18,7 +18,7 @@ class TicketsController < ApplicationController
   end
 
   def all_status
-    render json: [{ 'id' => 'open', label: 'Open' }, { 'id' => 'close', label: 'Close' }, { 'id' => 'closed_forever', label: 'Closed Forever' }]
+    render json:  Ticket.statuses.map { |x, i| {'id'=>x, label: x.titleize} }
   end
 
   def new; end

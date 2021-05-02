@@ -31,7 +31,7 @@ ActiveRecord::Schema.define(version: 2021_04_27_090514) do
     t.text "description"
     t.string "email"
     t.string "name"
-    t.string "status", default: "open"
+    t.integer "status", default: 0
     t.bigint "creator_id"
     t.bigint "assignee_id"
     t.datetime "created_at", precision: 6, null: false
