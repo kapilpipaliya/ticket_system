@@ -82,6 +82,6 @@ test:
 #
 production:
   <<: *default
-  database: ticket_system_production
-  username: ticket_system
-  password: <%= ENV['TICKET_SYSTEM_DATABASE_PASSWORD'] %>
+  database:  <%= ENV['DATABASE_URL']
+#  username: ticket_system
+#  password: <%#= ENV['TICKET_SYSTEM_DATABASE_PASSWORD'] %>
