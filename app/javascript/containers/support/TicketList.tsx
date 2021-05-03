@@ -12,6 +12,8 @@ import {fetchAllTicketData, getInitialErrorState, ticketCreate, ticketDelete} fr
 import { fetchCurrentUser } from './serviceUser';
 import { ToastNotification } from './ToastNotification';
 import { ConfirmationDialog } from './ConfirmationDialog';
+import styles from './TicketList.module'
+import clsx from 'clsx';
 
 interface TicketProps {
   ticket: Ticket;
@@ -223,7 +225,7 @@ export const TicketList = () => {
                 </Button>
               </div>
             </Card.Header>
-            <Card.Body className="shadow border-0">
+            <Card.Body className={clsx(["shadow border-0", styles['support-table']])}>
               <Table responsive hover>
                 <thead>
                   <tr>
