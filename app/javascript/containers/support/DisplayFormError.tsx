@@ -7,9 +7,9 @@ export const DisplayFormError = (props: { errors?: string[] }) => {
       {props.errors &&
         props.errors.map(error => {
           return (
-            <Form.Text key={error} className="text-muted">
+            <Form.Control.Feedback key={error} type="invalid">
               {error}
-            </Form.Text>
+            </Form.Control.Feedback>
           );
         })}
     </>

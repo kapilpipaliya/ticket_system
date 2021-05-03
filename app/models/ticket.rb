@@ -13,10 +13,10 @@ class Ticket < ApplicationRecord
   enum status: [:open, :close, :closed_forever]
 
   validates :status, inclusion: { in: statuses.keys }
-  validates :subject, :description, presence: true, if: :guest?
-  validates :subject, :description, length: { minimum: 10 }, if: :guest?
-  validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }, if: :guest?
-  validates :email, :name, presence: true, if: :guest?
+  validates :subject, :description, presence: true
+  validates :subject, :description, length: { minimum: 10 }
+  validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }
+  validates :email, :name, presence: true
   validates :creator, absence: true, if: :guest?
   validates :creator, presence: true, on: :create, if: -> { supporter? || customer? }
 

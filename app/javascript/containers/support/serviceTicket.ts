@@ -1,4 +1,4 @@
-import { Pagy, Ticket, TicketStatus } from './TicketTypes';
+import {Pagy, Ticket, TicketStatus} from './TicketTypes';
 
 export const fetchAllTicketData = async (page_number: number | string): Promise<{ data: Ticket[]; pagy: Pagy }> => {
   try {
@@ -104,3 +104,11 @@ export const ticketDelete = async ticketId => {
     alert(err);
   }
 };
+export const getInitialErrorState = () => {
+  return {
+    subject: [] as string[],
+    name: [] as string[],
+    email: [] as string[],
+    description: [] as string[],
+  };
+}

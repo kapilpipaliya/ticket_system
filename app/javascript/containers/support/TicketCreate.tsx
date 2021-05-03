@@ -1,14 +1,14 @@
 import * as React from 'react';
-import { useEffect, useRef, useState } from 'react';
-import { Alert, Breadcrumb, Button, Card, Col, Container, Form, Row } from 'react-bootstrap';
+import {useEffect, useRef, useState} from 'react';
+import {Alert, Breadcrumb, Button, Card, Col, Container, Form, Row} from 'react-bootstrap';
 import 'jodit';
 import 'jodit/build/jodit.min.css';
-import { IJodit } from 'jodit';
+import {IJodit} from 'jodit';
 import JoditEditor from 'jodit-react';
-import { CurrentUser } from './TicketTypes';
-import { DisplayFormError } from './DisplayFormError';
-import { ticketCreate } from './serviceTicket';
-import { fetchCurrentUser } from './serviceUser';
+import {CurrentUser} from './TicketTypes';
+import {DisplayFormError} from './DisplayFormError';
+import {getInitialErrorState, ticketCreate} from './serviceTicket';
+import {fetchCurrentUser} from './serviceUser';
 
 // import {TopNavBar} from "./NavBar";
 
@@ -22,12 +22,7 @@ export const TicketCreate = () => {
   const config: Partial<IJodit['options']> = {
     readonly: false,
   };
-  const [errors, setErrors] = useState({
-    subject: [] as string[],
-    name: [] as string[],
-    email: [] as string[],
-    description: [] as string[],
-  });
+  const [errors, setErrors] = useState(getInitialErrorState());
   useEffect(() => {
     fetchCurrentUser().then(resp => setCurrentUser(resp));
   }, []);
@@ -49,8 +44,9 @@ export const TicketCreate = () => {
         setDescription('');
         setIsSuccess(true);
         setTimeout(() => setIsSuccess(false), 5000);
+        setErrors(({...getInitialErrorState()}));
       } else {
-        setErrors(result);
+        setErrors(({...getInitialErrorState(), ...result}));
       }
     };
     submitForm().then(() => {});
@@ -78,21 +74,21 @@ export const TicketCreate = () => {
                     <Col sm={6}>
                       <Form.Group controlId="formSubject">
                         <Form.Label>Subject</Form.Label>
-                        <Form.Control type="text" placeholder="Subject" ref={subjectRef} />
+                        <Form.Control type="text" placeholder="Subject" ref={subjectRef} isInvalid={errors.subject.length}/>
                         <DisplayFormError errors={errors.subject} />
                       </Form.Group>
                     </Col>
                     <Col sm={6}>
                       <Form.Group controlId="formName">
                         <Form.Label>Name</Form.Label>
-                        <Form.Control type="text" placeholder="Name" ref={nameOfSubmitterRef} />
+                        <Form.Control type="text" placeholder="Name" ref={nameOfSubmitterRef} isInvalid={errors.name.length}/>
                         <DisplayFormError errors={errors.name} />
                       </Form.Group>
                     </Col>
                     <Col sm={12}>
                       <Form.Group controlId="formEmail">
                         <Form.Label>Email</Form.Label>
-                        <Form.Control type="email" placeholder="Email" ref={emailOfSubmitterRef} />
+                        <Form.Control type="email" placeholder="Email" ref={emailOfSubmitterRef} isInvalid={errors.email.length}/>
                         <DisplayFormError errors={errors.email} />
                       </Form.Group>
                     </Col>
@@ -100,6 +96,7 @@ export const TicketCreate = () => {
                       <Form.Group controlId="formDescription">
                         <Form.Label>Description</Form.Label>
                         <JoditEditor key={2} value={description} config={config as any} onBlur={setDescription} />
+                        <div className={`${errors.description.length ? 'is-invalid' : ''}`}/>
                         <DisplayFormError errors={errors.description} />
                       </Form.Group>
                     </Col>

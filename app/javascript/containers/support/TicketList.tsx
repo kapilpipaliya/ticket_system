@@ -8,7 +8,7 @@ import 'jodit';
 import 'jodit/build/jodit.min.css';
 import { IJodit } from 'jodit';
 import JoditEditor from 'jodit-react';
-import { fetchAllTicketData, ticketCreate, ticketDelete } from './serviceTicket';
+import {fetchAllTicketData, getInitialErrorState, ticketCreate, ticketDelete} from './serviceTicket';
 import { fetchCurrentUser } from './serviceUser';
 import { ToastNotification } from './ToastNotification';
 import { ConfirmationDialog } from './ConfirmationDialog';
@@ -44,6 +44,7 @@ interface NewTicketModal {
   show: boolean;
   onHide: () => void;
   onNewTicket: (ticket: Ticket) => void;
+  currentUser: CurrentUser
 }
 
 const AddNewTicketModal = (props: NewTicketModal) => {
@@ -52,19 +53,10 @@ const AddNewTicketModal = (props: NewTicketModal) => {
   const nameOfSubmitterRef = useRef<HTMLInputElement>(null);
   const emailOfSubmitterRef = useRef<HTMLInputElement>(null);
   const [description, setDescription] = useState('');
-  const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
   const config: Partial<IJodit['options']> = {
     readonly: false,
   };
-  const [errors, setErrors] = useState({
-    subject: [] as string[],
-    name: [] as string[],
-    email: [] as string[],
-    description: [] as string[],
-  });
-  useEffect(() => {
-    fetchCurrentUser().then(resp => setCurrentUser(resp));
-  }, []);
+  const [errors, setErrors] = useState(getInitialErrorState());
   const handleSubmitForm = e => {
     e.preventDefault();
     const submitForm = async () => {
@@ -73,7 +65,7 @@ const AddNewTicketModal = (props: NewTicketModal) => {
         name: nameOfSubmitterRef.current.value,
         email: emailOfSubmitterRef.current.value,
         description,
-        creator_id: currentUser ? currentUser.id : currentUser,
+        creator_id: props.currentUser ? props.currentUser.id : props.currentUser,
       });
       if (result.id) {
         subjectRef.current.value = '';
@@ -82,10 +74,11 @@ const AddNewTicketModal = (props: NewTicketModal) => {
         setDescription('');
         setIsSuccess(true);
         setTimeout(() => setIsSuccess(false), 5000);
+        setErrors(({...getInitialErrorState()}));
         props.onHide();
         props.onNewTicket(result);
       } else {
-        setErrors(result);
+        setErrors(({...getInitialErrorState(), ...result}));
       }
     };
     submitForm().then(() => {});
@@ -110,28 +103,29 @@ const AddNewTicketModal = (props: NewTicketModal) => {
           <Col sm={6}>
             <Form.Group controlId="formName">
               <Form.Label>Name</Form.Label>
-              <Form.Control type="text" placeholder="Name" ref={nameOfSubmitterRef} />
+              <Form.Control type="text" placeholder="Name" value={props.currentUser.first_name} ref={nameOfSubmitterRef} disabled isInvalid={errors.name.length}/>
               <DisplayFormError errors={errors.name} />
             </Form.Group>
           </Col>
           <Col sm={6}>
             <Form.Group controlId="formEmail">
               <Form.Label>Email</Form.Label>
-              <Form.Control type="email" placeholder="Email" ref={emailOfSubmitterRef} />
+              <Form.Control type="email" placeholder="Email" value={props.currentUser.email} ref={emailOfSubmitterRef} disabled isInvalid={errors.email.length}/>
               <DisplayFormError errors={errors.email} />
             </Form.Group>
           </Col>
           <Col sm={12}>
             <Form.Group controlId="formSubject">
               <Form.Label>Subject</Form.Label>
-              <Form.Control type="text" placeholder="Subject" ref={subjectRef} />
+              <Form.Control type="text" placeholder="Subject" ref={subjectRef} isInvalid={errors.subject.length}/>
               <DisplayFormError errors={errors.subject} />
             </Form.Group>
           </Col>
           <Col sm={12}>
             <Form.Group controlId="formDescription">
               <Form.Label>Description</Form.Label>
-              <JoditEditor key={2} value={description} config={config as any} onBlur={setDescription} />
+              <JoditEditor key={2} value={description} config={config as any} onBlur={setDescription}/>
+              <div className={`${errors.description.length ? 'is-invalid' : ''}`}/>
               <DisplayFormError errors={errors.description} />
             </Form.Group>
           </Col>
@@ -163,11 +157,13 @@ export const TicketList = () => {
   const [toastMessage, setToastMessage] = useState('');
   const [pagy, setPagy] = useState<Pagy>({} as Pagy);
   const [pageNo, setPageNo] = useState<number | string>(1);
+  const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
 
   const getTicketData = page_number => {
     fetchAllTicketData(page_number).then(resp => {
       setTicketData(resp.data);
       setPagy(resp.pagy);
+      fetchCurrentUser().then(resp => setCurrentUser(resp));
     });
   };
   useEffect(() => getTicketData(pageNo), []);
@@ -215,7 +211,7 @@ export const TicketList = () => {
         body={'Ticket and its comments will be deleted permanently.'}
         okButtonLabel={'Confirm'}
       />
-      <AddNewTicketModal show={isOpen} onHide={() => setIsOpen(false)} onNewTicket={onNewTicket} />
+      {currentUser && <AddNewTicketModal show={isOpen} onHide={() => setIsOpen(false)} onNewTicket={onNewTicket} currentUser={currentUser}/>}
       <Row>
         <Col sm={12}>
           <Card className="shadow-none">
