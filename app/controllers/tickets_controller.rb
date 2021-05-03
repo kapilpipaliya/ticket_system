@@ -1,5 +1,6 @@
 class TicketsController < ApplicationController
   include Pagy::Backend
+
   protect_from_forgery with: :null_session
   before_action :authenticate_user!, only: %i[index edit show update destroy]
   before_action :set_ticket, only: %i[edit show update destroy]

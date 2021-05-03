@@ -1,4 +1,6 @@
 class ApplicationController < ActionController::Base
+  include AuthHelper
+
   before_action :configure_permitted_parameters, if: :devise_controller?
 
   protected
@@ -9,15 +11,4 @@ class ApplicationController < ActionController::Base
     devise_parameter_sanitizer.permit(:account_update, keys: attributes)
   end
 
-  def guest?
-    current_user.nil?
-  end
-
-  def supporter?
-    current_user&.role == "support"
-  end
-
-  def customer?
-    current_user&.role == "customer"
-  end
 end

@@ -1,4 +1,6 @@
 class Ticket < ApplicationRecord
+  include AuthHelper
+
   # https://stackoverflow.com/questions/36911269/rails-custom-validation-involving-current-user
   attr_accessor :current_user
 
@@ -12,7 +14,8 @@ class Ticket < ApplicationRecord
 
   validates :status, inclusion: { in: statuses.keys }
   validates :subject, :description, presence: true, if: :guest?
-  validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }
+  validates :subject, :description, length: { minimum: 10 }, if: :guest?
+  validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }, if: :guest?
   validates :email, :name, presence: true, if: :guest?
   validates :creator, absence: true, if: :guest?
   validates :creator, presence: true, on: :create, if: -> { supporter? || customer? }
@@ -21,18 +24,6 @@ class Ticket < ApplicationRecord
   after_update :send_status_change_email
 
   private
-
-  def guest?
-    current_user.nil?
-  end
-
-  def supporter?
-    current_user&.role == "support"
-  end
-
-  def customer?
-    current_user&.role == "support"
-  end
 
   def send_new_ticket_email
     TicketMailer.with(ticket: self).new_ticket_email.deliver_later
