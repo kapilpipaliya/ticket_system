@@ -3,6 +3,7 @@ class TicketsController < ApplicationController
   protect_from_forgery with: :null_session
   before_action :authenticate_user!, only: %i[index edit show update destroy]
   before_action :set_ticket, only: %i[edit show update destroy]
+  before_action :check_ticket_permission, only: %i[edit show]
 
   # GET /tickets
   # GET /tickets.json
@@ -25,15 +26,11 @@ class TicketsController < ApplicationController
 
   def new; end
 
-  def edit
-    render plain: 'Error' if customer? && @ticket.creator_id != current_user.id
-  end
+  def edit; end
 
   # GET /tickets/1
   # GET /tickets/1.json
-  def show
-    render plain: 'Error' if customer? && @ticket.creator_id != current_user.id
-  end
+  def show; end
 
   # POST /tickets
   # POST /tickets.json
@@ -61,7 +58,7 @@ class TicketsController < ApplicationController
   # DELETE /tickets/1
   # DELETE /tickets/1.json
   def destroy
-    if current_user.role === 'support'
+    if supporter?
       @ticket.destroy
       render json: @ticket.errors.messages
     else
@@ -81,5 +78,9 @@ class TicketsController < ApplicationController
   # Only allow a list of trusted parameters through.
   def ticket_params
     params.require(:ticket).permit(:subject, :description, :email, :name, :status, :creator_id, :assignee_id)
+  end
+
+  def check_ticket_permission
+    render json: {'base'=>'you dont have permission'} if customer? && @ticket.creator_id != current_user.id
   end
 end
