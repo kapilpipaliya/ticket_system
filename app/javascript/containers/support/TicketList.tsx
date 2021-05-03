@@ -30,7 +30,7 @@ export const TicketItem = (props: TicketProps) => {
       <td>{new Date(props.ticket.updated_at).toUTCString()}</td>
       {/*<td>Url: {props.ticket.url}</td>*/}
       <td style={{ display: 'flex', flexWrap: 'nowrap' }}>
-        <a href={`tickets/${props.ticket.id}/edit?id=${props.ticket.id}`} className="text-muted">
+        <a href={`tickets/${props.ticket.id}/edit`} className="text-muted">
           <Edit className={'mr-1'} />
         </a>
 

@@ -10,6 +10,8 @@ import { deleteComment, fetchCommentData, submitTicketReply } from './serviceCom
 import { fetchAllUsers, fetchCurrentUser } from './serviceUser';
 import { ToastNotification } from './ToastNotification';
 import { ConfirmationDialog } from './ConfirmationDialog';
+import * as UrlPattern from 'url-pattern';
+
 function isEmpty(obj) {    return Object.keys(obj).length === 0;}
 export const TicketEdit = () => {
   const [ticket, setTicket] = useState<Ticket>(getInitialTicketState());
@@ -29,8 +31,9 @@ export const TicketEdit = () => {
     readonly: false,
   };
   useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const ticketId = urlParams.get('id');
+    const pattern = new UrlPattern('/tickets/(:id)/edit');
+    const matches = pattern.match(window.location.pathname);
+    const ticketId = matches.id;
     fetchCurrentUser().then(resp => setCurrentUser(resp));
     fetchTicketData(ticketId).then(resp => {
       setTicket(resp);
