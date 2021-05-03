@@ -96,8 +96,8 @@ export const ticketDelete = async ticketId => {
       },
     });
     const result = await response.json();
-    if (result.error) {
-      alert(result.error);
+    if (result.base) {
+      alert(result.base);
     }
     return result;
   } catch (err) {

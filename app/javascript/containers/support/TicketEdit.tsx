@@ -10,7 +10,7 @@ import { deleteComment, fetchCommentData, submitTicketReply } from './serviceCom
 import { fetchAllUsers, fetchCurrentUser } from './serviceUser';
 import { ToastNotification } from './ToastNotification';
 import { ConfirmationDialog } from './ConfirmationDialog';
-
+function isEmpty(obj) {    return Object.keys(obj).length === 0;}
 export const TicketEdit = () => {
   const [ticket, setTicket] = useState<Ticket>(getInitialTicketState());
   const replySubjectRef = useRef<HTMLInputElement>(null);
@@ -92,7 +92,7 @@ export const TicketEdit = () => {
   const onTicketDelete = async () => {
     setShowTicketDeleteConfirm(false);
     await ticketDelete(deleteConfirmationData.ticketId).then(resp => {
-      if (!resp.error) {
+      if (isEmpty(resp)) {
         setToastMessage('Ticket deleted successfully');
         setShowToast(true);
         window.history.back();

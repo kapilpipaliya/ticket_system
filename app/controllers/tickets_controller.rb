@@ -63,10 +63,9 @@ class TicketsController < ApplicationController
   def destroy
     if current_user.role === 'support'
       @ticket.destroy
-      error = { 'error' => false }
-      render json: error
+      render json: @ticket.errors.messages
     else
-      error = { 'error' => 'only support member can delete ticket' }
+      error = { 'base' => 'only support member can delete ticket' }
       render json: error, status: :unprocessable_entity
     end
   end
