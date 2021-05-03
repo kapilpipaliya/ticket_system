@@ -42,7 +42,6 @@ class TicketsController < ApplicationController
     @ticket.current_user = current_user
 
     if @ticket.save
-      TicketMailer.with(ticket: @ticket).new_ticket_email.deliver_later
       render :show, status: :created, location: @ticket
     else
       render json: @ticket.errors, status: :unprocessable_entity
@@ -52,9 +51,7 @@ class TicketsController < ApplicationController
   # PATCH/PUT /tickets/1
   # PATCH/PUT /tickets/1.json
   def update
-    sendStatusChangeEmail = @ticket.status != params[:status]
     if @ticket.update(ticket_params)
-      TicketMailer.with(ticket: @ticket).ticket_status_change_email.deliver_later if sendStatusChangeEmail
       render :show, status: :ok, location: @ticket
     else
       render json: @ticket.errors, status: :unprocessable_entity

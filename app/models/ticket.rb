@@ -15,7 +15,10 @@ class Ticket < ApplicationRecord
   validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }
   validates :email, :name, presence: true, if: :guest?
   validates :creator, absence: true, if: :guest?
-  validates :creator, presence: true, if: -> { supporter? || customer? }
+  validates :creator, presence: true, on: :create, if: -> { supporter? || customer? }
+
+  after_create :send_new_ticket_email
+  after_update :send_status_change_email
 
   private
 
@@ -29,5 +32,14 @@ class Ticket < ApplicationRecord
 
   def customer?
     current_user&.role == "support"
+  end
+
+  def send_new_ticket_email
+    TicketMailer.with(ticket: self).new_ticket_email.deliver_later
+  end
+
+  def send_status_change_email
+    send_status_change_email = self.status != self.status_before_last_save
+    TicketMailer.with(ticket: self).ticket_status_change_email.deliver_later if send_status_change_email
   end
 end
