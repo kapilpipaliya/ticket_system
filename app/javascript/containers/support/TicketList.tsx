@@ -12,7 +12,7 @@ import {fetchAllTicketData, getInitialErrorState, ticketCreate, ticketDelete} fr
 import { fetchCurrentUser } from './serviceUser';
 import { ToastNotification } from './ToastNotification';
 import { ConfirmationDialog } from './ConfirmationDialog';
-import styles from './TicketList.module'
+import styles from './TicketList.module.scss'
 import clsx from 'clsx';
 
 interface TicketProps {

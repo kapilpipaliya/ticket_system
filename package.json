@@ -28,6 +28,7 @@
   },
   "version": "0.1.0",
   "devDependencies": {
+    "typescript-plugin-css-modules": "^3.2.0",
     "webpack-dev-server": "^3.11.2"
   }
 }
