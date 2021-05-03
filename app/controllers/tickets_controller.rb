@@ -7,10 +7,10 @@ class TicketsController < ApplicationController
   # GET /tickets
   # GET /tickets.json
   def index
-    if current_user.role == 'customer'
-      @pagy, @tickets = pagy(Ticket.where(creator: current_user.id).order(created_at: :asc))
+    if customer?
+      @pagy, @tickets = pagy(Ticket.tickets_from(current_user).order(created_at: :asc))
       @pagy_meta = pagy_metadata(@pagy)
-    elsif current_user.role === 'support'
+    elsif supporter?
       @pagy, @tickets = pagy(Ticket.all.order(created_at: :asc))
       @pagy_meta = pagy_metadata(@pagy)
     else
@@ -26,13 +26,13 @@ class TicketsController < ApplicationController
   def new; end
 
   def edit
-    render plain: 'Error' if current_user.role == 'customer' && @ticket.creator_id != current_user.id
+    render plain: 'Error' if customer? && @ticket.creator_id != current_user.id
   end
 
   # GET /tickets/1
   # GET /tickets/1.json
   def show
-    render plain: 'Error' if current_user.role == 'customer' && @ticket.creator_id != current_user.id
+    render plain: 'Error' if customer? && @ticket.creator_id != current_user.id
   end
 
   # POST /tickets

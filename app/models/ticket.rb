@@ -6,6 +6,8 @@ class Ticket < ApplicationRecord
   belongs_to :assignee, class_name: 'User', optional: true
   has_many :comments, dependent: :destroy
 
+  scope :tickets_from, ->(user) { where(creator: user.id) }
+
   enum status: [:open, :close, :closed_forever]
 
   validates :status, inclusion: { in: statuses.keys }
