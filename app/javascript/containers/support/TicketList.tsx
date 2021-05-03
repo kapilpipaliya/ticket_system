@@ -8,11 +8,11 @@ import 'jodit';
 import 'jodit/build/jodit.min.css';
 import { IJodit } from 'jodit';
 import JoditEditor from 'jodit-react';
-import {fetchAllTicketData, getInitialErrorState, ticketCreate, ticketDelete} from './serviceTicket';
+import { fetchAllTicketData, getInitialErrorState, ticketCreate, ticketDelete } from './serviceTicket';
 import { fetchCurrentUser } from './serviceUser';
 import { ToastNotification } from './ToastNotification';
 import { ConfirmationDialog } from './ConfirmationDialog';
-import styles from './TicketList.module.scss'
+import styles from './TicketList.module.scss';
 import clsx from 'clsx';
 
 interface TicketProps {
@@ -25,8 +25,12 @@ export const TicketItem = (props: TicketProps) => {
     <>
       <td>{props.ticket.name}</td>
       <td>{props.ticket.email}</td>
-      <td className={'text-truncate'}  style={{maxWidth: 300}}>{props.ticket.subject}</td>
-      <td className={'text-truncate'}  style={{maxWidth: 300}}>{props.ticket.description}</td>
+      <td className={'text-truncate'} style={{ maxWidth: 300 }}>
+        {props.ticket.subject}
+      </td>
+      <td className={'text-truncate'} style={{ maxWidth: 300 }}>
+        {props.ticket.description}
+      </td>
       <td>{props.ticket.assignee_name}</td>
       <td>{new Date(props.ticket.created_at).toUTCString()}</td>
       <td>{new Date(props.ticket.updated_at).toUTCString()}</td>
@@ -46,7 +50,7 @@ interface NewTicketModal {
   show: boolean;
   onHide: () => void;
   onNewTicket: (ticket: Ticket) => void;
-  currentUser: CurrentUser
+  currentUser: CurrentUser;
 }
 
 const AddNewTicketModal = (props: NewTicketModal) => {
@@ -76,11 +80,11 @@ const AddNewTicketModal = (props: NewTicketModal) => {
         setDescription('');
         setIsSuccess(true);
         setTimeout(() => setIsSuccess(false), 5000);
-        setErrors(({...getInitialErrorState()}));
+        setErrors({ ...getInitialErrorState() });
         props.onHide();
         props.onNewTicket(result);
       } else {
-        setErrors(({...getInitialErrorState(), ...result}));
+        setErrors({ ...getInitialErrorState(), ...result });
       }
     };
     submitForm().then(() => {});
@@ -105,29 +109,29 @@ const AddNewTicketModal = (props: NewTicketModal) => {
           <Col sm={6}>
             <Form.Group controlId="formName">
               <Form.Label>Name</Form.Label>
-              <Form.Control type="text" placeholder="Name" value={props.currentUser.first_name} ref={nameOfSubmitterRef} disabled isInvalid={errors.name.length}/>
+              <Form.Control type="text" placeholder="Name" value={props.currentUser.first_name} ref={nameOfSubmitterRef} disabled isInvalid={errors.name.length} />
               <DisplayFormError errors={errors.name} />
             </Form.Group>
           </Col>
           <Col sm={6}>
             <Form.Group controlId="formEmail">
               <Form.Label>Email</Form.Label>
-              <Form.Control type="email" placeholder="Email" value={props.currentUser.email} ref={emailOfSubmitterRef} disabled isInvalid={errors.email.length}/>
+              <Form.Control type="email" placeholder="Email" value={props.currentUser.email} ref={emailOfSubmitterRef} disabled isInvalid={errors.email.length} />
               <DisplayFormError errors={errors.email} />
             </Form.Group>
           </Col>
           <Col sm={12}>
             <Form.Group controlId="formSubject">
               <Form.Label>Subject</Form.Label>
-              <Form.Control type="text" placeholder="Subject" ref={subjectRef} isInvalid={errors.subject.length}/>
+              <Form.Control type="text" placeholder="Subject" ref={subjectRef} isInvalid={errors.subject.length} />
               <DisplayFormError errors={errors.subject} />
             </Form.Group>
           </Col>
           <Col sm={12}>
             <Form.Group controlId="formDescription">
               <Form.Label>Description</Form.Label>
-              <JoditEditor key={2} value={description} config={config as any} onBlur={setDescription}/>
-              <div className={`${errors.description.length ? 'is-invalid' : ''}`}/>
+              <JoditEditor key={2} value={description} config={config as any} onBlur={setDescription} />
+              <div className={`${errors.description.length ? 'is-invalid' : ''}`} />
               <DisplayFormError errors={errors.description} />
             </Form.Group>
           </Col>
@@ -186,14 +190,14 @@ export const TicketList = () => {
     setShowTicketDeleteConfirm(false);
     await ticketDelete(deleteConfirmationData.ticketId).then(resp => {
       if (!resp.error) {
-        getTicketData(pageNo)
+        getTicketData(pageNo);
         setToastMessage('Ticket deleted successfully');
         setShowToast(true);
       }
     });
   };
   const onNewTicket = (ticket: Ticket) => {
-    getTicketData(pageNo)
+    getTicketData(pageNo);
     setToastMessage('Ticket created successfully');
     setShowToast(true);
   };
@@ -213,7 +217,7 @@ export const TicketList = () => {
         body={'Ticket and its comments will be deleted permanently.'}
         okButtonLabel={'Confirm'}
       />
-      {currentUser && <AddNewTicketModal show={isOpen} onHide={() => setIsOpen(false)} onNewTicket={onNewTicket} currentUser={currentUser}/>}
+      {currentUser && <AddNewTicketModal show={isOpen} onHide={() => setIsOpen(false)} onNewTicket={onNewTicket} currentUser={currentUser} />}
       <Row>
         <Col sm={12}>
           <Card className="shadow-none">
@@ -225,7 +229,7 @@ export const TicketList = () => {
                 </Button>
               </div>
             </Card.Header>
-            <Card.Body className={clsx(["shadow border-0", styles['support-table']])}>
+            <Card.Body className={clsx(['shadow border-0', styles['support-table']])}>
               <Table responsive hover>
                 <thead>
                   <tr>

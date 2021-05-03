@@ -12,6 +12,7 @@ export interface Ticket {
   url: string;
   assignee_name: string;
 }
+
 export interface Comment {
   id: number;
   title: string;
@@ -23,6 +24,7 @@ export interface Comment {
   commenter_id: number;
   commenter_name: string;
 }
+
 export interface CurrentUser {
   id: number;
   first_name: string;
@@ -32,6 +34,7 @@ export interface CurrentUser {
   created_at: string;
   updated_at: string;
 }
+
 export interface TicketStatus {
   id: string;
   label: string;
@@ -44,6 +47,7 @@ export interface User {
 }
 
 interface PagyParams {}
+
 interface PagyVars {
   page: number;
   items: number;

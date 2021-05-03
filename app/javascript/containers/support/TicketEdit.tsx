@@ -12,7 +12,10 @@ import { ToastNotification } from './ToastNotification';
 import { ConfirmationDialog } from './ConfirmationDialog';
 import * as UrlPattern from 'url-pattern';
 
-function isEmpty(obj) {    return Object.keys(obj).length === 0;}
+function isEmpty(obj) {
+  return Object.keys(obj).length === 0;
+}
+
 export const TicketEdit = () => {
   const [ticket, setTicket] = useState<Ticket>(getInitialTicketState());
   const replySubjectRef = useRef<HTMLInputElement>(null);
@@ -256,27 +259,39 @@ export const TicketEdit = () => {
             </Card.Body>
             <Container>
               <Row>
-                <Col sm={3}><label>Name:</label></Col>
-                <Col sm={9}><span>{ticket.name}</span></Col>
+                <Col sm={3}>
+                  <label>Name:</label>
+                </Col>
+                <Col sm={9}>
+                  <span>{ticket.name}</span>
+                </Col>
               </Row>
               <Row>
-                <Col sm={3}><label>Email:</label></Col>
-                <Col sm={9}><span>{ticket.email}</span></Col>
+                <Col sm={3}>
+                  <label>Email:</label>
+                </Col>
+                <Col sm={9}>
+                  <span>{ticket.email}</span>
+                </Col>
               </Row>
               <Row>
-                <Col sm={3}><label className="mb-0 wid-100 mr-2">Created:</label></Col>
-                <Col sm={9}><span>{new Date(ticket.created_at).toUTCString()}</span></Col>
+                <Col sm={3}>
+                  <label className="mb-0 wid-100 mr-2">Created:</label>
+                </Col>
+                <Col sm={9}>
+                  <span>{new Date(ticket.created_at).toUTCString()}</span>
+                </Col>
               </Row>
               <Row>
-                <Col sm={3}><label className="mb-0 wid-100 mr-2">Response:</label></Col>
-                <Col sm={9}><span>{new Date(ticket.updated_at).toUTCString()}</span></Col>
+                <Col sm={3}>
+                  <label className="mb-0 wid-100 mr-2">Response:</label>
+                </Col>
+                <Col sm={9}>
+                  <span>{new Date(ticket.updated_at).toUTCString()}</span>
+                </Col>
               </Row>
             </Container>
             <ul className="list-group list-group-flush">
-
-
-
-
               <li className="list-group-item py-3">
                 <Button variant="primary" onClick={handleUpdateTicket}>
                   <Save className={'mr-2'} />
