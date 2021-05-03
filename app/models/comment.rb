@@ -3,4 +3,6 @@ class Comment < ApplicationRecord
   belongs_to :commenter, class_name: 'User'
 
   default_scope { order(created_at: :asc) }
+
+  validates :title, :description,:ticket,:commenter, presence: true
 end

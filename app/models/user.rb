@@ -9,4 +9,5 @@ class User < ApplicationRecord
   enum role: [:customer, :support]
 
   validates :role, inclusion: { in: roles.keys }
+  validates :first_name, :role, presence: true
 end
