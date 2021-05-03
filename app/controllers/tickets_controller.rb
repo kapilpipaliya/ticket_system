@@ -9,12 +9,14 @@ class TicketsController < ApplicationController
   def index
     if current_user.role == 'customer'
       @pagy, @tickets = pagy(Ticket.where(creator: current_user.id).order(created_at: :asc))
+      @pagy_meta = pagy_metadata(@pagy)
     elsif current_user.role === 'support'
       @pagy, @tickets = pagy(Ticket.all.order(created_at: :asc))
+      @pagy_meta = pagy_metadata(@pagy)
     else
       @tickets = []
+      @pagy_meta = {}
     end
-    @pagy_meta = pagy_metadata(@pagy)
   end
 
   def all_status

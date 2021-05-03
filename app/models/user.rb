@@ -5,4 +5,8 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :validatable,
          :confirmable, :lockable, :trackable
   has_many :tickets
+
+  enum role: [:customer, :support]
+
+  validates :role, inclusion: { in: roles.keys }
 end
