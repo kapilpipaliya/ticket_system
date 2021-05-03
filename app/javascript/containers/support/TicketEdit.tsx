@@ -254,47 +254,29 @@ export const TicketEdit = () => {
                 </Form.Control>
               </Form.Group>
             </Card.Body>
+            <Container>
+              <Row>
+                <Col sm={3}><label>Name:</label></Col>
+                <Col sm={9}><span>{ticket.name}</span></Col>
+              </Row>
+              <Row>
+                <Col sm={3}><label>Email:</label></Col>
+                <Col sm={9}><span>{ticket.email}</span></Col>
+              </Row>
+              <Row>
+                <Col sm={3}><label className="mb-0 wid-100 mr-2">Created:</label></Col>
+                <Col sm={9}><span>{new Date(ticket.created_at).toUTCString()}</span></Col>
+              </Row>
+              <Row>
+                <Col sm={3}><label className="mb-0 wid-100 mr-2">Response:</label></Col>
+                <Col sm={9}><span>{new Date(ticket.updated_at).toUTCString()}</span></Col>
+              </Row>
+            </Container>
             <ul className="list-group list-group-flush">
-              <li className="list-group-item">
-                <div className="media align-items-center">
-                  <label className="mb-0 wid-100 mr-2">Name of submitter:</label>
-                  <div className="media-body">
-                    <p className="mb-0">
-                      <a href={'#'}>{ticket.name}</a>
-                    </p>
-                  </div>
-                </div>
-              </li>
-              <li className="list-group-item">
-                <div className="media align-items-center">
-                  <label className="mb-0 wid-100 mr-2">Email of submitter:</label>
-                  <div className="media-body">
-                    <p className="mb-0">
-                      <a href={'#'}>{ticket.email}</a>
-                    </p>
-                  </div>
-                </div>
-              </li>
-              <li className="list-group-item">
-                <div className="media align-items-center">
-                  <label className="mb-0 wid-100 mr-2">Created:</label>
-                  <div className="media-body">
-                    <p className="mb-0">
-                      <label className="mb-0">{new Date(ticket.created_at).toUTCString()}</label>
-                    </p>
-                  </div>
-                </div>
-              </li>
-              <li className="list-group-item">
-                <div className="media align-items-center">
-                  <label className="mb-0 wid-100 mr-2">Response:</label>
-                  <div className="media-body">
-                    <p className="mb-0">
-                      <label className="mb-0">{new Date(ticket.updated_at).toUTCString()}</label>
-                    </p>
-                  </div>
-                </div>
-              </li>
+
+
+
+
               <li className="list-group-item py-3">
                 <Button variant="primary" onClick={handleUpdateTicket}>
                   <Save className={'mr-2'} />

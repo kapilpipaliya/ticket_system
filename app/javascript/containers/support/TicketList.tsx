@@ -25,8 +25,8 @@ export const TicketItem = (props: TicketProps) => {
     <>
       <td>{props.ticket.name}</td>
       <td>{props.ticket.email}</td>
-      <td>{props.ticket.subject}</td>
-      <td>{props.ticket.description}</td>
+      <td className={'text-truncate'}  style={{maxWidth: 300}}>{props.ticket.subject}</td>
+      <td className={'text-truncate'}  style={{maxWidth: 300}}>{props.ticket.description}</td>
       <td>{props.ticket.assignee_name}</td>
       <td>{new Date(props.ticket.created_at).toUTCString()}</td>
       <td>{new Date(props.ticket.updated_at).toUTCString()}</td>
