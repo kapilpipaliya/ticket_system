@@ -188,18 +188,14 @@ export const TicketList = () => {
     setShowTicketDeleteConfirm(false);
     await ticketDelete(deleteConfirmationData.ticketId).then(resp => {
       if (!resp.error) {
-        setTicketData(prevState => {
-          return prevState.filter(ticket => ticket.id !== deleteConfirmationData.ticketId);
-        });
+        getTicketData(pageNo)
         setToastMessage('Ticket deleted successfully');
         setShowToast(true);
       }
     });
   };
   const onNewTicket = (ticket: Ticket) => {
-    setTicketData(prevState => {
-      return [...prevState, ticket];
-    });
+    getTicketData(pageNo)
     setToastMessage('Ticket created successfully');
     setShowToast(true);
   };
@@ -263,7 +259,7 @@ export const TicketList = () => {
                 <nav aria-label="Page navigation example" className="d-inline-block">
                   <Pagination>
                     {/*@ts-ignore*/}
-                    <Pagination.First onClick={handlePageChange(1)} />
+                    <Pagination.First onClick={handlePageChange(1)} disabled={!pagy.prev} />
                     {/*@ts-ignore*/}
                     <Pagination.Prev onClick={handlePageChange(pagy.prev)} disabled={!pagy.prev} />
                     {(pagy.series || []).map(x => {
@@ -285,7 +281,7 @@ export const TicketList = () => {
                     {/*@ts-ignore*/}
                     <Pagination.Next onClick={handlePageChange(pagy.next)} disabled={!pagy.next} />
                     {/*@ts-ignore*/}
-                    <Pagination.Last onClick={handlePageChange(pagy.last)} disabled={!pagy.last} />
+                    <Pagination.Last onClick={handlePageChange(pagy.last)} disabled={!pagy.last || !pagy.next} />
                   </Pagination>
                 </nav>
               </div>
