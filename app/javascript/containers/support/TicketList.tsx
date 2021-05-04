@@ -1,17 +1,17 @@
 import * as React from 'react';
-import { useEffect, useRef, useState } from 'react';
-import { Button, Card, Col, Container, Form, Modal, Pagination, Row, Table } from 'react-bootstrap';
-import { Edit, Plus, Trash2, Trello } from 'react-feather';
-import { CurrentUser, Pagy, Ticket } from './TicketTypes';
-import { DisplayFormError } from './DisplayFormError';
+import {useEffect, useRef, useState} from 'react';
+import {Button, Card, Col, Container, Form, Modal, Pagination, Row, Table} from 'react-bootstrap';
+import {Edit, Plus, Trash2, Trello} from 'react-feather';
+import {CurrentUser, Pagy, SortDirection, SortState, Ticket} from './TicketTypes';
+import {DisplayFormError} from './DisplayFormError';
 import 'jodit';
 import 'jodit/build/jodit.min.css';
-import { IJodit } from 'jodit';
+import {IJodit} from 'jodit';
 import JoditEditor from 'jodit-react';
-import { fetchAllTicketData, getInitialErrorState, ticketCreate, ticketDelete } from './serviceTicket';
-import { fetchCurrentUser } from './serviceUser';
-import { ToastNotification } from './ToastNotification';
-import { ConfirmationDialog } from './ConfirmationDialog';
+import {fetchAllTicketData, getInitialErrorState, ticketCreate, ticketDelete} from './serviceTicket';
+import {fetchCurrentUser} from './serviceUser';
+import {ToastNotification} from './ToastNotification';
+import {ConfirmationDialog} from './ConfirmationDialog';
 import styles from './TicketList.module.scss';
 import clsx from 'clsx';
 
@@ -164,15 +164,16 @@ export const TicketList = () => {
   const [pagy, setPagy] = useState<Pagy>({} as Pagy);
   const [pageNo, setPageNo] = useState<number | string>(1);
   const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
+  const [sortState, setSortState] = useState<SortState>({});
 
   const getTicketData = page_number => {
-    fetchAllTicketData(page_number).then(resp => {
+    fetchAllTicketData(page_number, sortState).then(resp => {
       setTicketData(resp.data);
       setPagy(resp.pagy);
       fetchCurrentUser().then(resp => setCurrentUser(resp));
     });
   };
-  useEffect(() => getTicketData(pageNo), []);
+  useEffect(() => getTicketData(pageNo), [pageNo, sortState]);
   const onTicketDeleteConfirm = ticketId => async () => {
     setDeleteConfirmationData(prevState => {
       return { ...prevState, show: true, ticketId };
@@ -203,8 +204,31 @@ export const TicketList = () => {
   };
   const handlePageChange = (page_number: number | string) => () => {
     setPageNo(page_number);
-    getTicketData(page_number);
   };
+  const handleOnSortClick = (column_id: string, order?: SortDirection) => (e?: React.MouseEvent) => {
+    setSortState(prevState => {
+          const sortOrder = sortState[column_id];
+          const newSortState = (!e || !e.ctrlKey) ? {} : {...prevState}
+          if (order !== undefined) {
+            // when clicked from context menu
+            return ({...newSortState, [column_id]: order})
+          } else {
+            if (sortOrder === null || sortOrder === undefined || sortOrder === SortDirection.None) {
+              return ({...newSortState, [column_id]: SortDirection.Ascending})
+            } else if (sortOrder === SortDirection.Ascending) {
+              return ({...newSortState, [column_id]: SortDirection.Descending})
+            } else {
+              delete newSortState[column_id]
+              return newSortState
+            }
+          }
+    })
+  }
+  const SortIcon = (p: {id: string}) => {
+    if(sortState[p.id] ===SortDirection.Ascending) return <>▲</>;
+    if(sortState[p.id] ===SortDirection.Descending) return <>▼</>;
+    return <></>
+  }
   return (
     <Container>
       <ToastNotification show={showToast} setShow={setShowToast} message={toastMessage} />
@@ -233,16 +257,16 @@ export const TicketList = () => {
               <Table responsive hover>
                 <thead>
                   <tr>
-                    <th className="border-top-0">Name</th>
-                    <th className="border-top-0">Email</th>
-                    <th className="border-top-0">Subject</th>
-                    <th className="border-top-0">Description</th>
-                    <th className="border-top-0" style={{ whiteSpace: 'nowrap' }}>
-                      Assigned to
+                    <th className="border-top-0" onClick={handleOnSortClick('name')}>Name <SortIcon id={'name'}/></th>
+                    <th className="border-top-0" onClick={handleOnSortClick('email')}>Email <SortIcon id={'email'}/></th>
+                    <th className="border-top-0" onClick={handleOnSortClick('subject')}>Subject <SortIcon id={'subject'}/></th>
+                    <th className="border-top-0" onClick={handleOnSortClick('description')}>Description <SortIcon id={'description'}/></th>
+                    <th className="border-top-0" style={{ whiteSpace: 'nowrap' }} onClick={handleOnSortClick('assignee_id')}>
+                      Assigned to <SortIcon id={'assignee_id'}/>
                     </th>
-                    <th className="border-top-0">Created</th>
-                    <th className="border-top-0" style={{ whiteSpace: 'nowrap' }}>
-                      Last Activity
+                    <th className="border-top-0" onClick={handleOnSortClick('created_at')}>Created <SortIcon id={'created_at'}/></th>
+                    <th className="border-top-0" style={{ whiteSpace: 'nowrap' }} onClick={handleOnSortClick('updated_at')}>
+                      Last Activity <SortIcon id={'updated_at'}/>
                     </th>
                     <th className="border-top-0">Actions</th>
                   </tr>

@@ -1,8 +1,24 @@
-import { Pagy, Ticket, TicketStatus } from './TicketTypes';
+import {Pagy, SortDirection, SortState, Ticket, TicketStatus} from './TicketTypes';
 
-export const fetchAllTicketData = async (page_number: number | string): Promise<{ data: Ticket[]; pagy: Pagy }> => {
+const sortDirectionToString = (d: SortDirection) => {
+  switch (d) {
+    case SortDirection.Ascending: return 'asc';
+    case SortDirection.Descending: return 'desc';
+    case SortDirection.None: return '';
+  }
+}
+const sortQuery = (sort_state: SortState) => {
+  return Object.entries(sort_state).map(([key, value]) => {
+    if(value != SortDirection.None){
+      return 'q[s][]=' + key + ' ' + sortDirectionToString(value)
+    } else {
+      return '';
+    }
+  }).join('&')
+}
+export const fetchAllTicketData = async (page_number: number | string, sort_state: SortState): Promise<{ data: Ticket[]; pagy: Pagy }> => {
   try {
-    const response = await fetch(`/tickets.json?page=${page_number}`);
+    const response = await fetch(`/tickets.json?page=${page_number}&${sortQuery(sort_state)}`);
     return await response.json();
   } catch (err) {
     alert(err);

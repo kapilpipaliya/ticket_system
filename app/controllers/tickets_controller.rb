@@ -10,10 +10,12 @@ class TicketsController < ApplicationController
   # GET /tickets.json
   def index
     if customer?
-      @pagy, @tickets = pagy(Ticket.tickets_from(current_user).order(created_at: :asc))
+      @q = Ticket.tickets_from(current_user).ransack(params[:q]) # .order(created_at: :asc)
+      @pagy, @tickets = pagy(@q.result)
       @pagy_meta = pagy_metadata(@pagy)
     elsif supporter?
-      @pagy, @tickets = pagy(Ticket.all.order(created_at: :asc))
+      @q = Ticket.ransack(params[:q]) # .order(created_at: :asc)
+      @pagy, @tickets = pagy(@q.result)
       @pagy_meta = pagy_metadata(@pagy)
     else
       @tickets = []
@@ -82,6 +84,6 @@ class TicketsController < ApplicationController
   end
 
   def check_ticket_permission
-    render json: {'base'=>'you dont have permission'} if customer? && @ticket.creator_id != current_user.id
+    render json: {'base'=>:unauthorized}, status: :unprocessable_entity if customer? && @ticket.creator_id != current_user.id
   end
 end
