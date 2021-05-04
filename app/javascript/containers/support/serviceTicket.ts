@@ -1,24 +1,47 @@
-import {Pagy, SortDirection, SortState, Ticket, TicketStatus} from './TicketTypes';
+import { Pagy, SearchState, SortDirection, SortState, Ticket, TicketStatus } from './TicketTypes';
 
 const sortDirectionToString = (d: SortDirection) => {
   switch (d) {
-    case SortDirection.Ascending: return 'asc';
-    case SortDirection.Descending: return 'desc';
-    case SortDirection.None: return '';
-  }
-}
-const sortQuery = (sort_state: SortState) => {
-  return Object.entries(sort_state).map(([key, value]) => {
-    if(value != SortDirection.None){
-      return 'q[s][]=' + key + ' ' + sortDirectionToString(value)
-    } else {
+    case SortDirection.Ascending:
+      return 'asc';
+    case SortDirection.Descending:
+      return 'desc';
+    case SortDirection.None:
       return '';
-    }
-  }).join('&')
-}
-export const fetchAllTicketData = async (page_number: number | string, sort_state: SortState): Promise<{ data: Ticket[]; pagy: Pagy }> => {
+  }
+};
+const sortQuery = (sort_state: SortState) => {
+  return Object.entries(sort_state)
+    .map(([key, value]) => {
+      if (value != SortDirection.None) {
+        return 'q[s][]=' + key + ' ' + sortDirectionToString(value);
+      } else {
+        return '';
+      }
+    })
+    .join('&');
+};
+const searchQuery = (sort_state: SearchState) => {
+  return Object.entries(sort_state)
+    .map(([key, value]) => {
+      if (value) {
+        return 'q[' + key + '_cont]=' + value;
+      } else {
+        return '';
+      }
+    })
+    .join('&');
+};
+export const fetchAllTicketData = async (
+  page_number: number | string,
+  sort_state: SortState,
+  search_state: SearchState,
+  status: number | string,
+): Promise<{ data: Ticket[]; pagy: Pagy }> => {
   try {
-    const response = await fetch(`/tickets.json?page=${page_number}&${sortQuery(sort_state)}`);
+    const search_query = searchQuery(search_state);
+    const sort_query = sortQuery(sort_state);
+    const response = await fetch(`/tickets.json?page=${page_number}${search_query ? `&${search_query}` : ''}${sort_query ? `&${sort_query}` : ''}&q[status_eq]=${status}`);
     return await response.json();
   } catch (err) {
     alert(err);
@@ -89,6 +112,20 @@ export const ticketUpdate = async (ticketId, data: { [key: string]: any }) => {
 export const fetchAllTicketStatus = async (): Promise<TicketStatus[]> => {
   try {
     const response = await fetch(`/tickets/all_status.json`, {
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+    });
+    return await response.json();
+  } catch (err) {
+    alert(err);
+    return [];
+  }
+};
+export const fetchAllTicketStatusFilter = async (): Promise<TicketStatus[]> => {
+  try {
+    const response = await fetch(`/tickets/all_status_filter.json`, {
       headers: {
         'Content-Type': 'application/json',
         Accept: 'application/json',

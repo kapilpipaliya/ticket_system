@@ -87,6 +87,12 @@ export enum SortDirection {
   Ascending,
   Descending,
 }
-export interface SortState  {
-  [key:string]: SortDirection
+export interface SortState {
+  [key: string]: SortDirection;
+}
+export interface SearchState {
+  name: string;
+  email: string;
+  subject: string;
+  description: string;
 }

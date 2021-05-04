@@ -24,7 +24,11 @@ class TicketsController < ApplicationController
   end
 
   def all_status
-    render json:  Ticket.statuses.map { |x, i| {'id'=>x, label: x.titleize} }
+    render json:  status_options
+  end
+
+  def all_status_filter
+    render json:  status_options_filter
   end
 
   def new; end
@@ -85,5 +89,13 @@ class TicketsController < ApplicationController
 
   def check_ticket_permission
     render json: {'base'=>:unauthorized}, status: :unprocessable_entity if customer? && @ticket.creator_id != current_user.id
+  end
+
+  def status_options
+    Ticket.statuses.map { |x, i| {'id'=>x, label: x.titleize} }
+  end
+  
+  def status_options_filter
+    Ticket.statuses.map { |x, i| {'id'=>i, label: x.titleize} }.prepend({'id'=>'', label: 'All'})
   end
 end

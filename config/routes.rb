@@ -4,6 +4,7 @@ Rails.application.routes.draw do
   authenticated :user do
     resource :user, only: :show
     get '/tickets/all_status', to: 'tickets#all_status'
+    get '/tickets/all_status_filter', to: 'tickets#all_status_filter'
     root 'tickets#index', as: :authenticated_root
     resources :tickets
     resources :comments, only: %i[create destroy]

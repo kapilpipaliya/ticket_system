@@ -1,17 +1,17 @@
 import * as React from 'react';
-import {useEffect, useRef, useState} from 'react';
-import {Button, Card, Col, Container, Form, Modal, Pagination, Row, Table} from 'react-bootstrap';
-import {Edit, Plus, Trash2, Trello} from 'react-feather';
-import {CurrentUser, Pagy, SortDirection, SortState, Ticket} from './TicketTypes';
-import {DisplayFormError} from './DisplayFormError';
+import { useEffect, useRef, useState } from 'react';
+import { Button, Card, Col, Container, Form, Modal, Pagination, Row, Table } from 'react-bootstrap';
+import { Edit, Plus, Trash2, Trello } from 'react-feather';
+import { CurrentUser, Pagy, SearchState, SortDirection, SortState, Ticket } from './TicketTypes';
+import { DisplayFormError } from './DisplayFormError';
 import 'jodit';
 import 'jodit/build/jodit.min.css';
-import {IJodit} from 'jodit';
+import { IJodit } from 'jodit';
 import JoditEditor from 'jodit-react';
-import {fetchAllTicketData, getInitialErrorState, ticketCreate, ticketDelete} from './serviceTicket';
-import {fetchCurrentUser} from './serviceUser';
-import {ToastNotification} from './ToastNotification';
-import {ConfirmationDialog} from './ConfirmationDialog';
+import { fetchAllTicketData, fetchAllTicketStatusFilter, getInitialErrorState, ticketCreate, ticketDelete } from './serviceTicket';
+import { fetchCurrentUser } from './serviceUser';
+import { ToastNotification } from './ToastNotification';
+import { ConfirmationDialog } from './ConfirmationDialog';
 import styles from './TicketList.module.scss';
 import clsx from 'clsx';
 
@@ -165,15 +165,27 @@ export const TicketList = () => {
   const [pageNo, setPageNo] = useState<number | string>(1);
   const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
   const [sortState, setSortState] = useState<SortState>({});
-
+  const [searchState, setSearchState] = useState<SearchState>({
+    name: '',
+    email: '',
+    subject: '',
+    description: '',
+  });
+  const [status, setStatus] = useState<number | string>('');
+  const [statusOptions, setStatusOptions] = useState([]);
   const getTicketData = page_number => {
-    fetchAllTicketData(page_number, sortState).then(resp => {
+    fetchAllTicketData(page_number, sortState, searchState, status).then(resp => {
       setTicketData(resp.data);
       setPagy(resp.pagy);
       fetchCurrentUser().then(resp => setCurrentUser(resp));
     });
   };
   useEffect(() => getTicketData(pageNo), [pageNo, sortState]);
+  useEffect(() => {
+    fetchAllTicketStatusFilter().then(resp => {
+      setStatusOptions(resp);
+    });
+  }, []);
   const onTicketDeleteConfirm = ticketId => async () => {
     setDeleteConfirmationData(prevState => {
       return { ...prevState, show: true, ticketId };
@@ -207,28 +219,31 @@ export const TicketList = () => {
   };
   const handleOnSortClick = (column_id: string, order?: SortDirection) => (e?: React.MouseEvent) => {
     setSortState(prevState => {
-          const sortOrder = sortState[column_id];
-          const newSortState = (!e || !e.ctrlKey) ? {} : {...prevState}
-          if (order !== undefined) {
-            // when clicked from context menu
-            return ({...newSortState, [column_id]: order})
-          } else {
-            if (sortOrder === null || sortOrder === undefined || sortOrder === SortDirection.None) {
-              return ({...newSortState, [column_id]: SortDirection.Ascending})
-            } else if (sortOrder === SortDirection.Ascending) {
-              return ({...newSortState, [column_id]: SortDirection.Descending})
-            } else {
-              delete newSortState[column_id]
-              return newSortState
-            }
-          }
-    })
-  }
-  const SortIcon = (p: {id: string}) => {
-    if(sortState[p.id] ===SortDirection.Ascending) return <>▲</>;
-    if(sortState[p.id] ===SortDirection.Descending) return <>▼</>;
-    return <></>
-  }
+      const sortOrder = sortState[column_id];
+      const newSortState = !e || !e.ctrlKey ? {} : { ...prevState };
+      if (order !== undefined) {
+        // when clicked from context menu
+        return { ...newSortState, [column_id]: order };
+      } else {
+        if (sortOrder === null || sortOrder === undefined || sortOrder === SortDirection.None) {
+          return { ...newSortState, [column_id]: SortDirection.Ascending };
+        } else if (sortOrder === SortDirection.Ascending) {
+          return { ...newSortState, [column_id]: SortDirection.Descending };
+        } else {
+          delete newSortState[column_id];
+          return newSortState;
+        }
+      }
+    });
+  };
+  const handleSearchSubmit = () => {
+    getTicketData(pageNo);
+  };
+  const SortIcon = (p: { id: string }) => {
+    if (sortState[p.id] === SortDirection.Ascending) return <>▲</>;
+    if (sortState[p.id] === SortDirection.Descending) return <>▼</>;
+    return <></>;
+  };
   return (
     <Container>
       <ToastNotification show={showToast} setShow={setShowToast} message={toastMessage} />
@@ -253,20 +268,76 @@ export const TicketList = () => {
                 </Button>
               </div>
             </Card.Header>
+
             <Card.Body className={clsx(['shadow border-0', styles['support-table']])}>
+              <Row>
+                <Col sm={6}>
+                  <Form.Group controlId="formName">
+                    <Form.Label>Name</Form.Label>
+                    <Form.Control type="text" placeholder="Name" value={searchState.name} onChange={e => setSearchState({ ...searchState, name: e.target.value })} />
+                  </Form.Group>
+                </Col>
+                <Col sm={6}>
+                  <Form.Group controlId="formName">
+                    <Form.Label>Email</Form.Label>
+                    <Form.Control type="text" placeholder="Name" value={searchState.email} onChange={e => setSearchState({ ...searchState, email: e.target.value })} />
+                  </Form.Group>
+                </Col>
+                <Col sm={6}>
+                  <Form.Group controlId="formName">
+                    <Form.Label>Subject</Form.Label>
+                    <Form.Control type="text" placeholder="Name" value={searchState.subject} onChange={e => setSearchState({ ...searchState, subject: e.target.value })} />
+                  </Form.Group>
+                </Col>
+                <Col sm={6}>
+                  <Form.Group controlId="formName">
+                    <Form.Label>Description</Form.Label>
+                    <Form.Control type="text" placeholder="Name" value={searchState.description} onChange={e => setSearchState({ ...searchState, description: e.target.value })} />
+                  </Form.Group>
+                </Col>
+                <Col sm={6}>
+                  <Form.Group controlId="formName">
+                    <Form.Label>Description</Form.Label>
+
+                    <Form.Control as="select" value={status} onChange={e => setStatus(e.target.value)}>
+                      {statusOptions.map(s => {
+                        return (
+                          <option key={s.id} value={s.id}>
+                            {s.label}
+                          </option>
+                        );
+                      })}
+                    </Form.Control>
+                  </Form.Group>
+                </Col>
+                <Col sm={2}>
+                  <Button onClick={handleSearchSubmit}>Search</Button>
+                </Col>
+              </Row>
+
               <Table responsive hover>
                 <thead>
                   <tr>
-                    <th className="border-top-0" onClick={handleOnSortClick('name')}>Name <SortIcon id={'name'}/></th>
-                    <th className="border-top-0" onClick={handleOnSortClick('email')}>Email <SortIcon id={'email'}/></th>
-                    <th className="border-top-0" onClick={handleOnSortClick('subject')}>Subject <SortIcon id={'subject'}/></th>
-                    <th className="border-top-0" onClick={handleOnSortClick('description')}>Description <SortIcon id={'description'}/></th>
-                    <th className="border-top-0" style={{ whiteSpace: 'nowrap' }} onClick={handleOnSortClick('assignee_id')}>
-                      Assigned to <SortIcon id={'assignee_id'}/>
+                    <th className="border-top-0" onClick={handleOnSortClick('name')}>
+                      Name <SortIcon id={'name'} />
                     </th>
-                    <th className="border-top-0" onClick={handleOnSortClick('created_at')}>Created <SortIcon id={'created_at'}/></th>
+                    <th className="border-top-0" onClick={handleOnSortClick('email')}>
+                      Email <SortIcon id={'email'} />
+                    </th>
+                    <th className="border-top-0" onClick={handleOnSortClick('subject')}>
+                      Subject <SortIcon id={'subject'} />
+                    </th>
+                    <th className="border-top-0" onClick={handleOnSortClick('description')}>
+                      Description <SortIcon id={'description'} />
+                    </th>
+                    <th className="border-top-0" style={{ whiteSpace: 'nowrap' }} onClick={handleOnSortClick('assignee_id')}>
+                      Assigned to <SortIcon id={'assignee_id'} />
+                    </th>
+                    <th className="border-top-0" onClick={handleOnSortClick('created_at')}>
+                      Created <SortIcon id={'created_at'} />
+                    </th>
                     <th className="border-top-0" style={{ whiteSpace: 'nowrap' }} onClick={handleOnSortClick('updated_at')}>
-                      Last Activity <SortIcon id={'updated_at'}/>
+                      Last Activity <SortIcon id={'updated_at'} />
                     </th>
                     <th className="border-top-0">Actions</th>
                   </tr>
