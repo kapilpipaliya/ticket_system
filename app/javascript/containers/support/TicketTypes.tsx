@@ -82,14 +82,17 @@ export interface Pagy {
   next: number;
   series: (number | string)[];
 }
+
 export enum SortDirection {
   None,
   Ascending,
   Descending,
 }
+
 export interface SortState {
   [key: string]: SortDirection;
 }
+
 export interface SearchState {
   name: string;
   email: string;

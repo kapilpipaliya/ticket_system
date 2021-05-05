@@ -16,6 +16,7 @@ export const fetchCurrentUser = async (): Promise<CurrentUser | null> => {
     return null;
   }
 };
+
 export const fetchAllUsers = async (): Promise<User[]> => {
   const csrfToken = (document.querySelector('[name=csrf-token]') as HTMLMetaElement).content;
   try {

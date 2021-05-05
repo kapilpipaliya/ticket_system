@@ -65,6 +65,7 @@ class TicketsController < ApplicationController
   # PATCH/PUT /tickets/1.json
   def update
     authorize @ticket
+    return user_not_authorized if customer? && !params[:assignee_id].empty? && params[:assignee_id].to_i != @ticket.assignee_id
     if @ticket.update(ticket_params)
       render :show, status: :ok, location: @ticket
     else

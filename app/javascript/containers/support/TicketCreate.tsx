@@ -9,7 +9,6 @@ import { CurrentUser } from './TicketTypes';
 import { DisplayFormError } from './DisplayFormError';
 import { getInitialErrorState, ticketCreate } from './serviceTicket';
 import { fetchCurrentUser } from './serviceUser';
-
 // import {TopNavBar} from "./NavBar";
 
 export const TicketCreate = () => {
@@ -19,10 +18,11 @@ export const TicketCreate = () => {
   const emailOfSubmitterRef = useRef<HTMLInputElement>(null);
   const [description, setDescription] = useState('');
   const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
+  const [errors, setErrors] = useState(getInitialErrorState());
   const config: Partial<IJodit['options']> = {
     readonly: false,
   };
-  const [errors, setErrors] = useState(getInitialErrorState());
+
   useEffect(() => {
     fetchCurrentUser().then(resp => setCurrentUser(resp));
   }, []);
@@ -51,6 +51,7 @@ export const TicketCreate = () => {
     };
     submitForm().then(() => {});
   };
+
   return (
     <>
       {/*<TopNavBar/>*/}

@@ -10,6 +10,7 @@ const sortDirectionToString = (d: SortDirection) => {
       return '';
   }
 };
+
 const sortQuery = (sort_state: SortState) => {
   return Object.entries(sort_state)
     .map(([key, value]) => {
@@ -21,6 +22,7 @@ const sortQuery = (sort_state: SortState) => {
     })
     .join('&');
 };
+
 const searchQuery = (sort_state: SearchState) => {
   return Object.entries(sort_state)
     .map(([key, value]) => {
@@ -32,6 +34,7 @@ const searchQuery = (sort_state: SearchState) => {
     })
     .join('&');
 };
+
 export const fetchAllTicketData = async (
   page_number: number | string,
   sort_state: SortState,
@@ -48,6 +51,7 @@ export const fetchAllTicketData = async (
     return { data: [], pagy: {} as Pagy };
   }
 };
+
 export const ticketCreate = async (data: { [key: string]: any }) => {
   try {
     const csrfToken = (document.querySelector('[name=csrf-token]') as HTMLMetaElement).content;
@@ -66,6 +70,7 @@ export const ticketCreate = async (data: { [key: string]: any }) => {
     return {};
   }
 };
+
 export const getInitialTicketState = (): Ticket => {
   return {
     id: 0,
@@ -82,6 +87,7 @@ export const getInitialTicketState = (): Ticket => {
     assignee_name: '',
   };
 };
+
 export const fetchTicketData = async (ticketId: string): Promise<Ticket> => {
   try {
     const response = await fetch(`/tickets/${ticketId}.json`);
@@ -91,6 +97,7 @@ export const fetchTicketData = async (ticketId: string): Promise<Ticket> => {
     return getInitialTicketState();
   }
 };
+
 export const ticketUpdate = async (ticketId, data: { [key: string]: any }) => {
   try {
     const csrfToken = (document.querySelector('[name=csrf-token]') as HTMLMetaElement).content;
@@ -109,6 +116,7 @@ export const ticketUpdate = async (ticketId, data: { [key: string]: any }) => {
     return {};
   }
 };
+
 export const fetchAllTicketStatus = async (): Promise<TicketStatus[]> => {
   try {
     const response = await fetch(`/tickets/all_status.json`, {
@@ -123,6 +131,7 @@ export const fetchAllTicketStatus = async (): Promise<TicketStatus[]> => {
     return [];
   }
 };
+
 export const fetchAllTicketStatusFilter = async (): Promise<TicketStatus[]> => {
   try {
     const response = await fetch(`/tickets/all_status_filter.json`, {
@@ -137,6 +146,7 @@ export const fetchAllTicketStatusFilter = async (): Promise<TicketStatus[]> => {
     return [];
   }
 };
+
 export const ticketDelete = async ticketId => {
   try {
     const csrfToken = (document.querySelector('[name=csrf-token]') as HTMLMetaElement).content;
@@ -157,6 +167,7 @@ export const ticketDelete = async ticketId => {
     alert(err);
   }
 };
+
 export const getInitialErrorState = () => {
   return {
     subject: [] as string[],

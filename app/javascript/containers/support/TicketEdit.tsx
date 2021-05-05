@@ -26,13 +26,16 @@ export const TicketEdit = () => {
   const [allUsers, setAllUsers] = useState([]);
   const [newStatus, setNewStatus] = useState('open');
   const [newAssignedToID, setNewAssignedToID] = useState<'' | number>('');
-  const [deleteConfirmationData, setDeleteConfirmationData] = useState({ show: false, ticketId: 0 });
+  const [ticketDeleteConfirmation, setTicketDeleteConfirmation] = useState(false);
+  const [commentDeleteConfirmation, setCommentDeleteConfirmation] = useState(false);
+  const [selectedComment, setSelectedComment] = useState(0);
   const [showToast, setShowToast] = useState(false);
   const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
   const [toastMessage, setToastMessage] = useState('');
   const config: Partial<IJodit['options']> = {
     readonly: false,
   };
+
   useEffect(() => {
     const pattern = new UrlPattern('/tickets/(:id)/edit');
     const matches = pattern.match(window.location.pathname);
@@ -47,6 +50,7 @@ export const TicketEdit = () => {
     fetchAllTicketStatus().then(resp => setAllStatus(resp));
     fetchAllUsers().then(resp => setAllUsers(resp));
   }, []);
+
   const handleSendReply = () => {
     const submitComment = async () => {
       const result = await submitTicketReply({
@@ -68,53 +72,61 @@ export const TicketEdit = () => {
     };
     submitComment().then(r => {});
   };
-  const handleDeleteComment = commentId => async () => {
-    await deleteComment(commentId);
-    setComments(prev => {
-      return prev.filter(x => x.id !== commentId);
-    });
+
+  const handleDeleteConfirmation = commentId => () => {
+    setCommentDeleteConfirmation(true);
+    setSelectedComment(commentId);
   };
+  const handleDeleteComment = async () => {
+    await deleteComment(selectedComment);
+    setCommentDeleteConfirmation(false);
+    setComments(prev => {
+      return prev.filter(x => x.id !== selectedComment);
+    });
+    setToastMessage('Comment deleted successfully');
+    setShowToast(true);
+  };
+
   const handleUpdateTicket = async () => {
     const result = await ticketUpdate(ticket.id, { status: newStatus, assignee_id: newAssignedToID });
     if (result.id) {
       setTicket(result);
       setToastMessage('Ticket updated successfully');
       setShowToast(true);
+    } else if (result.base) {
+      alert(result.base);
     }
   };
-  const onTicketDeleteConfirm = ticketId => async () => {
-    setDeleteConfirmationData(prevState => {
-      return { ...prevState, show: true, ticketId };
-    });
+
+  const handleTicketDelete = async () => {
+    const resp = await ticketDelete(ticket.id);
+    setTicketDeleteConfirmation(false);
+    if (isEmpty(resp)) {
+      setToastMessage('Ticket deleted successfully');
+      setShowToast(true);
+      window.history.back();
+    }
   };
-  const setShowTicketDeleteConfirm = (show: boolean) => {
-    setDeleteConfirmationData(prevState => {
-      return { ...prevState, show };
-    });
-  };
-  const onTicketConfirmCancel = () => {
-    setShowTicketDeleteConfirm(false);
-  };
-  const onTicketDelete = async () => {
-    setShowTicketDeleteConfirm(false);
-    await ticketDelete(deleteConfirmationData.ticketId).then(resp => {
-      if (isEmpty(resp)) {
-        setToastMessage('Ticket deleted successfully');
-        setShowToast(true);
-        window.history.back();
-      }
-    });
-  };
+
   return (
     <Container>
       <ToastNotification show={showToast} setShow={setShowToast} message={toastMessage} />
       <ConfirmationDialog
-        show={deleteConfirmationData.show}
-        setShow={setShowTicketDeleteConfirm}
-        onCancel={onTicketConfirmCancel}
-        onSubmit={onTicketDelete}
+        show={ticketDeleteConfirmation}
+        setShow={setTicketDeleteConfirmation}
+        onCancel={() => setTicketDeleteConfirmation(false)}
+        onSubmit={handleTicketDelete}
         title={'Are you sure?'}
         body={'Ticket and its comments will be deleted permanently.'}
+        okButtonLabel={'Confirm'}
+      />
+      <ConfirmationDialog
+        show={commentDeleteConfirmation}
+        setShow={setCommentDeleteConfirmation}
+        onCancel={() => setCommentDeleteConfirmation(false)}
+        onSubmit={handleDeleteComment}
+        title={'Are you sure?'}
+        body={'Comment will be deleted permanently.'}
         okButtonLabel={'Confirm'}
       />
       <Row>
@@ -156,14 +168,14 @@ export const TicketEdit = () => {
                     <Card.Body className="text-center">
                       <ul className="list-unstyled mb-0 edit-del">
                         <li className="d-inline-block f-20 mr-1">
-                          <a href={'#'}>
-                            <Edit2 className={'text-muted'} />
-                          </a>
+                          <span>
+                            <Edit2 className={'text-muted'} style={{ cursor: 'pointer' }} />
+                          </span>
                         </li>
                         <li className="d-inline-block f-20">
-                          <a href={'#'}>
-                            <Trash2 className={'text-muted'} onClick={handleDeleteComment(comment.id)} />
-                          </a>
+                          <span>
+                            <Trash2 className={'text-muted'} style={{ cursor: 'pointer' }} onClick={handleDeleteConfirmation(comment.id)} />
+                          </span>
                         </li>
                       </ul>
                     </Card.Body>
@@ -297,7 +309,7 @@ export const TicketEdit = () => {
                   <Save className={'mr-2'} />
                   Update
                 </Button>{' '}
-                <Button variant="danger" onClick={onTicketDeleteConfirm(ticket.id)}>
+                <Button variant="danger" onClick={() => setTicketDeleteConfirmation(true)}>
                   {' '}
                   <Trash2 className={'mr-2'} />
                   Delete Ticket

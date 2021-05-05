@@ -9,6 +9,7 @@ export const fetchCommentData = async (ticketId: string): Promise<Comment[]> => 
     return [];
   }
 };
+
 export const submitTicketReply = async (data): Promise<Comment | null> => {
   const csrfToken = (document.querySelector('[name=csrf-token]') as HTMLMetaElement).content;
   try {
@@ -27,6 +28,7 @@ export const submitTicketReply = async (data): Promise<Comment | null> => {
     return null;
   }
 };
+
 export const deleteComment = async commentId => {
   const csrfToken = (document.querySelector('[name=csrf-token]') as HTMLMetaElement).content;
   try {

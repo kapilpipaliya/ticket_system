@@ -2,18 +2,18 @@ import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { Button, Card, Col, Container, Form, Modal, Pagination, Row, Table } from 'react-bootstrap';
 import { Edit, Plus, Trash2, Trello } from 'react-feather';
-import { CurrentUser, Pagy, SearchState, SortDirection, SortState, Ticket } from './TicketTypes';
-import { DisplayFormError } from './DisplayFormError';
+import clsx from 'clsx';
 import 'jodit';
 import 'jodit/build/jodit.min.css';
 import { IJodit } from 'jodit';
 import JoditEditor from 'jodit-react';
+import { CurrentUser, Pagy, SearchState, SortDirection, SortState, Ticket } from './TicketTypes';
+import { DisplayFormError } from './DisplayFormError';
 import { fetchAllTicketData, fetchAllTicketStatusFilter, getInitialErrorState, ticketCreate, ticketDelete } from './serviceTicket';
 import { fetchCurrentUser } from './serviceUser';
 import { ToastNotification } from './ToastNotification';
 import { ConfirmationDialog } from './ConfirmationDialog';
 import styles from './TicketList.module.scss';
-import clsx from 'clsx';
 
 interface TicketProps {
   ticket: Ticket;
@@ -54,7 +54,6 @@ interface NewTicketModal {
 }
 
 const AddNewTicketModal = (props: NewTicketModal) => {
-  const [isSuccess, setIsSuccess] = useState(null);
   const subjectRef = useRef<HTMLInputElement>(null);
   const nameOfSubmitterRef = useRef<HTMLInputElement>(null);
   const emailOfSubmitterRef = useRef<HTMLInputElement>(null);
@@ -63,6 +62,7 @@ const AddNewTicketModal = (props: NewTicketModal) => {
     readonly: false,
   };
   const [errors, setErrors] = useState(getInitialErrorState());
+
   const handleSubmitForm = e => {
     e.preventDefault();
     const submitForm = async () => {
@@ -78,8 +78,6 @@ const AddNewTicketModal = (props: NewTicketModal) => {
         nameOfSubmitterRef.current.value = '';
         emailOfSubmitterRef.current.value = '';
         setDescription('');
-        setIsSuccess(true);
-        setTimeout(() => setIsSuccess(false), 5000);
         setErrors({ ...getInitialErrorState() });
         props.onHide();
         props.onNewTicket(result);
@@ -89,6 +87,7 @@ const AddNewTicketModal = (props: NewTicketModal) => {
     };
     submitForm().then(() => {});
   };
+
   const onClear = () => {
     subjectRef.current.value = '';
     nameOfSubmitterRef.current.value = '';
@@ -96,6 +95,7 @@ const AddNewTicketModal = (props: NewTicketModal) => {
     setDescription('');
     props.onHide();
   };
+
   return (
     <Modal show={props.show} onHide={props.onHide} size={'lg'}>
       <Modal.Header closeButton>
@@ -158,7 +158,8 @@ const AddNewTicketModal = (props: NewTicketModal) => {
 export const TicketList = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [ticketData, setTicketData] = useState([]);
-  const [deleteConfirmationData, setDeleteConfirmationData] = useState({ show: false, ticketId: 0 });
+  const [deleteConfirmation, setDeleteConfirmation] = useState(false);
+  const [selectedTicket, setSelectedTicket] = useState(0);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const [pagy, setPagy] = useState<Pagy>({} as Pagy);
@@ -173,6 +174,7 @@ export const TicketList = () => {
   });
   const [status, setStatus] = useState<number | string>('');
   const [statusOptions, setStatusOptions] = useState([]);
+
   const getTicketData = page_number => {
     fetchAllTicketData(page_number, sortState, searchState, status).then(resp => {
       setTicketData(resp.data);
@@ -180,28 +182,27 @@ export const TicketList = () => {
       fetchCurrentUser().then(resp => setCurrentUser(resp));
     });
   };
+
   useEffect(() => getTicketData(pageNo), [pageNo, sortState]);
+
   useEffect(() => {
     fetchAllTicketStatusFilter().then(resp => {
       setStatusOptions(resp);
     });
   }, []);
+
   const onTicketDeleteConfirm = ticketId => async () => {
-    setDeleteConfirmationData(prevState => {
-      return { ...prevState, show: true, ticketId };
-    });
+    setDeleteConfirmation(true);
+    setSelectedTicket(ticketId);
   };
-  const setShowTicketDeleteConfirm = (show: boolean) => {
-    setDeleteConfirmationData(prevState => {
-      return { ...prevState, show };
-    });
-  };
+
   const onTicketConfirmCancel = () => {
-    setShowTicketDeleteConfirm(false);
+    setDeleteConfirmation(false);
   };
+
   const onTicketDelete = async () => {
-    setShowTicketDeleteConfirm(false);
-    await ticketDelete(deleteConfirmationData.ticketId).then(resp => {
+    setDeleteConfirmation(false);
+    await ticketDelete(selectedTicket).then(resp => {
       if (!resp.error) {
         getTicketData(pageNo);
         setToastMessage('Ticket deleted successfully');
@@ -209,14 +210,17 @@ export const TicketList = () => {
       }
     });
   };
+
   const onNewTicket = (ticket: Ticket) => {
     getTicketData(pageNo);
     setToastMessage('Ticket created successfully');
     setShowToast(true);
   };
+
   const handlePageChange = (page_number: number | string) => () => {
     setPageNo(page_number);
   };
+
   const handleOnSortClick = (column_id: string, order?: SortDirection) => (e?: React.MouseEvent) => {
     setSortState(prevState => {
       const sortOrder = sortState[column_id];
@@ -236,20 +240,23 @@ export const TicketList = () => {
       }
     });
   };
+
   const handleSearchSubmit = () => {
     getTicketData(pageNo);
   };
+
   const SortIcon = (p: { id: string }) => {
     if (sortState[p.id] === SortDirection.Ascending) return <>▲</>;
     if (sortState[p.id] === SortDirection.Descending) return <>▼</>;
     return <></>;
   };
+
   return (
     <Container>
       <ToastNotification show={showToast} setShow={setShowToast} message={toastMessage} />
       <ConfirmationDialog
-        show={deleteConfirmationData.show}
-        setShow={setShowTicketDeleteConfirm}
+        show={deleteConfirmation}
+        setShow={setDeleteConfirmation}
         onCancel={onTicketConfirmCancel}
         onSubmit={onTicketDelete}
         title={'Are you sure?'}

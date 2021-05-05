@@ -16,6 +16,7 @@ export const ConfirmationDialog = (props: ConfirmationDialogProps) => {
   const handleSubmit = () => {
     props.onSubmit().then(r => {});
   };
+
   return (
     <>
       <Modal show={props.show} onHide={handleClose}>
