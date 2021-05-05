@@ -1,26 +1,22 @@
 import * as React from 'react';
-import { useEffect, useRef, useState } from 'react';
-import { Button, Card, Col, Container, Form, Modal, Pagination, Row, Table } from 'react-bootstrap';
-import { Edit, Plus, Trash2, Trello } from 'react-feather';
+import { useEffect, useState } from 'react';
+import { Button, Card, Col, Container, Form, Pagination, Row, Table } from 'react-bootstrap';
+import { Edit, Plus, Trash2 } from 'react-feather';
 import clsx from 'clsx';
-import 'jodit';
-import 'jodit/build/jodit.min.css';
-import { IJodit } from 'jodit';
-import JoditEditor from 'jodit-react';
 import { CurrentUser, Pagy, SearchState, SortDirection, SortState, Ticket } from './TicketTypes';
-import { DisplayFormError } from './DisplayFormError';
-import { fetchAllTicketData, fetchAllTicketStatusFilter, getInitialErrorState, ticketCreate, ticketDelete } from './serviceTicket';
+import { fetchAllTicketData, fetchAllTicketStatusFilter, ticketDelete } from './serviceTicket';
 import { fetchCurrentUser } from './serviceUser';
 import { ToastNotification } from './ToastNotification';
 import { ConfirmationDialog } from './ConfirmationDialog';
+import { NewTicketModal } from './NewTicketModal';
 import styles from './TicketList.module.scss';
 
-interface TicketProps {
+interface TicketItemProps {
   ticket: Ticket;
   onDelete: () => Promise<void>;
 }
 
-export const TicketItem = (props: TicketProps) => {
+export const TicketItem = (props: TicketItemProps) => {
   return (
     <>
       <td>{props.ticket.name}</td>
@@ -32,6 +28,7 @@ export const TicketItem = (props: TicketProps) => {
         {props.ticket.description}
       </td>
       <td>{props.ticket.assignee_name}</td>
+      <td>{props.ticket.status}</td>
       <td>{new Date(props.ticket.created_at).toUTCString()}</td>
       <td>{new Date(props.ticket.updated_at).toUTCString()}</td>
       {/*<td>Url: {props.ticket.url}</td>*/}
@@ -39,119 +36,9 @@ export const TicketItem = (props: TicketProps) => {
         <a href={`tickets/${props.ticket.id}/edit`} className="text-muted">
           <Edit className={'mr-1'} />
         </a>
-
         <Trash2 style={{ cursor: 'pointer' }} onClick={props.onDelete} />
       </td>
     </>
-  );
-};
-
-interface NewTicketModal {
-  show: boolean;
-  onHide: () => void;
-  onNewTicket: (ticket: Ticket) => void;
-  currentUser: CurrentUser;
-}
-
-const AddNewTicketModal = (props: NewTicketModal) => {
-  const subjectRef = useRef<HTMLInputElement>(null);
-  const nameOfSubmitterRef = useRef<HTMLInputElement>(null);
-  const emailOfSubmitterRef = useRef<HTMLInputElement>(null);
-  const [description, setDescription] = useState('');
-  const config: Partial<IJodit['options']> = {
-    readonly: false,
-  };
-  const [errors, setErrors] = useState(getInitialErrorState());
-
-  const handleSubmitForm = e => {
-    e.preventDefault();
-    const submitForm = async () => {
-      const result = await ticketCreate({
-        subject: subjectRef.current.value,
-        name: nameOfSubmitterRef.current.value,
-        email: emailOfSubmitterRef.current.value,
-        description,
-        creator_id: props.currentUser ? props.currentUser.id : props.currentUser,
-      });
-      if (result.id) {
-        subjectRef.current.value = '';
-        nameOfSubmitterRef.current.value = '';
-        emailOfSubmitterRef.current.value = '';
-        setDescription('');
-        setErrors({ ...getInitialErrorState() });
-        props.onHide();
-        props.onNewTicket(result);
-      } else {
-        setErrors({ ...getInitialErrorState(), ...result });
-      }
-    };
-    submitForm().then(() => {});
-  };
-
-  const onClear = () => {
-    subjectRef.current.value = '';
-    nameOfSubmitterRef.current.value = '';
-    emailOfSubmitterRef.current.value = '';
-    setDescription('');
-    props.onHide();
-  };
-
-  return (
-    <Modal show={props.show} onHide={props.onHide} size={'lg'}>
-      <Modal.Header closeButton>
-        <Modal.Title as="h5">
-          <Trello />
-          Add Ticket
-        </Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        <Row>
-          <Col sm={6}>
-            <Form.Group controlId="formName">
-              <Form.Label>Name</Form.Label>
-              <Form.Control type="text" placeholder="Name" value={props.currentUser.first_name} ref={nameOfSubmitterRef} disabled isInvalid={errors.name.length} />
-              <DisplayFormError errors={errors.name} />
-            </Form.Group>
-          </Col>
-          <Col sm={6}>
-            <Form.Group controlId="formEmail">
-              <Form.Label>Email</Form.Label>
-              <Form.Control type="email" placeholder="Email" value={props.currentUser.email} ref={emailOfSubmitterRef} disabled isInvalid={errors.email.length} />
-              <DisplayFormError errors={errors.email} />
-            </Form.Group>
-          </Col>
-          <Col sm={12}>
-            <Form.Group controlId="formSubject">
-              <Form.Label>Subject</Form.Label>
-              <Form.Control type="text" placeholder="Subject" ref={subjectRef} isInvalid={errors.subject.length} />
-              <DisplayFormError errors={errors.subject} />
-            </Form.Group>
-          </Col>
-          <Col sm={12}>
-            <Form.Group controlId="formDescription">
-              <Form.Label>Description</Form.Label>
-              <JoditEditor key={2} value={description} config={config as any} onBlur={setDescription} />
-              <div className={`${errors.description.length ? 'is-invalid' : ''}`} />
-              <DisplayFormError errors={errors.description} />
-            </Form.Group>
-          </Col>
-          <Col sm={12}>
-            <div className="form-group fill">
-              <label className="floating-label" htmlFor="Icon">
-                Image
-              </label>
-              <input type="file" className="form-control" id="Icon" placeholder="Image" />
-            </div>
-          </Col>
-        </Row>
-      </Modal.Body>
-      <Modal.Footer>
-        <Button variant="danger" onClick={onClear}>
-          Clear
-        </Button>
-        <Button onClick={handleSubmitForm}>Submit</Button>
-      </Modal.Footer>
-    </Modal>
   );
 };
 
@@ -242,7 +129,7 @@ export const TicketList = () => {
   };
 
   const handleSearchSubmit = () => {
-    getTicketData(pageNo);
+    getTicketData(1);
   };
 
   const SortIcon = (p: { id: string }) => {
@@ -263,7 +150,7 @@ export const TicketList = () => {
         body={'Ticket and its comments will be deleted permanently.'}
         okButtonLabel={'Confirm'}
       />
-      {currentUser && <AddNewTicketModal show={isOpen} onHide={() => setIsOpen(false)} onNewTicket={onNewTicket} currentUser={currentUser} />}
+      {currentUser && <NewTicketModal show={isOpen} onHide={() => setIsOpen(false)} onNewTicket={onNewTicket} currentUser={currentUser} />}
       <Row>
         <Col sm={12}>
           <Card className="shadow-none">
@@ -339,6 +226,9 @@ export const TicketList = () => {
                     </th>
                     <th className="border-top-0" style={{ whiteSpace: 'nowrap' }} onClick={handleOnSortClick('assignee_id')}>
                       Assigned to <SortIcon id={'assignee_id'} />
+                    </th>
+                    <th className="border-top-0" style={{ whiteSpace: 'nowrap' }} onClick={handleOnSortClick('status')}>
+                      Status <SortIcon id={'status'} />
                     </th>
                     <th className="border-top-0" onClick={handleOnSortClick('created_at')}>
                       Created <SortIcon id={'created_at'} />

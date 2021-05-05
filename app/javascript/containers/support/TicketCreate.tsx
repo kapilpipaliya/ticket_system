@@ -5,10 +5,10 @@ import 'jodit';
 import 'jodit/build/jodit.min.css';
 import { IJodit } from 'jodit';
 import JoditEditor from 'jodit-react';
-import { CurrentUser } from './TicketTypes';
-import { DisplayFormError } from './DisplayFormError';
-import { getInitialErrorState, ticketCreate } from './serviceTicket';
-import { fetchCurrentUser } from './serviceUser';
+import { CurrentUser } from './admin/TicketTypes';
+import { DisplayFormError } from './admin/DisplayFormError';
+import { getInitialErrorState, ticketCreate } from './admin/serviceTicket';
+import { fetchCurrentUser } from './admin/serviceUser';
 // import {TopNavBar} from "./NavBar";
 
 export const TicketCreate = () => {
