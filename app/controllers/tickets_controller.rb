@@ -21,28 +21,37 @@ class TicketsController < ApplicationController
       @tickets = []
       @pagy_meta = {}
     end
+    authorize @tickets
   end
 
   def all_status
+    authorize Ticket
     render json:  status_options
   end
 
   def all_status_filter
+    authorize Ticket
     render json:  status_options_filter
   end
 
-  def new; end
+  def new
+    authorize Ticket
+  end
 
-  def edit; end
+  def edit
+    authorize @ticket
+  end
 
   # GET /tickets/1
   # GET /tickets/1.json
-  def show; end
+  def show
+    authorize @ticket
+  end
 
   # POST /tickets
   # POST /tickets.json
   def create
-    @ticket = Ticket.new(ticket_params)
+    @ticket = authorize Ticket.new(ticket_params)
     @ticket.current_user = current_user
 
     if @ticket.save
@@ -55,6 +64,7 @@ class TicketsController < ApplicationController
   # PATCH/PUT /tickets/1
   # PATCH/PUT /tickets/1.json
   def update
+    authorize @ticket
     if @ticket.update(ticket_params)
       render :show, status: :ok, location: @ticket
     else
@@ -65,6 +75,7 @@ class TicketsController < ApplicationController
   # DELETE /tickets/1
   # DELETE /tickets/1.json
   def destroy
+    authorize @ticket
     if supporter?
       @ticket.destroy
       render json: @ticket.errors.messages
@@ -88,13 +99,13 @@ class TicketsController < ApplicationController
   end
 
   def check_ticket_permission
-    render json: {'base'=>:unauthorized}, status: :unprocessable_entity if customer? && @ticket.creator_id != current_user.id
+    user_not_authorized if customer? && @ticket.creator_id != current_user.id
   end
 
   def status_options
     Ticket.statuses.map { |x, i| {'id'=>x, label: x.titleize} }
   end
-  
+
   def status_options_filter
     Ticket.statuses.map { |x, i| {'id'=>i, label: x.titleize} }.prepend({'id'=>'', label: 'All'})
   end

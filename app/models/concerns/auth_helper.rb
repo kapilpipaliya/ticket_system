@@ -8,10 +8,10 @@ module AuthHelper
   end
 
   def supporter?
-    current_user&.role == "support"
+    current_user&.support?
   end
 
   def customer?
-    current_user&.role == "customer"
+    current_user&.customer?
   end
 end

@@ -6,24 +6,25 @@ class CommentsController < ApplicationController
   # GET /comments
   # GET /comments.json
   def index
-    @comments = Comment.all
+    @comments = authorize Comment.all
   end
 
   def by_ticket
     ticket = Ticket.find(params[:id])
-    @comments = ticket.comments
+    @comments = authorize ticket.comments
     render :index
   end
 
   # GET /comments/1
   # GET /comments/1.json
-  def show; end
+  def show
+    authorize @ticket
+  end
 
   # POST /comments
   # POST /comments.json
   def create
-    @comment = Comment.new(comment_params)
-
+    @comment = authorize Comment.new(comment_params)
     if @comment.save
       render :show, status: :created, location: @comment
     else
@@ -34,6 +35,7 @@ class CommentsController < ApplicationController
   # PATCH/PUT /comments/1
   # PATCH/PUT /comments/1.json
   def update
+    authorize @comment
     if @comment.update(comment_params)
       render :show, status: :ok, location: @comment
     else
@@ -44,6 +46,7 @@ class CommentsController < ApplicationController
   # DELETE /comments/1
   # DELETE /comments/1.json
   def destroy
+    authorize @comment
     @comment.destroy
   end
 
