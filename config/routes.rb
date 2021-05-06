@@ -7,7 +7,7 @@ Rails.application.routes.draw do
     get '/tickets/all_status_filter', to: 'tickets#all_status_filter'
     root 'tickets#index', as: :authenticated_root
     resources :tickets
-    resources :comments, only: %i[create destroy]
+    resources :comments, only: %i[create update destroy]
     get '/comments/by_ticket/:id', to: 'comments#by_ticket'
     get '/users/all', to: 'users#all'
   end

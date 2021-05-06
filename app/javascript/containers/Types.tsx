@@ -13,7 +13,7 @@ export interface Ticket {
   assignee_name: string;
 }
 
-export interface Comment {
+export interface CommentType {
   id: number;
   title: string;
   description: string;

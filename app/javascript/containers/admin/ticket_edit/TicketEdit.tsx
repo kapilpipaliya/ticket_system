@@ -1,19 +1,19 @@
 import * as React from 'react';
-import {useEffect, useRef, useState} from 'react';
-import {Button, Card, Col, Container, Form, Row} from 'react-bootstrap';
-import {CurrentUser} from '../../Types';
-import {CheckCircle, Edit2, FileText, MessageSquare, Save, Trash2} from 'react-feather';
-import {useMutation, useQuery} from 'react-query';
-import {IJodit} from 'jodit';
-import JoditEditor from 'jodit-react';
-import {fetchAllTicketStatus, fetchTicketData, ticketDelete, ticketUpdate} from '../../../services/serviceTicket';
-import {deleteComment, fetchCommentData, submitTicketReply} from '../../../services/serviceComment';
-import {fetchAllUsers, fetchCurrentUser} from '../../../services/serviceUser';
-import {ToastNotification} from '../../../components/ToastNotification';
-import {ConfirmationDialog} from '../../../components/ConfirmationDialog';
+import { useEffect, useState } from 'react';
+import { Button, Card, Col, Container, Form, Row } from 'react-bootstrap';
+import { CommentType, CurrentUser } from '../../Types';
+import { CheckCircle, FileText, MessageSquare, Save, Trash2 } from 'react-feather';
+import { useMutation, useQuery } from 'react-query';
+import { fetchAllTicketStatus, fetchTicketData, ticketDelete, ticketUpdate } from '../../../services/serviceTicket';
+import { deleteComment, fetchCommentData, submitTicketReply } from '../../../services/serviceComment';
+import { fetchAllUsers, fetchCurrentUser } from '../../../services/serviceUser';
+import { ToastNotification } from '../../../components/ToastNotification';
+import { ConfirmationDialog } from '../../../components/ConfirmationDialog';
 import * as UrlPattern from 'url-pattern';
-import {LoadingButton} from '../../../components/LoadingButton';
-import {isEmpty} from '../../utils';
+import { LoadingButton } from '../../../components/LoadingButton';
+import { isEmpty } from '../../utils';
+import { NewComponentForm } from './NewComponentForm';
+import { CommentItem } from './CommentItem';
 
 export const TicketEdit = () => {
   const [ticketId, setTicketId] = useState(() => {
@@ -21,9 +21,7 @@ export const TicketEdit = () => {
     const matches = pattern.match(window.location.pathname);
     return matches.id;
   });
-  const replySubjectRef = useRef<HTMLInputElement>(null);
   const [isReplyEditorOpen, setIsReplyEditorOpen] = useState(false);
-  const [description, setDescription] = useState('');
   const [allStatus, setAllStatus] = useState([]);
   const [allUsers, setAllUsers] = useState([]);
   const [newStatus, setNewStatus] = useState('open');
@@ -34,18 +32,15 @@ export const TicketEdit = () => {
   const [showToast, setShowToast] = useState(false);
   const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
   const [toastMessage, setToastMessage] = useState('');
-  const config: Partial<IJodit['options']> = {
-    readonly: false,
-  };
 
-  const { isLoading: isTicketLoading, error: ticketError, data: ticketData, isFetching, refetch: reFetchTicket } = useQuery(['ticketData'], async () => {
+  const { isLoading: isTicketLoading, error: ticketError, data: ticketData, isFetching, refetch: reFetchTicket } = useQuery('ticketData', async () => {
     const resp = await fetchTicketData(ticketId);
     setNewStatus(resp.status);
     setNewAssignedToID(resp.assignee_id || '');
     return resp;
   });
 
-  const { isLoading: isCommentLoading, error: commentError, data: commentsData, refetch: reFetchComment } = useQuery(['commentsData'], async () => {
+  const { isLoading: isCommentLoading, error: commentError, data: commentsData, refetch: reFetchComment } = useQuery('commentsData', async () => {
     return await fetchCommentData(ticketId);
   });
 
@@ -55,16 +50,16 @@ export const TicketEdit = () => {
     fetchAllUsers().then(resp => setAllUsers(resp));
   }, []);
 
-  const newCommentMutation = useMutation(async () => {
+  const newCommentMutation = useMutation(async (data: any) => {
     const result = await submitTicketReply({
-      title: replySubjectRef.current.value,
-      description,
+      title: data.subject,
+      description: data.description,
       ticket_id: ticketData.id,
       commenter_id: currentUser ? currentUser.id : currentUser,
     });
     if (result && result.id) {
-      replySubjectRef.current.value = '';
-      setDescription('');
+      //replySubjectRef.current.value = '';
+      //setDescription('');
       setIsReplyEditorOpen(false);
       await reFetchComment();
     } else {
@@ -72,9 +67,6 @@ export const TicketEdit = () => {
     }
     return result;
   });
-  const handleSendReply = () => {
-    newCommentMutation.mutate();
-  };
 
   const handleDeleteConfirmation = commentId => () => {
     setCommentDeleteConfirmation(true);
@@ -168,42 +160,18 @@ export const TicketEdit = () => {
 
             {isCommentLoading
               ? 'Loading Comments ...'
-              : commentsData.map(comment => (
-                  <Card.Body key={comment.id} className="hd-detail hdd-admin border-bottom">
-                    <Row>
-                      <Col sm="auto">
-                        <p>
-                          <i className="fas fa-thumbs-up mr-1 text-primary" />#{comment.id}
-                        </p>
-                      </Col>
-                      <Col>
-                        <div className="comment-top">
-                          <h4>
-                            {comment.commenter_name} <small className="text-muted f-w-400">replied</small>
-                          </h4>
-                          <p>{new Date(comment.created_at).toUTCString()}</p>
-                        </div>
-                        <div dangerouslySetInnerHTML={{ __html: comment.description }}></div>
-                      </Col>
-                      <Col sm="auto" className="pl-0 col-right">
-                        <Card.Body className="text-center">
-                          <ul className="list-unstyled mb-0 edit-del">
-                            <li className="d-inline-block f-20 mr-1">
-                              <span>
-                                <Edit2 className={'text-muted'} style={{ cursor: 'pointer' }} />
-                              </span>
-                            </li>
-                            <li className="d-inline-block f-20">
-                              <span>
-                                <Trash2 className={'text-muted'} style={{ cursor: 'pointer' }} onClick={handleDeleteConfirmation(comment.id)} />
-                              </span>
-                            </li>
-                          </ul>
-                        </Card.Body>
-                      </Col>
-                    </Row>
-                  </Card.Body>
-                ))}
+              : commentsData.map(comment => {
+                  return (
+                    <CommentItem
+                      key={comment.id}
+                      ticketId={ticketData.id}
+                      currentUser={currentUser}
+                      reFetchComment={reFetchComment}
+                      comment={comment}
+                      onClick={handleDeleteConfirmation(comment.id)}
+                    />
+                  );
+                })}
             <div className="bg-light p-3">
               <Row className="align-items-center">
                 <Col>
@@ -221,35 +189,14 @@ export const TicketEdit = () => {
               </Row>
             </div>
             {isReplyEditorOpen && (
-              <Form>
-                <Card>
-                  <Card.Body>
-                    <Card.Title>Reply:</Card.Title>
-                    <Row>
-                      <Col sm={12}>
-                        <Form.Group controlId="formSubject">
-                          <Form.Label>Subject</Form.Label>
-                          <Form.Control type="text" placeholder="Subject" ref={replySubjectRef} />
-                        </Form.Group>
-                      </Col>
-                      <Col sm={12}>
-                        <Form.Group controlId="formReply">
-                          <Form.Label>Description:</Form.Label>
-                          <JoditEditor key={2} value={description} config={config as any} onBlur={setDescription} />
-                        </Form.Group>
-                      </Col>
-                    </Row>
-                    <div>
-                      <LoadingButton variant="success" onClick={handleSendReply} loading={newCommentMutation.isLoading}>
-                        Send
-                      </LoadingButton>{' '}
-                      <Button variant="secondary" onClick={() => setIsReplyEditorOpen(!isReplyEditorOpen)}>
-                        Cancel
-                      </Button>
-                    </div>
-                  </Card.Body>
-                </Card>
-              </Form>
+              <NewComponentForm
+                key={2}
+                comment={{ title: '', description: '' } as CommentType}
+                onSubmit={newCommentMutation.mutate}
+                errors={{}}
+                loading={newCommentMutation.isLoading}
+                toggleComment={() => setIsReplyEditorOpen(!isReplyEditorOpen)}
+              />
             )}
           </Card>
         </Col>
