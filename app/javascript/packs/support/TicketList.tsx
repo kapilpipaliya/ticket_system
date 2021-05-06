@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { QueryClient, QueryClientProvider, useQuery } from 'react-query';
+import { QueryClient, QueryClientProvider } from 'react-query';
 import { TicketList } from '../../containers/support/admin/TicketList';
 const queryClient = new QueryClient();
 document.addEventListener('DOMContentLoaded', () => {

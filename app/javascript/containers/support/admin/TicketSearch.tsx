@@ -1,6 +1,7 @@
 import { SearchState } from './TicketTypes';
 import * as React from 'react';
-import { Button, Col, Form, Row, Spinner } from 'react-bootstrap';
+import { Button, Col, Form, Row } from 'react-bootstrap';
+import { LoadingButton } from '../../../components/LoadingButton';
 
 export const TicketSearch = (props: {
   searchState: SearchState;
@@ -57,10 +58,9 @@ export const TicketSearch = (props: {
         <Button variant="secondary" className={'mr-2'} onClick={props.onReset} {...(props.loading ? { disabled: true } : {})}>
           Reset
         </Button>
-        <Button variant="primary" onClick={props.onSubmit} {...(props.loading ? { disabled: true } : {})}>
-          {props.loading && <Spinner as="span" animation="grow" size="sm" role="status" aria-hidden="true" />}
-          {props.loading ? 'Searching...' : 'Search'}
-        </Button>
+        <LoadingButton onClick={props.onSubmit} loading={props.loading}>
+          Search
+        </LoadingButton>
       </Col>
     </Row>
   );

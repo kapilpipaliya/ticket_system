@@ -1,5 +1,6 @@
 import { Button, Modal } from 'react-bootstrap';
 import * as React from 'react';
+import { LoadingButton } from '../../../components/LoadingButton';
 
 interface ConfirmationDialogProps {
   show: boolean;
@@ -9,6 +10,7 @@ interface ConfirmationDialogProps {
   title: string;
   body: string;
   okButtonLabel: string;
+  loading: boolean;
 }
 
 export const ConfirmationDialog = (props: ConfirmationDialogProps) => {
@@ -28,9 +30,9 @@ export const ConfirmationDialog = (props: ConfirmationDialogProps) => {
           <Button variant="secondary" onClick={handleClose}>
             Close
           </Button>
-          <Button variant="primary" onClick={handleSubmit}>
+          <LoadingButton onClick={handleSubmit} loading={props.loading}>
             {props.okButtonLabel}
-          </Button>
+          </LoadingButton>
         </Modal.Footer>
       </Modal>
     </>

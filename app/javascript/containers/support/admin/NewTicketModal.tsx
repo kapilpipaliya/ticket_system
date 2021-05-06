@@ -5,10 +5,12 @@ import { IJodit } from 'jodit';
 import { getInitialErrorState, ticketCreate } from './serviceTicket';
 import { Button, Col, Form, Modal, Row } from 'react-bootstrap';
 import { Trello } from 'react-feather';
+import { useMutation } from 'react-query';
 import 'jodit';
 import 'jodit/build/jodit.min.css';
 import JoditEditor from 'jodit-react';
 import { DisplayFormError } from './DisplayFormError';
+import { LoadingButton } from '../../../components/LoadingButton';
 
 interface NewTicketModalProps {
   show: boolean;
@@ -27,29 +29,31 @@ export const NewTicketModal = (props: NewTicketModalProps) => {
   };
   const [errors, setErrors] = useState(getInitialErrorState());
 
+  const mutation = useMutation(async () => {
+    const result = await ticketCreate({
+      subject: subjectRef.current.value,
+      name: nameOfSubmitterRef.current.value,
+      email: emailOfSubmitterRef.current.value,
+      description,
+      creator_id: props.currentUser ? props.currentUser.id : props.currentUser,
+    });
+    if (result.id) {
+      subjectRef.current.value = '';
+      nameOfSubmitterRef.current.value = '';
+      emailOfSubmitterRef.current.value = '';
+      setDescription('');
+      setErrors({ ...getInitialErrorState() });
+      props.onHide();
+      props.onNewTicket(result);
+    } else {
+      setErrors({ ...getInitialErrorState(), ...result });
+    }
+    return result;
+  });
+
   const handleSubmitForm = e => {
     e.preventDefault();
-    const submitForm = async () => {
-      const result = await ticketCreate({
-        subject: subjectRef.current.value,
-        name: nameOfSubmitterRef.current.value,
-        email: emailOfSubmitterRef.current.value,
-        description,
-        creator_id: props.currentUser ? props.currentUser.id : props.currentUser,
-      });
-      if (result.id) {
-        subjectRef.current.value = '';
-        nameOfSubmitterRef.current.value = '';
-        emailOfSubmitterRef.current.value = '';
-        setDescription('');
-        setErrors({ ...getInitialErrorState() });
-        props.onHide();
-        props.onNewTicket(result);
-      } else {
-        setErrors({ ...getInitialErrorState(), ...result });
-      }
-    };
-    submitForm().then(() => {});
+    mutation.mutate();
   };
 
   const onClear = () => {
@@ -113,7 +117,9 @@ export const NewTicketModal = (props: NewTicketModalProps) => {
         <Button variant="danger" onClick={onClear}>
           Clear
         </Button>
-        <Button onClick={handleSubmitForm}>Submit</Button>
+        <LoadingButton onClick={handleSubmitForm} loading={mutation.isLoading}>
+          Submit
+        </LoadingButton>
       </Modal.Footer>
     </Modal>
   );

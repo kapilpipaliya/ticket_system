@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { Button, Card, Col, Container, Form, Row } from 'react-bootstrap';
-import { Comment, CurrentUser, Ticket } from './TicketTypes';
+import { CurrentUser } from './TicketTypes';
 import { CheckCircle, Edit2, FileText, MessageSquare, Save, Trash2 } from 'react-feather';
+import { useMutation, useQuery } from 'react-query';
 import { IJodit } from 'jodit';
 import JoditEditor from 'jodit-react';
 import { fetchAllTicketStatus, fetchTicketData, getInitialTicketState, ticketDelete, ticketUpdate } from './serviceTicket';
@@ -11,16 +12,20 @@ import { fetchAllUsers, fetchCurrentUser } from './serviceUser';
 import { ToastNotification } from './ToastNotification';
 import { ConfirmationDialog } from './ConfirmationDialog';
 import * as UrlPattern from 'url-pattern';
+import { LoadingButton } from '../../../components/LoadingButton';
 
 function isEmpty(obj) {
   return Object.keys(obj).length === 0;
 }
 
 export const TicketEdit = () => {
-  const [ticket, setTicket] = useState<Ticket>(getInitialTicketState());
+  const [ticketId, setTicketId] = useState(() => {
+    const pattern = new UrlPattern('/tickets/(:id)/edit');
+    const matches = pattern.match(window.location.pathname);
+    return matches.id;
+  });
   const replySubjectRef = useRef<HTMLInputElement>(null);
   const [isReplyEditorOpen, setIsReplyEditorOpen] = useState(false);
-  const [comments, setComments] = useState<Comment[]>([]);
   const [description, setDescription] = useState('');
   const [allStatus, setAllStatus] = useState([]);
   const [allUsers, setAllUsers] = useState([]);
@@ -36,78 +41,84 @@ export const TicketEdit = () => {
     readonly: false,
   };
 
+  const { isLoading: isTicketLoading, error: ticketError, data: ticketData, isFetching, refetch: reFetchTicket } = useQuery(['ticketData'], async () => {
+    const resp = await fetchTicketData(ticketId);
+    setNewStatus(resp.status);
+    setNewAssignedToID(resp.assignee_id || '');
+    return resp;
+  });
+  const { isLoading: isCommentLoading, error: commentError, data: commentsData, refetch: reFetchComment } = useQuery(['commentsData'], async () => {
+    const resp = await fetchCommentData(ticketId);
+    return resp;
+  });
+
   useEffect(() => {
-    const pattern = new UrlPattern('/tickets/(:id)/edit');
-    const matches = pattern.match(window.location.pathname);
-    const ticketId = matches.id;
     fetchCurrentUser().then(resp => setCurrentUser(resp));
-    fetchTicketData(ticketId).then(resp => {
-      setTicket(resp);
-      setNewStatus(resp.status);
-      setNewAssignedToID(resp.assignee_id || '');
-    });
-    fetchCommentData(ticketId).then(resp => setComments(resp));
     fetchAllTicketStatus().then(resp => setAllStatus(resp));
     fetchAllUsers().then(resp => setAllUsers(resp));
   }, []);
 
+  const newCommentMutation = useMutation(async () => {
+    const result = await submitTicketReply({
+      title: replySubjectRef.current.value,
+      description,
+      ticket_id: ticketData.id,
+      commenter_id: currentUser ? currentUser.id : currentUser,
+    });
+    if (result && result.id) {
+      replySubjectRef.current.value = '';
+      setDescription('');
+      setIsReplyEditorOpen(false);
+      await reFetchComment();
+    } else {
+      alert('Reply submit error');
+    }
+    return result;
+  });
   const handleSendReply = () => {
-    const submitComment = async () => {
-      const result = await submitTicketReply({
-        title: replySubjectRef.current.value,
-        description,
-        ticket_id: ticket.id,
-        commenter_id: currentUser ? currentUser.id : currentUser,
-      });
-      if (result && result.id) {
-        replySubjectRef.current.value = '';
-        setDescription('');
-        setIsReplyEditorOpen(false);
-        setComments(prev => {
-          return [...prev, result];
-        });
-      } else {
-        alert('Reply submit error');
-      }
-    };
-    submitComment().then(r => {});
+    newCommentMutation.mutate();
   };
 
   const handleDeleteConfirmation = commentId => () => {
     setCommentDeleteConfirmation(true);
     setSelectedComment(commentId);
   };
-  const handleDeleteComment = async () => {
+  const commentDeleteMutation = useMutation(async () => {
     await deleteComment(selectedComment);
     setCommentDeleteConfirmation(false);
-    setComments(prev => {
-      return prev.filter(x => x.id !== selectedComment);
-    });
+    await reFetchComment();
     setToastMessage('Comment deleted successfully');
     setShowToast(true);
+  });
+  const handleDeleteComment = async () => {
+    commentDeleteMutation.mutate();
   };
-
-  const handleUpdateTicket = async () => {
-    const result = await ticketUpdate(ticket.id, { status: newStatus, assignee_id: newAssignedToID });
+  const ticketUpdateMutation = useMutation(async () => {
+    const result = await ticketUpdate(ticketData.id, { status: newStatus, assignee_id: newAssignedToID });
     if (result.id) {
-      setTicket(result);
+      await reFetchTicket();
       setToastMessage('Ticket updated successfully');
       setShowToast(true);
     } else if (result.base) {
       alert(result.base);
     }
+  });
+  const handleUpdateTicket = async () => {
+    ticketUpdateMutation.mutate();
   };
-
-  const handleTicketDelete = async () => {
-    const resp = await ticketDelete(ticket.id);
+  const ticketDeleteMutation = useMutation(async () => {
+    const resp = await ticketDelete(ticketData.id);
     setTicketDeleteConfirmation(false);
     if (isEmpty(resp)) {
       setToastMessage('Ticket deleted successfully');
       setShowToast(true);
       window.history.back();
     }
+  });
+  const handleTicketDelete = async () => {
+    ticketDeleteMutation.mutate();
   };
-
+  if (isTicketLoading) return <Container>Loading ...</Container>;
   return (
     <Container>
       <ToastNotification show={showToast} setShow={setShowToast} message={toastMessage} />
@@ -119,6 +130,7 @@ export const TicketEdit = () => {
         title={'Are you sure?'}
         body={'Ticket and its comments will be deleted permanently.'}
         okButtonLabel={'Confirm'}
+        loading={ticketDeleteMutation.isLoading}
       />
       <ConfirmationDialog
         show={commentDeleteConfirmation}
@@ -128,6 +140,7 @@ export const TicketEdit = () => {
         title={'Are you sure?'}
         body={'Comment will be deleted permanently.'}
         okButtonLabel={'Confirm'}
+        loading={commentDeleteMutation.isLoading}
       />
       <Row>
         <Col lg={8}>
@@ -135,54 +148,56 @@ export const TicketEdit = () => {
             <Card.Header>
               <h5>
                 <FileText className={'mr-1'} />
-                {ticket.subject}
+                {ticketData.subject}
               </h5>
             </Card.Header>
             <Card.Body className="border-bottom">
               <Row className="align-items-center">
                 <Col md={8}>
-                  <h6 className="d-inline-block mb-0" dangerouslySetInnerHTML={{ __html: ticket.description }} />
+                  <h6 className="d-inline-block mb-0" dangerouslySetInnerHTML={{ __html: ticketData.description }} />
                 </Col>
                 <Col md={4}></Col>
               </Row>
             </Card.Body>
 
-            {comments.map(comment => (
-              <Card.Body key={comment.id} className="hd-detail hdd-admin border-bottom">
-                <Row>
-                  <Col sm="auto">
-                    <p>
-                      <i className="fas fa-thumbs-up mr-1 text-primary" />#{comment.id}
-                    </p>
-                  </Col>
-                  <Col>
-                    <div className="comment-top">
-                      <h4>
-                        {comment.commenter_name} <small className="text-muted f-w-400">replied</small>
-                      </h4>
-                      <p>{new Date(comment.created_at).toUTCString()}</p>
-                    </div>
-                    <div dangerouslySetInnerHTML={{ __html: comment.description }}></div>
-                  </Col>
-                  <Col sm="auto" className="pl-0 col-right">
-                    <Card.Body className="text-center">
-                      <ul className="list-unstyled mb-0 edit-del">
-                        <li className="d-inline-block f-20 mr-1">
-                          <span>
-                            <Edit2 className={'text-muted'} style={{ cursor: 'pointer' }} />
-                          </span>
-                        </li>
-                        <li className="d-inline-block f-20">
-                          <span>
-                            <Trash2 className={'text-muted'} style={{ cursor: 'pointer' }} onClick={handleDeleteConfirmation(comment.id)} />
-                          </span>
-                        </li>
-                      </ul>
-                    </Card.Body>
-                  </Col>
-                </Row>
-              </Card.Body>
-            ))}
+            {isCommentLoading
+              ? 'Loading Comments ...'
+              : commentsData.map(comment => (
+                  <Card.Body key={comment.id} className="hd-detail hdd-admin border-bottom">
+                    <Row>
+                      <Col sm="auto">
+                        <p>
+                          <i className="fas fa-thumbs-up mr-1 text-primary" />#{comment.id}
+                        </p>
+                      </Col>
+                      <Col>
+                        <div className="comment-top">
+                          <h4>
+                            {comment.commenter_name} <small className="text-muted f-w-400">replied</small>
+                          </h4>
+                          <p>{new Date(comment.created_at).toUTCString()}</p>
+                        </div>
+                        <div dangerouslySetInnerHTML={{ __html: comment.description }}></div>
+                      </Col>
+                      <Col sm="auto" className="pl-0 col-right">
+                        <Card.Body className="text-center">
+                          <ul className="list-unstyled mb-0 edit-del">
+                            <li className="d-inline-block f-20 mr-1">
+                              <span>
+                                <Edit2 className={'text-muted'} style={{ cursor: 'pointer' }} />
+                              </span>
+                            </li>
+                            <li className="d-inline-block f-20">
+                              <span>
+                                <Trash2 className={'text-muted'} style={{ cursor: 'pointer' }} onClick={handleDeleteConfirmation(comment.id)} />
+                              </span>
+                            </li>
+                          </ul>
+                        </Card.Body>
+                      </Col>
+                    </Row>
+                  </Card.Body>
+                ))}
             <div className="bg-light p-3">
               <Row className="align-items-center">
                 <Col>
@@ -219,9 +234,9 @@ export const TicketEdit = () => {
                       </Col>
                     </Row>
                     <div>
-                      <Button variant="success" onClick={handleSendReply}>
+                      <LoadingButton variant="success" onClick={handleSendReply} loading={newCommentMutation.isLoading}>
                         Send
-                      </Button>{' '}
+                      </LoadingButton>{' '}
                       <Button variant="secondary" onClick={() => setIsReplyEditorOpen(!isReplyEditorOpen)}>
                         Cancel
                       </Button>
@@ -238,7 +253,7 @@ export const TicketEdit = () => {
               <h5>Ticket Details</h5>
             </Card.Header>
             <Card.Body>
-              {!!comments.length && (
+              {!isCommentLoading && !!commentsData.length && (
                 <div className="alert alert-success d-block text-center text-uppercase">
                   <CheckCircle className={'mr-2'} />
                   Replied
@@ -275,7 +290,7 @@ export const TicketEdit = () => {
                   <label>Name:</label>
                 </Col>
                 <Col sm={9}>
-                  <span>{ticket.name}</span>
+                  <span>{ticketData.name}</span>
                 </Col>
               </Row>
               <Row>
@@ -283,7 +298,7 @@ export const TicketEdit = () => {
                   <label>Email:</label>
                 </Col>
                 <Col sm={9}>
-                  <span>{ticket.email}</span>
+                  <span>{ticketData.email}</span>
                 </Col>
               </Row>
               <Row>
@@ -291,7 +306,7 @@ export const TicketEdit = () => {
                   <label className="mb-0 wid-100 mr-2">Created:</label>
                 </Col>
                 <Col sm={9}>
-                  <span>{new Date(ticket.created_at).toUTCString()}</span>
+                  <span>{new Date(ticketData.created_at).toUTCString()}</span>
                 </Col>
               </Row>
               <Row>
@@ -299,21 +314,21 @@ export const TicketEdit = () => {
                   <label className="mb-0 wid-100 mr-2">Response:</label>
                 </Col>
                 <Col sm={9}>
-                  <span>{new Date(ticket.updated_at).toUTCString()}</span>
+                  <span>{new Date(ticketData.updated_at).toUTCString()}</span>
                 </Col>
               </Row>
             </Container>
             <ul className="list-group list-group-flush">
               <li className="list-group-item py-3">
-                <Button variant="primary" onClick={handleUpdateTicket}>
+                <LoadingButton onClick={handleUpdateTicket} loading={ticketUpdateMutation.isLoading}>
                   <Save className={'mr-2'} />
                   Update
-                </Button>{' '}
-                <Button variant="danger" onClick={() => setTicketDeleteConfirmation(true)}>
+                </LoadingButton>{' '}
+                <LoadingButton onClick={() => setTicketDeleteConfirmation(true)} loading={ticketDeleteMutation.isLoading} variant={'danger'}>
                   {' '}
                   <Trash2 className={'mr-2'} />
                   Delete Ticket
-                </Button>
+                </LoadingButton>
               </li>
             </ul>
           </Card>
