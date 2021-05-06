@@ -52,7 +52,7 @@ export const TicketEdit = () => {
 
   const newCommentMutation = useMutation(async (data: any) => {
     const result = await submitTicketReply({
-      title: data.subject,
+      title: data.title,
       description: data.description,
       ticket_id: ticketData.id,
       commenter_id: currentUser ? currentUser.id : currentUser,
@@ -193,7 +193,7 @@ export const TicketEdit = () => {
                 key={2}
                 comment={{ title: '', description: '' } as CommentType}
                 onSubmit={newCommentMutation.mutate}
-                errors={{}}
+                errors={{title:[], description: []}}
                 loading={newCommentMutation.isLoading}
                 toggleComment={() => setIsReplyEditorOpen(!isReplyEditorOpen)}
               />

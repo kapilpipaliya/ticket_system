@@ -27,7 +27,7 @@ export const NewComponentForm = (props: {
           <Row>
             <Col sm={12}>
               <Form.Group controlId="formSubject">
-                <Form.Label>Subject</Form.Label>
+                <Form.Label>Title</Form.Label>
                 <Form.Control type="text" defaultValue={props.comment.title} ref={replySubjectRef} isInvalid={props.errors.title.length} />
                 <DisplayFormError errors={props.errors.title} />
               </Form.Group>
