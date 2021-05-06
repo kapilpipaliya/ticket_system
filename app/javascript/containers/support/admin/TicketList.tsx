@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { Button, Card, Col, Container, Form, Pagination, Row, Table } from 'react-bootstrap';
+import { Button, Card, Col, Container, Pagination, Row, Table } from 'react-bootstrap';
 import { Edit, Plus, Trash2 } from 'react-feather';
 import clsx from 'clsx';
 import { CurrentUser, Pagy, SearchState, SortDirection, SortState, Ticket } from './TicketTypes';
@@ -10,6 +10,7 @@ import { ToastNotification } from './ToastNotification';
 import { ConfirmationDialog } from './ConfirmationDialog';
 import { NewTicketModal } from './NewTicketModal';
 import styles from './TicketList.module.scss';
+import { TicketSearch } from './TicketSearch';
 
 interface TicketItemProps {
   ticket: Ticket;
@@ -155,130 +156,107 @@ export const TicketList = () => {
         <Col sm={12}>
           <Card className="shadow-none">
             <Card.Header>
-              <h5>All Tickets</h5>
-              <div className="card-header-right">
-                <Button variant="success" className="btn-sm btn-round has-ripple" onClick={() => setIsOpen(true)}>
-                  <Plus /> Add Ticket
-                </Button>
-              </div>
+              <Row>
+                <Col sm={6}>
+                  <h5>All Tickets</h5>
+                </Col>
+                <Col sm={6} className="text-right">
+                  <Button variant="success" className="btn-sm btn-round has-ripple" onClick={() => setIsOpen(true)}>
+                    <Plus /> Add Ticket
+                  </Button>
+                </Col>
+              </Row>
             </Card.Header>
 
             <Card.Body className={clsx(['shadow border-0', styles['support-table']])}>
-              <Row>
-                <Col sm={6}>
-                  <Form.Group controlId="formName">
-                    <Form.Label>Name</Form.Label>
-                    <Form.Control type="text" placeholder="Name" value={searchState.name} onChange={e => setSearchState({ ...searchState, name: e.target.value })} />
-                  </Form.Group>
-                </Col>
-                <Col sm={6}>
-                  <Form.Group controlId="formName">
-                    <Form.Label>Email</Form.Label>
-                    <Form.Control type="text" placeholder="Name" value={searchState.email} onChange={e => setSearchState({ ...searchState, email: e.target.value })} />
-                  </Form.Group>
-                </Col>
-                <Col sm={6}>
-                  <Form.Group controlId="formName">
-                    <Form.Label>Subject</Form.Label>
-                    <Form.Control type="text" placeholder="Name" value={searchState.subject} onChange={e => setSearchState({ ...searchState, subject: e.target.value })} />
-                  </Form.Group>
-                </Col>
-                <Col sm={6}>
-                  <Form.Group controlId="formName">
-                    <Form.Label>Description</Form.Label>
-                    <Form.Control type="text" placeholder="Name" value={searchState.description} onChange={e => setSearchState({ ...searchState, description: e.target.value })} />
-                  </Form.Group>
-                </Col>
-                <Col sm={6}>
-                  <Form.Group controlId="formName">
-                    <Form.Label>Description</Form.Label>
-
-                    <Form.Control as="select" value={status} onChange={e => setStatus(e.target.value)}>
-                      {statusOptions.map(s => {
+              <Card>
+                <Card.Header>Filter</Card.Header>
+                <Card.Body>
+                  <TicketSearch
+                    searchState={searchState}
+                    setSearchState={setSearchState}
+                    status={status}
+                    setStatus={setStatus}
+                    statusOptions={statusOptions}
+                    onSubmit={handleSearchSubmit}
+                    loading={false}
+                  />
+                </Card.Body>
+              </Card>
+              <Card className={'mt-3'}>
+                <Card.Body>
+                  <Table responsive hover>
+                    <thead>
+                      <tr>
+                        <th className="border-top-0" onClick={handleOnSortClick('name')}>
+                          Name <SortIcon id={'name'} />
+                        </th>
+                        <th className="border-top-0" onClick={handleOnSortClick('email')}>
+                          Email <SortIcon id={'email'} />
+                        </th>
+                        <th className="border-top-0" onClick={handleOnSortClick('subject')}>
+                          Subject <SortIcon id={'subject'} />
+                        </th>
+                        <th className="border-top-0" onClick={handleOnSortClick('description')}>
+                          Description <SortIcon id={'description'} />
+                        </th>
+                        <th className="border-top-0" style={{ whiteSpace: 'nowrap' }} onClick={handleOnSortClick('assignee_id')}>
+                          Assigned to <SortIcon id={'assignee_id'} />
+                        </th>
+                        <th className="border-top-0" style={{ whiteSpace: 'nowrap' }} onClick={handleOnSortClick('status')}>
+                          Status <SortIcon id={'status'} />
+                        </th>
+                        <th className="border-top-0" onClick={handleOnSortClick('created_at')}>
+                          Created <SortIcon id={'created_at'} />
+                        </th>
+                        <th className="border-top-0" style={{ whiteSpace: 'nowrap' }} onClick={handleOnSortClick('updated_at')}>
+                          Last Activity <SortIcon id={'updated_at'} />
+                        </th>
+                        <th className="border-top-0">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {ticketData.map(item => {
                         return (
-                          <option key={s.id} value={s.id}>
-                            {s.label}
-                          </option>
+                          <tr key={item.id}>
+                            <TicketItem ticket={item} onDelete={onTicketDeleteConfirm(item.id)} />
+                          </tr>
                         );
                       })}
-                    </Form.Control>
-                  </Form.Group>
-                </Col>
-                <Col sm={2}>
-                  <Button onClick={handleSearchSubmit}>Search</Button>
-                </Col>
-              </Row>
-
-              <Table responsive hover>
-                <thead>
-                  <tr>
-                    <th className="border-top-0" onClick={handleOnSortClick('name')}>
-                      Name <SortIcon id={'name'} />
-                    </th>
-                    <th className="border-top-0" onClick={handleOnSortClick('email')}>
-                      Email <SortIcon id={'email'} />
-                    </th>
-                    <th className="border-top-0" onClick={handleOnSortClick('subject')}>
-                      Subject <SortIcon id={'subject'} />
-                    </th>
-                    <th className="border-top-0" onClick={handleOnSortClick('description')}>
-                      Description <SortIcon id={'description'} />
-                    </th>
-                    <th className="border-top-0" style={{ whiteSpace: 'nowrap' }} onClick={handleOnSortClick('assignee_id')}>
-                      Assigned to <SortIcon id={'assignee_id'} />
-                    </th>
-                    <th className="border-top-0" style={{ whiteSpace: 'nowrap' }} onClick={handleOnSortClick('status')}>
-                      Status <SortIcon id={'status'} />
-                    </th>
-                    <th className="border-top-0" onClick={handleOnSortClick('created_at')}>
-                      Created <SortIcon id={'created_at'} />
-                    </th>
-                    <th className="border-top-0" style={{ whiteSpace: 'nowrap' }} onClick={handleOnSortClick('updated_at')}>
-                      Last Activity <SortIcon id={'updated_at'} />
-                    </th>
-                    <th className="border-top-0">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {ticketData.map(item => {
-                    return (
-                      <tr key={item.id}>
-                        <TicketItem ticket={item} onDelete={onTicketDeleteConfirm(item.id)} />
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </Table>
-              <div className="pagination-block text-center">
-                <nav aria-label="Page navigation example" className="d-inline-block">
-                  <Pagination>
-                    {/*@ts-ignore*/}
-                    <Pagination.First onClick={handlePageChange(1)} disabled={!pagy.prev} />
-                    {/*@ts-ignore*/}
-                    <Pagination.Prev onClick={handlePageChange(pagy.prev)} disabled={!pagy.prev} />
-                    {(pagy.series || []).map(x => {
-                      if (typeof x == 'string' && x != 'gap')
-                        return (
-                          <Pagination.Item key={x} active onClick={handlePageChange(x)}>
-                            {x}
-                          </Pagination.Item>
-                        );
-                      if (typeof x == 'number')
-                        return (
-                          <Pagination.Item key={x} onClick={handlePageChange(x)}>
-                            {x}
-                          </Pagination.Item>
-                        );
-                      if (x == 'gap') return <Pagination.Ellipsis key={x} disabled />;
-                      return <div key={x}>Error</div>;
-                    })}
-                    {/*@ts-ignore*/}
-                    <Pagination.Next onClick={handlePageChange(pagy.next)} disabled={!pagy.next} />
-                    {/*@ts-ignore*/}
-                    <Pagination.Last onClick={handlePageChange(pagy.last)} disabled={!pagy.last || !pagy.next} />
-                  </Pagination>
-                </nav>
-              </div>
+                    </tbody>
+                  </Table>
+                  <div className="pagination-block text-center">
+                    <nav aria-label="Page navigation example" className="d-inline-block">
+                      <Pagination>
+                        {/*@ts-ignore*/}
+                        <Pagination.First onClick={handlePageChange(1)} disabled={!pagy.prev} />
+                        {/*@ts-ignore*/}
+                        <Pagination.Prev onClick={handlePageChange(pagy.prev)} disabled={!pagy.prev} />
+                        {(pagy.series || []).map(x => {
+                          if (typeof x == 'string' && x != 'gap')
+                            return (
+                              <Pagination.Item key={x} active onClick={handlePageChange(x)}>
+                                {x}
+                              </Pagination.Item>
+                            );
+                          if (typeof x == 'number')
+                            return (
+                              <Pagination.Item key={x} onClick={handlePageChange(x)}>
+                                {x}
+                              </Pagination.Item>
+                            );
+                          if (x == 'gap') return <Pagination.Ellipsis key={x} disabled />;
+                          return <div key={x}>Error</div>;
+                        })}
+                        {/*@ts-ignore*/}
+                        <Pagination.Next onClick={handlePageChange(pagy.next)} disabled={!pagy.next} />
+                        {/*@ts-ignore*/}
+                        <Pagination.Last onClick={handlePageChange(pagy.last)} disabled={!pagy.last || !pagy.next} />
+                      </Pagination>
+                    </nav>
+                  </div>
+                </Card.Body>
+              </Card>
             </Card.Body>
           </Card>
         </Col>
