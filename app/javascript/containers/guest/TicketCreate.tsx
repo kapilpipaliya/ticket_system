@@ -5,11 +5,12 @@ import 'jodit';
 import 'jodit/build/jodit.min.css';
 import { IJodit } from 'jodit';
 import JoditEditor from 'jodit-react';
-import { CurrentUser } from './admin/TicketTypes';
-import { DisplayFormError } from './admin/DisplayFormError';
-import { getInitialErrorState, ticketCreate } from './admin/serviceTicket';
-import { fetchCurrentUser } from './admin/serviceUser';
-// import {TopNavBar} from "./NavBar";
+import { CurrentUser } from '../Types';
+import { DisplayFormError } from '../../components/DisplayFormError';
+import { getInitialErrorState, ticketCreate } from '../../services/serviceTicket';
+import { fetchCurrentUser } from '../../services/serviceUser';
+import { useMutation } from 'react-query';
+import { LoadingButton } from '../../components/LoadingButton';
 
 export const TicketCreate = () => {
   const [isSuccess, setIsSuccess] = useState(null);
@@ -27,34 +28,34 @@ export const TicketCreate = () => {
     fetchCurrentUser().then(resp => setCurrentUser(resp));
   }, []);
 
+  const newTicketMutation = useMutation(async () => {
+    const result = await ticketCreate({
+      subject: subjectRef.current.value,
+      name: nameOfSubmitterRef.current.value,
+      email: emailOfSubmitterRef.current.value,
+      description,
+      creator_id: currentUser ? currentUser.id : currentUser,
+    });
+    if (result.id) {
+      subjectRef.current.value = '';
+      nameOfSubmitterRef.current.value = '';
+      emailOfSubmitterRef.current.value = '';
+      setDescription('');
+      setIsSuccess(true);
+      setTimeout(() => setIsSuccess(false), 5000);
+      setErrors({ ...getInitialErrorState() });
+    } else {
+      setErrors({ ...getInitialErrorState(), ...result });
+    }
+  });
+
   const handleSubmitForm = e => {
     e.preventDefault();
-    const submitForm = async () => {
-      const result = await ticketCreate({
-        subject: subjectRef.current.value,
-        name: nameOfSubmitterRef.current.value,
-        email: emailOfSubmitterRef.current.value,
-        description,
-        creator_id: currentUser ? currentUser.id : currentUser,
-      });
-      if (result.id) {
-        subjectRef.current.value = '';
-        nameOfSubmitterRef.current.value = '';
-        emailOfSubmitterRef.current.value = '';
-        setDescription('');
-        setIsSuccess(true);
-        setTimeout(() => setIsSuccess(false), 5000);
-        setErrors({ ...getInitialErrorState() });
-      } else {
-        setErrors({ ...getInitialErrorState(), ...result });
-      }
-    };
-    submitForm().then(() => {});
+    newTicketMutation.mutate();
   };
 
   return (
     <>
-      {/*<TopNavBar/>*/}
       <Container>
         <Breadcrumb className={'mt-3'}>
           <Breadcrumb.Item href="/">Home</Breadcrumb.Item>
@@ -111,9 +112,9 @@ export const TicketCreate = () => {
                                     </div>
                                 </Col>*/}
                     <Col sm={12}>
-                      <Button type="submit" className="waves-effect waves-light">
+                      <LoadingButton onClick={handleSubmitForm} loading={newTicketMutation.isLoading}>
                         Submit
-                      </Button>
+                      </LoadingButton>
                     </Col>
                   </Row>
                 </Form>

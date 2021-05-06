@@ -1,15 +1,15 @@
-import { CurrentUser, Ticket } from './TicketTypes';
+import { CurrentUser, Ticket } from '../../Types';
 import * as React from 'react';
 import { useRef, useState } from 'react';
 import { IJodit } from 'jodit';
-import { getInitialErrorState, ticketCreate } from './serviceTicket';
+import { getInitialErrorState, ticketCreate } from '../../../services/serviceTicket';
 import { Button, Col, Form, Modal, Row } from 'react-bootstrap';
 import { Trello } from 'react-feather';
 import { useMutation } from 'react-query';
 import 'jodit';
 import 'jodit/build/jodit.min.css';
 import JoditEditor from 'jodit-react';
-import { DisplayFormError } from './DisplayFormError';
+import { DisplayFormError } from '../../../components/DisplayFormError';
 import { LoadingButton } from '../../../components/LoadingButton';
 
 interface NewTicketModalProps {

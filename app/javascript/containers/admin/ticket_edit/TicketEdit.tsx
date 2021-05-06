@@ -1,22 +1,19 @@
 import * as React from 'react';
-import { useEffect, useRef, useState } from 'react';
-import { Button, Card, Col, Container, Form, Row } from 'react-bootstrap';
-import { CurrentUser } from './TicketTypes';
-import { CheckCircle, Edit2, FileText, MessageSquare, Save, Trash2 } from 'react-feather';
-import { useMutation, useQuery } from 'react-query';
-import { IJodit } from 'jodit';
+import {useEffect, useRef, useState} from 'react';
+import {Button, Card, Col, Container, Form, Row} from 'react-bootstrap';
+import {CurrentUser} from '../../Types';
+import {CheckCircle, Edit2, FileText, MessageSquare, Save, Trash2} from 'react-feather';
+import {useMutation, useQuery} from 'react-query';
+import {IJodit} from 'jodit';
 import JoditEditor from 'jodit-react';
-import { fetchAllTicketStatus, fetchTicketData, getInitialTicketState, ticketDelete, ticketUpdate } from './serviceTicket';
-import { deleteComment, fetchCommentData, submitTicketReply } from './serviceComment';
-import { fetchAllUsers, fetchCurrentUser } from './serviceUser';
-import { ToastNotification } from './ToastNotification';
-import { ConfirmationDialog } from './ConfirmationDialog';
+import {fetchAllTicketStatus, fetchTicketData, ticketDelete, ticketUpdate} from '../../../services/serviceTicket';
+import {deleteComment, fetchCommentData, submitTicketReply} from '../../../services/serviceComment';
+import {fetchAllUsers, fetchCurrentUser} from '../../../services/serviceUser';
+import {ToastNotification} from '../../../components/ToastNotification';
+import {ConfirmationDialog} from '../../../components/ConfirmationDialog';
 import * as UrlPattern from 'url-pattern';
-import { LoadingButton } from '../../../components/LoadingButton';
-
-function isEmpty(obj) {
-  return Object.keys(obj).length === 0;
-}
+import {LoadingButton} from '../../../components/LoadingButton';
+import {isEmpty} from '../../utils';
 
 export const TicketEdit = () => {
   const [ticketId, setTicketId] = useState(() => {
@@ -47,9 +44,9 @@ export const TicketEdit = () => {
     setNewAssignedToID(resp.assignee_id || '');
     return resp;
   });
+
   const { isLoading: isCommentLoading, error: commentError, data: commentsData, refetch: reFetchComment } = useQuery(['commentsData'], async () => {
-    const resp = await fetchCommentData(ticketId);
-    return resp;
+    return await fetchCommentData(ticketId);
   });
 
   useEffect(() => {
@@ -83,6 +80,7 @@ export const TicketEdit = () => {
     setCommentDeleteConfirmation(true);
     setSelectedComment(commentId);
   };
+
   const commentDeleteMutation = useMutation(async () => {
     await deleteComment(selectedComment);
     setCommentDeleteConfirmation(false);
@@ -90,9 +88,11 @@ export const TicketEdit = () => {
     setToastMessage('Comment deleted successfully');
     setShowToast(true);
   });
+
   const handleDeleteComment = async () => {
     commentDeleteMutation.mutate();
   };
+
   const ticketUpdateMutation = useMutation(async () => {
     const result = await ticketUpdate(ticketData.id, { status: newStatus, assignee_id: newAssignedToID });
     if (result.id) {
@@ -103,9 +103,11 @@ export const TicketEdit = () => {
       alert(result.base);
     }
   });
+
   const handleUpdateTicket = async () => {
     ticketUpdateMutation.mutate();
   };
+
   const ticketDeleteMutation = useMutation(async () => {
     const resp = await ticketDelete(ticketData.id);
     setTicketDeleteConfirmation(false);
@@ -114,11 +116,15 @@ export const TicketEdit = () => {
       setShowToast(true);
       window.history.back();
     }
+    return resp;
   });
+
   const handleTicketDelete = async () => {
     ticketDeleteMutation.mutate();
   };
+
   if (isTicketLoading) return <Container>Loading ...</Container>;
+
   return (
     <Container>
       <ToastNotification show={showToast} setShow={setShowToast} message={toastMessage} />

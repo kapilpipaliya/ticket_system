@@ -1,4 +1,4 @@
-import { Comment } from './TicketTypes';
+import { Comment } from '../containers/Types';
 
 export const fetchCommentData = async (ticketId: string): Promise<Comment[]> => {
   try {

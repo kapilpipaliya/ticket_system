@@ -1,6 +1,6 @@
 import { Button, Modal } from 'react-bootstrap';
 import * as React from 'react';
-import { LoadingButton } from '../../../components/LoadingButton';
+import { LoadingButton } from './LoadingButton';
 
 interface ConfirmationDialogProps {
   show: boolean;

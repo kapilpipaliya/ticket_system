@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { QueryClient, QueryClientProvider } from 'react-query';
-import { TicketCreate } from '../../containers/support/TicketCreate';
+import { TicketCreate } from '../../containers/guest/TicketCreate';
 const queryClient = new QueryClient();
 document.addEventListener('DOMContentLoaded', () => {
   ReactDOM.render(

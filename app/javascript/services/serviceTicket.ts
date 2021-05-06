@@ -1,4 +1,4 @@
-import { Pagy, SearchState, SortDirection, SortState, Ticket, TicketStatus } from './TicketTypes';
+import { Pagy, SearchState, SortDirection, SortState, Ticket, TicketStatus } from '../containers/Types';
 
 const sortDirectionToString = (d: SortDirection) => {
   switch (d) {

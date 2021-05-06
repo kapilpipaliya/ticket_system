@@ -1,4 +1,4 @@
-import { CurrentUser, User } from './TicketTypes';
+import { CurrentUser, User } from '../containers/Types';
 
 export const fetchCurrentUser = async (): Promise<CurrentUser | null> => {
   const csrfToken = (document.querySelector('[name=csrf-token]') as HTMLMetaElement).content;

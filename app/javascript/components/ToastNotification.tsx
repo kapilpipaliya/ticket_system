@@ -16,6 +16,7 @@ export const ToastNotification = (props: ToastNotificationProps) => {
         delay={3000}
         autohide
         style={{
+          zIndex: 1,
           position: 'fixed',
           top: 0,
           right: 0,
