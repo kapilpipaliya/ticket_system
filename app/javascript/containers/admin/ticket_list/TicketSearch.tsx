@@ -58,7 +58,7 @@ export const TicketSearch = (props: {
         <Button variant="secondary" className={'mr-2'} onClick={props.onReset} {...(props.loading ? { disabled: true } : {})}>
           Reset
         </Button>
-        <LoadingButton onClick={props.onSubmit} loading={props.loading}>
+        <LoadingButton onClick={props.onSubmit} loading={props.loading} showSpinner={false}>
           Search
         </LoadingButton>
       </Col>

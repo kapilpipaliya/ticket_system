@@ -7,7 +7,13 @@ import { DisplayFormError } from '../../../components/DisplayFormError';
 import JoditEditor from 'jodit-react';
 import { LoadingButton } from '../../../components/LoadingButton';
 
-export const NewComponentForm = (props: { comment: CommentType; loading: boolean; toggleComment: () => void; onSubmit: (data: any) => void; errors: { [key: string]: string[] } }) => {
+export const NewComponentForm = (props: {
+  comment: CommentType;
+  loading: boolean;
+  toggleComment: () => void;
+  onSubmit: (data: any) => void;
+  errors: { [key: string]: string[] };
+}) => {
   const replySubjectRef = useRef<HTMLInputElement>(null);
   const [description, setDescription] = useState(props.comment.description);
   const config: Partial<IJodit['options']> = {
