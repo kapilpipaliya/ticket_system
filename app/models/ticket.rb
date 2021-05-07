@@ -2,7 +2,11 @@ class Ticket < ApplicationRecord
   include AuthHelper
 
   # https://stackoverflow.com/questions/36911269/rails-custom-validation-involving-current-user
-  attr_accessor :current_user
+  attr_accessor :current_user, :send_notification
+
+  after_initialize do |ticket|
+    @send_notification = true
+  end
 
   belongs_to :creator, class_name: 'User', optional: true
   belongs_to :assignee, class_name: 'User', optional: true
@@ -28,7 +32,7 @@ class Ticket < ApplicationRecord
   private
 
   def send_new_ticket_email
-    NewTicketEmailJob.perform_later self
+    NewTicketEmailJob.perform_later self if @send_notification
   end
 
   def send_status_change_email

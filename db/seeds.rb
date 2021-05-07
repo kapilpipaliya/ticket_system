@@ -23,6 +23,7 @@ tickets = []
       name: Faker::Name.name_with_middle }
   )
   ticket.current_user = nil
+  ticket.send_notification = false
   ticket.save!
   tickets.push ticket
 end
