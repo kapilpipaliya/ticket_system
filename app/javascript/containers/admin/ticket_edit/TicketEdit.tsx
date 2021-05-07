@@ -52,7 +52,6 @@ export const TicketEdit = () => {
 
   const newCommentMutation = useMutation(async (data: any) => {
     const result = await submitTicketReply({
-      title: data.title,
       description: data.description,
       ticket_id: ticketData.id,
       commenter_id: currentUser ? currentUser.id : currentUser,
@@ -76,13 +75,13 @@ export const TicketEdit = () => {
   const commentDeleteMutation = useMutation(async () => {
     const result = await deleteComment(selectedComment);
     setCommentDeleteConfirmation(false);
-     if (result.base) {
+    if (result.base) {
       alert(result.base);
     } else {
       await reFetchComment();
       setToastMessage('Comment deleted successfully');
       setShowToast(true);
-     }
+    }
   });
 
   const handleDeleteComment = async () => {
@@ -195,9 +194,9 @@ export const TicketEdit = () => {
             {isReplyEditorOpen && (
               <NewComponentForm
                 key={2}
-                comment={{ title: '', description: '' } as CommentType}
+                comment={{ description: '' } as CommentType}
                 onSubmit={newCommentMutation.mutate}
-                errors={{title:[], description: []}}
+                errors={{ description: [] }}
                 loading={newCommentMutation.isLoading}
                 toggleComment={() => setIsReplyEditorOpen(!isReplyEditorOpen)}
               />

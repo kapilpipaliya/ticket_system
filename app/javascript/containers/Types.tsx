@@ -15,7 +15,6 @@ export interface Ticket {
 
 export interface CommentType {
   id: number;
-  title: string;
   description: string;
   ticket_id: number;
   created_at: string;

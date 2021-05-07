@@ -14,7 +14,6 @@ export const NewComponentForm = (props: {
   onSubmit: (data: any) => void;
   errors: { [key: string]: string[] };
 }) => {
-  const replySubjectRef = useRef<HTMLInputElement>(null);
   const [description, setDescription] = useState(props.comment.description);
   const config: Partial<IJodit['options']> = {
     readonly: false,
@@ -25,13 +24,6 @@ export const NewComponentForm = (props: {
         <Card.Body>
           <Card.Title>Reply:</Card.Title>
           <Row>
-            <Col sm={12}>
-              <Form.Group controlId="formSubject">
-                <Form.Label>Title</Form.Label>
-                <Form.Control type="text" defaultValue={props.comment.title} ref={replySubjectRef} isInvalid={props.errors.title.length} />
-                <DisplayFormError errors={props.errors.title} />
-              </Form.Group>
-            </Col>
             <Col sm={12}>
               <Form.Group controlId="formReply">
                 <Form.Label>Description:</Form.Label>
@@ -46,7 +38,6 @@ export const NewComponentForm = (props: {
               variant="success"
               onClick={() =>
                 props.onSubmit({
-                  title: replySubjectRef.current.value,
                   description,
                 })
               }

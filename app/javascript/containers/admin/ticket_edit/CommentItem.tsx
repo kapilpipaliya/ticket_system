@@ -8,7 +8,7 @@ import { Card, Col, Row } from 'react-bootstrap';
 import { Edit2, Trash2 } from 'react-feather';
 
 const initialErrorState = () => {
-  return { title: [] as string[], description: [] as string[] };
+  return { description: [] as string[] };
 };
 
 export function CommentItem(props: { comment: CommentType; onClick: () => void; ticketId: number; currentUser: CurrentUser; reFetchComment: () => void }) {
@@ -17,13 +17,11 @@ export function CommentItem(props: { comment: CommentType; onClick: () => void; 
 
   const editCommentMutation = useMutation(async (data: any) => {
     const result = await submitCommentEdit(props.comment.id, {
-      title: data.title,
       description: data.description,
       //ticket_id: props.ticketId,
       //commenter_id: props.currentUser ? props.currentUser.id : props.currentUser,
     });
     if (result && result.id) {
-      //replySubjectRef.current.value = '';
       //setDescription('');
       await props.reFetchComment();
       setIsEditing(false);

@@ -31,12 +31,10 @@ end
   supporter = supporters[Faker::Number.between(from: 0, to: 1)]
   comments = Comment.create!(
     [{
-       title: "Thanks for Ticket.",
        description: Faker::Hipster.paragraph,
        ticket: tickets[c],
        commenter: supporter
      }, {
-       title: "Your order has been processed",
        description: Faker::Hipster.paragraph,
        ticket: tickets[c],
        commenter: supporter
