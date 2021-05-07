@@ -20,17 +20,23 @@ class Ticket < ApplicationRecord
   validates :creator, absence: true, if: :guest?
   validates :creator, presence: true, on: :create, if: -> { supporter? || customer? }
 
-  after_create :send_new_ticket_email
-  after_update :send_status_change_email
+  after_create_commit :send_new_ticket_email
+  after_update_commit :send_status_change_email
+
+  after_save_commit :update_ticket_last_activity
 
   private
 
   def send_new_ticket_email
-    TicketMailer.with(ticket: self).new_ticket_email.deliver_later
+    NewTicketEmailJob.perform_later self
   end
 
   def send_status_change_email
     send_status_change_email = self.status != self.status_before_last_save
-    TicketMailer.with(ticket: self).ticket_status_change_email.deliver_later if send_status_change_email
+    TicketStatusChangeEmailJob.perform_later self if send_status_change_email
+  end
+
+  def update_ticket_last_activity
+    TicketLastActivityUpdateJob.perform_later self, Time.now
   end
 end

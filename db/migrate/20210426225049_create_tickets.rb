@@ -6,6 +6,8 @@ class CreateTickets < ActiveRecord::Migration[6.1]
       t.string :email
       t.string :name
       t.integer :status, default: 0
+      t.integer :comments_count, default: 0
+      t.datetime :last_activity
       t.references :creator, null: true, foreign_key: {to_table: :users}
       t.references :assignee, null: true, foreign_key: {to_table: :users}
 
