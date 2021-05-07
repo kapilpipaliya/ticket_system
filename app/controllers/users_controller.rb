@@ -3,6 +3,7 @@ class UsersController < ApplicationController
   before_action :authenticate_user!, only: %i[]
 
   def all
+    authorize User
     @users = if !current_user
                []
              else
@@ -14,7 +15,6 @@ class UsersController < ApplicationController
                  []
                end
              end
-    authorize @users
   end
 
   def show

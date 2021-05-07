@@ -3,8 +3,6 @@ class CommentsController < ApplicationController
   before_action :authenticate_user!, only: %i[index update destroy]
   before_action :set_comment, only: %i[show update destroy]
 
-  # GET /comments
-  # GET /comments.json
   def index
     @comments = authorize Comment.all
   end
@@ -15,14 +13,10 @@ class CommentsController < ApplicationController
     render :index
   end
 
-  # GET /comments/1
-  # GET /comments/1.json
   def show
     authorize @ticket
   end
 
-  # POST /comments
-  # POST /comments.json
   def create
     @comment = authorize Comment.new(comment_params)
     if @comment.save
@@ -32,8 +26,6 @@ class CommentsController < ApplicationController
     end
   end
 
-  # PATCH/PUT /comments/1
-  # PATCH/PUT /comments/1.json
   def update
     authorize @comment
     if @comment.update(comment_params)
@@ -43,8 +35,6 @@ class CommentsController < ApplicationController
     end
   end
 
-  # DELETE /comments/1
-  # DELETE /comments/1.json
   def destroy
     authorize @comment
     @comment.destroy
@@ -53,12 +43,10 @@ class CommentsController < ApplicationController
 
   private
 
-  # Use callbacks to share common setup or constraints between actions.
   def set_comment
     @comment = Comment.find(params[:id])
   end
 
-  # Only allow a list of trusted parameters through.
   def comment_params
     params.require(:comment).permit(:description, :ticket_id, :commenter_id)
   end
