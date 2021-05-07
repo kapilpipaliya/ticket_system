@@ -21,8 +21,9 @@ export const TicketItem = (props: TicketItemProps) => {
       </td>
       <td>{props.ticket.assignee_name}</td>
       <td>{props.ticket.status}</td>
+      <td>{props.ticket.comments_count}</td>
       <td>{new Date(props.ticket.created_at).toUTCString()}</td>
-      <td>{new Date(props.ticket.updated_at).toUTCString()}</td>
+      <td>{new Date(props.ticket.last_activity).toUTCString()}</td>
       {/*<td>Url: {props.ticket.url}</td>*/}
       <td style={{ display: 'flex', flexWrap: 'nowrap' }}>
         <a href={`tickets/${props.ticket.id}/edit`} className="text-muted">
@@ -67,11 +68,14 @@ export const TicketTable = (props: {
           <th className="border-top-0" style={{ whiteSpace: 'nowrap' }} onClick={handleOnSortClick('status')}>
             Status <SortIcon id={'status'} />
           </th>
+          <th className="border-top-0" onClick={handleOnSortClick('comments_count')}>
+            Comments <SortIcon id={'comments_count'} />
+          </th>
           <th className="border-top-0" onClick={handleOnSortClick('created_at')}>
             Created <SortIcon id={'created_at'} />
           </th>
-          <th className="border-top-0" style={{ whiteSpace: 'nowrap' }} onClick={handleOnSortClick('updated_at')}>
-            Last Activity <SortIcon id={'updated_at'} />
+          <th className="border-top-0" style={{ whiteSpace: 'nowrap' }} onClick={handleOnSortClick('last_activity')}>
+            Last Activity <SortIcon id={'last_activity'} />
           </th>
           <th className="border-top-0">Actions</th>
         </tr>

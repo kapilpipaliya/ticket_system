@@ -7,8 +7,10 @@ export interface Ticket {
   name: string;
   assignee_id: '' | number;
   creator_id: null | number;
+  comments_count: number;
   created_at: string;
   updated_at: string;
+  last_activity: string;
   url: string;
   assignee_name: string;
 }
