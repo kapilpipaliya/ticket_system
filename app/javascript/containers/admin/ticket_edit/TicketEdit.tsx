@@ -74,11 +74,15 @@ export const TicketEdit = () => {
   };
 
   const commentDeleteMutation = useMutation(async () => {
-    await deleteComment(selectedComment);
+    const result = await deleteComment(selectedComment);
     setCommentDeleteConfirmation(false);
-    await reFetchComment();
-    setToastMessage('Comment deleted successfully');
-    setShowToast(true);
+     if (result.base) {
+      alert(result.base);
+    } else {
+      await reFetchComment();
+      setToastMessage('Comment deleted successfully');
+      setShowToast(true);
+     }
   });
 
   const handleDeleteComment = async () => {

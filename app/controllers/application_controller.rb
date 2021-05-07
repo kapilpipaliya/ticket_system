@@ -6,6 +6,7 @@ class ApplicationController < ActionController::Base
   # after_action :verify_policy_scoped, only: :index
 
   before_action :configure_permitted_parameters, if: :devise_controller?
+  before_action :set_current_user
 
   protected
 
@@ -16,6 +17,10 @@ class ApplicationController < ActionController::Base
   end
 
   def user_not_authorized
-    render json: {'base'=>:unauthorized}, status: :unprocessable_entity
+    render json: { 'base' => :unauthorized }, status: :unprocessable_entity
+  end
+
+  def set_current_user
+    Current.current_user = current_user
   end
 end

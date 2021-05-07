@@ -58,7 +58,7 @@ export const deleteComment = async commentId => {
         Accept: 'application/json',
       },
     });
-    return await response.text();
+    return await response.json();
   } catch (err) {
     alert(err);
   }

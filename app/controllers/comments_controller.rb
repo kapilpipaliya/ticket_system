@@ -48,6 +48,7 @@ class CommentsController < ApplicationController
   def destroy
     authorize @comment
     @comment.destroy
+    render json: @comment.errors.messages
   end
 
   private

@@ -1,8 +1,7 @@
 class Ticket < ApplicationRecord
   include AuthHelper
 
-  # https://stackoverflow.com/questions/36911269/rails-custom-validation-involving-current-user
-  attr_accessor :current_user, :send_notification
+  attr_accessor :send_notification
 
   after_initialize do |ticket|
     @send_notification = true

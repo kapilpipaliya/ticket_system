@@ -4,14 +4,14 @@ module AuthHelper
   private
 
   def guest?
-    current_user.nil?
+    Current.current_user.nil?
   end
 
   def supporter?
-    current_user&.support?
+    Current.current_user&.support?
   end
 
   def customer?
-    current_user&.customer?
+    Current.current_user&.customer?
   end
 end
