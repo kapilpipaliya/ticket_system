@@ -54,7 +54,7 @@ module.exports = function(api) {
       [
         '@babel/plugin-proposal-class-properties',
         {
-          loose: true
+          //loose: true // commented because it giving warning when packages update
         }
       ],
       [
