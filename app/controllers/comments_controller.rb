@@ -9,7 +9,7 @@ class CommentsController < ApplicationController
 
   def by_ticket
     ticket = Ticket.find(params[:id])
-    @comments = authorize ticket.comments
+    @comments = authorize ticket.comments.includes(:commenter)
     render :index
   end
 
