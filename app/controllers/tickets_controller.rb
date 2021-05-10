@@ -8,12 +8,14 @@ class TicketsController < ApplicationController
 
   def index
     if customer?
-      @q = TicketCommentCount.new.tickets.tickets_from(current_user).ransack(params[:q])
+      @q = Ticket.tickets_from(current_user).ransack(params[:q])
       @pagy, @tickets = pagy(@q.result)
+      @tickets = TicketCommentCount.new(@tickets).tickets
       @pagy_meta = pagy_metadata(@pagy)
     elsif supporter?
-      @q = TicketCommentCount.new.tickets.ransack(params[:q])
+      @q = Ticket.ransack(params[:q])
       @pagy, @tickets = pagy(@q.result)
+      @tickets = TicketCommentCount.new(@tickets).tickets
       @pagy_meta = pagy_metadata(@pagy)
     else
       @tickets = []
