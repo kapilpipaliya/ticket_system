@@ -8,6 +8,7 @@ export interface Ticket {
   assignee_id: '' | number;
   creator_id: null | number;
   comments_count: number;
+  assignee_comments?: number;
   created_at: string;
   updated_at: string;
   last_activity: string;

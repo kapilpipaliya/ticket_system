@@ -21,7 +21,7 @@ export const TicketItem = (props: TicketItemProps) => {
       </td>
       <td>{props.ticket.assignee_name}</td>
       <td>{props.ticket.status}</td>
-      <td>{props.ticket.comments_count}</td>
+      <td>{props.ticket.assignee_comments}</td>
       <td>{new Date(props.ticket.created_at).toUTCString()}</td>
       <td>{new Date(props.ticket.last_activity).toUTCString()}</td>
       {/*<td>Url: {props.ticket.url}</td>*/}
