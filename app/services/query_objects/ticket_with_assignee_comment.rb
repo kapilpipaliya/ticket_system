@@ -1,4 +1,4 @@
-class TicketCommentCount
+class TicketWithAssigneeComment
   def initialize(tickets)
     @tickets = tickets
   end

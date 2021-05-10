@@ -10,12 +10,12 @@ class TicketsController < ApplicationController
     if customer?
       @q = Ticket.tickets_from(current_user).ransack(params[:q])
       @pagy, @tickets = pagy(@q.result)
-      @tickets = TicketCommentCount.new(@tickets).tickets
+      @tickets = TicketWithAssigneeComment.new(@tickets).tickets
       @pagy_meta = pagy_metadata(@pagy)
     elsif supporter?
       @q = Ticket.ransack(params[:q])
       @pagy, @tickets = pagy(@q.result)
-      @tickets = TicketCommentCount.new(@tickets).tickets
+      @tickets = TicketWithAssigneeComment.new(@tickets).tickets
       @pagy_meta = pagy_metadata(@pagy)
     else
       @tickets = []
