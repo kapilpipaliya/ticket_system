@@ -22,6 +22,6 @@ class Comment < ApplicationRecord
   end
 
   def update_ticket_last_activity
-    TicketLastActivityUpdateJob.perform_later self.ticket, Time.now
+    TicketLastActivityUpdateJob.perform_later self.ticket, Time.current
   end
 end

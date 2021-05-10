@@ -16,10 +16,9 @@ class Ticket < ApplicationRecord
   enum status: [:open, :close, :closed_forever]
 
   validates :status, inclusion: { in: statuses.keys }
-  validates :subject, :description, presence: true
+  validates :email, :name, :subject, :description, presence: true
   validates :subject, :description, length: { minimum: 10 }
   validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }
-  validates :email, :name, presence: true
   validates :creator, absence: true, if: :guest?
   validates :creator, presence: true, on: :create, if: -> { supporter? || customer? }
 
@@ -40,6 +39,6 @@ class Ticket < ApplicationRecord
   end
 
   def update_ticket_last_activity
-    TicketLastActivityUpdateJob.perform_later self, Time.now
+    TicketLastActivityUpdateJob.perform_later self, Time.current
   end
 end
