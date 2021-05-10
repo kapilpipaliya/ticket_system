@@ -1,10 +1,10 @@
 class CreateTickets < ActiveRecord::Migration[6.1]
   def change
     create_table :tickets do |t|
-      t.string :subject
-      t.text :description
-      t.string :email
-      t.string :name
+      t.string :subject, null: false
+      t.text :description, null: false
+      t.string :email, null: false, index: true
+      t.string :name, null: false
       t.integer :status, default: 0
       t.integer :comments_count, default: 0
       t.datetime :last_activity
