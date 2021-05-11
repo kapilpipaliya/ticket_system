@@ -32,15 +32,15 @@ class Ticket < ApplicationRecord
   end
 
   def send_new_ticket_email
-    NewTicketEmailJob.perform_later self if @send_notification
+    NewTicketEmailJob.perform_later self.id if @send_notification
   end
 
   def send_status_change_email
     send_status_change_email = self.status != self.status_before_last_save
-    TicketStatusChangeEmailJob.perform_later self if send_status_change_email
+    TicketStatusChangeEmailJob.perform_later self.id if send_status_change_email
   end
 
   def update_ticket_last_activity
-    TicketLastActivityUpdateJob.perform_later self, Time.current
+    TicketLastActivityUpdateJob.perform_later self.id, Time.current
   end
 end

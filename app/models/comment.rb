@@ -14,14 +14,14 @@ class Comment < ApplicationRecord
   private
 
   def update_ticket_comments_count_create
-    TicketCommentsCountUpdateJob.perform_later self.ticket
+    TicketCommentsCountUpdateJob.perform_later self.ticket.id
   end
 
   def update_ticket_comments_count_update
-    TicketCommentsCountUpdateJob.perform_later self.ticket
+    TicketCommentsCountUpdateJob.perform_later self.ticket.id
   end
 
   def update_ticket_last_activity
-    TicketLastActivityUpdateJob.perform_later self.ticket, Time.current
+    TicketLastActivityUpdateJob.perform_later self.ticket.id, Time.current
   end
 end

@@ -1,7 +1,7 @@
 class TicketStatusChangeEmailJob < ApplicationJob
   queue_as :default
 
-  def perform(ticket)
-    TicketMailer.with(ticket: ticket).ticket_status_change_email.deliver_later
+  def perform(ticket_id)
+    TicketMailer.with(ticket_id: ticket_id).ticket_status_change_email.deliver_later
   end
 end
