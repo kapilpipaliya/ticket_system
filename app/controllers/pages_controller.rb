@@ -4,8 +4,6 @@ class PagesController < ApplicationController
   def dashboard; end
 
   def dashboard_data
-    from = params[:from]
-    to = params[:to]
     @from = params[:from] ? Time.zone.at(params[:from].to_i) : Time.zone.now.midnight
     @to = params[:to] ? Time.zone.at(params[:to].to_i) : Time.zone.now.midnight + 1.day
     new_tickets_count = new_tickets.count
