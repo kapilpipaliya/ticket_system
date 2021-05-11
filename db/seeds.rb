@@ -16,11 +16,15 @@ end
 
 tickets = []
 100.times do |i|
+  created_at = Time.zone.now - (2..15).to_a.sample.days
   ticket = Ticket.new(
     { subject: Faker::Hipster.sentence,
       description: Faker::Hipster.paragraph,
       email: Faker::Internet.email,
-      name: Faker::Name.name_with_middle }
+      name: Faker::Name.name_with_middle,
+      created_at: created_at,
+      due_date: created_at + 5.days
+    }
   )
   ticket.send_notification = false
   ticket.save!
@@ -33,10 +37,12 @@ end
     [{
        description: Faker::Hipster.paragraph,
        ticket: tickets[c],
-       commenter: supporter
+       commenter: supporter,
+       created_at: tickets[c].created_at + 1.days
      }, {
        description: Faker::Hipster.paragraph,
        ticket: tickets[c],
-       commenter: supporter
+       commenter: supporter,
+       created_at: tickets[c].created_at + 2.days
      }])
 end

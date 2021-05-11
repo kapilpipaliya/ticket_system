@@ -1,6 +1,6 @@
 import { CommentType } from '../../Types';
 import * as React from 'react';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { IJodit } from 'jodit';
 import { Button, Card, Col, Form, Row } from 'react-bootstrap';
 import { DisplayFormError } from '../../../components/DisplayFormError';

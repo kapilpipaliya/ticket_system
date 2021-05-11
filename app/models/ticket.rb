@@ -13,7 +13,7 @@ class Ticket < ApplicationRecord
 
   scope :tickets_from, ->(user) { where(creator: user.id) }
 
-  enum status: [:open, :close, :closed_forever]
+  enum status: [:open, :hold, :close]
 
   validates :status, inclusion: { in: statuses.keys }
   validates :email, :name, :subject, :description, presence: true
@@ -21,13 +21,17 @@ class Ticket < ApplicationRecord
   validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }
   validates :creator, absence: true, if: :guest?
   validates :creator, presence: true, on: :create, if: -> { supporter? || customer? }
-
+  before_create :set_due_date
   after_create_commit :send_new_ticket_email
   after_update_commit :send_status_change_email
 
   after_save_commit :update_ticket_last_activity
 
   private
+
+  def set_due_date
+    self.due_date ||= Time.zone.now + 5.days
+  end
 
   def send_new_ticket_email
     NewTicketEmailJob.perform_later self if @send_notification

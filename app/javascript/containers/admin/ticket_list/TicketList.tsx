@@ -41,9 +41,13 @@ export const TicketList = () => {
     fetchCurrentUser().then(resp => setCurrentUser(resp));
   }, []);
 
-  const { isLoading, error, data: ticketData, refetch, isFetching } = useQuery(['ticketsData', pageNo, sortState], () =>
-    fetchAllTicketData(pageNo, sortState, searchState, status),
-  );
+  const {
+    isLoading,
+    error,
+    data: ticketData,
+    refetch,
+    isFetching,
+  } = useQuery(['ticketsData', pageNo, sortState], () => fetchAllTicketData(pageNo, sortState, searchState, status));
 
   useEffect(() => {
     fetchAllTicketStatusFilter().then(resp => {

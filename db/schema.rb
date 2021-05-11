@@ -16,7 +16,7 @@ ActiveRecord::Schema.define(version: 2021_04_27_090514) do
   enable_extension "plpgsql"
 
   create_table "comments", force: :cascade do |t|
-    t.text "description"
+    t.text "description", null: false
     t.bigint "ticket_id", null: false
     t.bigint "commenter_id"
     t.datetime "created_at", precision: 6, null: false
@@ -26,19 +26,21 @@ ActiveRecord::Schema.define(version: 2021_04_27_090514) do
   end
 
   create_table "tickets", force: :cascade do |t|
-    t.string "subject"
-    t.text "description"
-    t.string "email"
-    t.string "name"
+    t.string "subject", null: false
+    t.text "description", null: false
+    t.string "email", null: false
+    t.string "name", null: false
     t.integer "status", default: 0
     t.integer "comments_count", default: 0
     t.datetime "last_activity"
+    t.date "due_date"
     t.bigint "creator_id"
     t.bigint "assignee_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["assignee_id"], name: "index_tickets_on_assignee_id"
     t.index ["creator_id"], name: "index_tickets_on_creator_id"
+    t.index ["email"], name: "index_tickets_on_email"
   end
 
   create_table "users", force: :cascade do |t|
@@ -70,7 +72,7 @@ ActiveRecord::Schema.define(version: 2021_04_27_090514) do
     t.index ["unlock_token"], name: "index_users_on_unlock_token", unique: true
   end
 
-  add_foreign_key "comments", "tickets"
+  add_foreign_key "comments", "tickets", on_delete: :cascade
   add_foreign_key "comments", "users", column: "commenter_id"
   add_foreign_key "tickets", "users", column: "assignee_id"
   add_foreign_key "tickets", "users", column: "creator_id"

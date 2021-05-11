@@ -33,14 +33,25 @@ export const TicketEdit = () => {
   const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
   const [toastMessage, setToastMessage] = useState('');
 
-  const { isLoading: isTicketLoading, error: ticketError, data: ticketData, isFetching, refetch: reFetchTicket } = useQuery('ticketData', async () => {
+  const {
+    isLoading: isTicketLoading,
+    error: ticketError,
+    data: ticketData,
+    isFetching,
+    refetch: reFetchTicket,
+  } = useQuery('ticketData', async () => {
     const resp = await fetchTicketData(ticketId);
     setNewStatus(resp.status);
     setNewAssignedToID(resp.assignee_id || '');
     return resp;
   });
 
-  const { isLoading: isCommentLoading, error: commentError, data: commentsData, refetch: reFetchComment } = useQuery('commentsData', async () => {
+  const {
+    isLoading: isCommentLoading,
+    error: commentError,
+    data: commentsData,
+    refetch: reFetchComment,
+  } = useQuery('commentsData', async () => {
     return await fetchCommentData(ticketId);
   });
 
