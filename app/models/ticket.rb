@@ -3,9 +3,7 @@ class Ticket < ApplicationRecord
 
   attr_accessor :send_notification
 
-  after_initialize do |ticket|
-    @send_notification = true
-  end
+  after_initialize { |ticket| @send_notification = true }
 
   belongs_to :creator, class_name: 'User', optional: true
   belongs_to :assignee, class_name: 'User', optional: true
@@ -13,7 +11,7 @@ class Ticket < ApplicationRecord
 
   scope :tickets_from, ->(user) { where(creator: user.id) }
 
-  enum status: [:open, :hold, :close]
+  enum status: %i[open hold close]
 
   validates :status, inclusion: { in: statuses.keys }
   validates :email, :name, :subject, :description, presence: true

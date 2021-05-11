@@ -1,5 +1,4 @@
 class TicketPolicy < ApplicationPolicy
-
   def index?
     @user.support? || @user.customer?
   end
@@ -35,6 +34,4 @@ class TicketPolicy < ApplicationPolicy
   def destroy?
     @user.support?
   end
-
-
 end

@@ -26,12 +26,12 @@ class TicketsController < ApplicationController
 
   def all_status
     authorize Ticket
-    render json:  status_options
+    render json: status_options
   end
 
   def all_status_filter
     authorize Ticket
-    render json:  status_options_filter
+    render json: status_options_filter
   end
 
   def new
@@ -92,10 +92,10 @@ class TicketsController < ApplicationController
   end
 
   def status_options
-    Ticket.statuses.map { |x, i| {'id'=>x, label: x.titleize} }
+    Ticket.statuses.map { |x, i| { 'id' => x, :label => x.titleize } }
   end
 
   def status_options_filter
-    Ticket.statuses.map { |x, i| {'id'=>i, label: x.titleize} }.prepend({'id'=>'', label: 'All'})
+    Ticket.statuses.map { |x, i| { 'id' => i, :label => x.titleize } }.prepend({ 'id' => '', :label => 'All' })
   end
 end

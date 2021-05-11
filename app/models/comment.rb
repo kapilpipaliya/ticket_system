@@ -4,7 +4,7 @@ class Comment < ApplicationRecord
 
   default_scope { order(created_at: :asc) }
 
-  validates :description,:ticket,:commenter, presence: true
+  validates :description, :ticket, :commenter, presence: true
 
   after_create_commit :update_ticket_comments_count_create
   after_destroy_commit :update_ticket_comments_count_update

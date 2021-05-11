@@ -4,7 +4,7 @@ class CommentPolicy < ApplicationPolicy
   end
 
   def by_ticket?
-      @user.support? || @user.customer?
+    @user.support? || @user.customer?
   end
 
   def show?
@@ -22,6 +22,4 @@ class CommentPolicy < ApplicationPolicy
   def destroy?
     @user.support?
   end
-
-
 end
