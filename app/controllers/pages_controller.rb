@@ -1,9 +1,17 @@
 class PagesController < ApplicationController
-  def index; end
+  protect_from_forgery with: :null_session
+  before_action :authenticate_user!, only: %i[dashboard dashboard_data]
 
-  def dashboard; end
+  def index
+    authorize :page
+  end
+
+  def dashboard
+    authorize :page
+  end
 
   def dashboard_data
+    authorize :page
     @from = params[:from] ? Time.zone.at(params[:from].to_i) : Time.zone.now.midnight
     @to = params[:to] ? Time.zone.at(params[:to].to_i) : Time.zone.now.midnight + 1.day
     new_tickets_count = new_tickets.count
