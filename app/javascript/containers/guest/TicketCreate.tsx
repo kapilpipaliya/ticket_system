@@ -64,7 +64,7 @@ export const TicketCreate = () => {
         <Row>
           <Col sm={12}>
             {isSuccess && (
-              <Alert variant="success" onClose={() => setIsSuccess(false)} dismissible>
+              <Alert variant="success">
                 <Alert.Heading>Thank you for submitting a ticket!</Alert.Heading>
                 <p>We will reply soon...</p>
               </Alert>
@@ -74,27 +74,27 @@ export const TicketCreate = () => {
                 <Form onSubmit={handleSubmitForm}>
                   <Row>
                     <Col sm={6}>
-                      <Form.Group controlId="formSubject">
-                        <Form.Label>Subject</Form.Label>
-                        <Form.Control type="text" placeholder="Subject" ref={subjectRef} isInvalid={errors.subject.length} />
-                        <DisplayFormError errors={errors.subject} />
-                      </Form.Group>
-                    </Col>
-                    <Col sm={6}>
                       <Form.Group controlId="formName">
                         <Form.Label>Name</Form.Label>
-                        <Form.Control type="text" placeholder="Name" ref={nameOfSubmitterRef} isInvalid={errors.name.length} />
+                        <Form.Control type="text" placeholder="John" ref={nameOfSubmitterRef} isInvalid={errors.name.length} />
                         <DisplayFormError errors={errors.name} />
                       </Form.Group>
                     </Col>
-                    <Col sm={12}>
+                    <Col sm={6}>
                       <Form.Group controlId="formEmail">
                         <Form.Label>Email</Form.Label>
-                        <Form.Control type="email" placeholder="Email" ref={emailOfSubmitterRef} isInvalid={errors.email.length} />
+                        <Form.Control type="email" placeholder="john@example.com" ref={emailOfSubmitterRef} isInvalid={errors.email.length} />
                         <DisplayFormError errors={errors.email} />
                       </Form.Group>
                     </Col>
-                    <Col sm={12}>
+                    <Col sm={12} className={'mt-2'}>
+                      <Form.Group controlId="formSubject">
+                        <Form.Label>Subject</Form.Label>
+                        <Form.Control type="text" placeholder="I did not received burger." ref={subjectRef} isInvalid={errors.subject.length} />
+                        <DisplayFormError errors={errors.subject} />
+                      </Form.Group>
+                    </Col>
+                    <Col sm={12} className={'mt-2'}>
                       <Form.Group controlId="formDescription">
                         <Form.Label>Description</Form.Label>
                         <JoditEditor key={2} value={description} config={config as any} onBlur={setDescription} />
@@ -111,7 +111,7 @@ export const TicketCreate = () => {
                                         </div>
                                     </div>
                                 </Col>*/}
-                    <Col sm={12}>
+                    <Col sm={12} className={'mt-3'}>
                       <LoadingButton onClick={handleSubmitForm} loading={newTicketMutation.isLoading}>
                         Submit
                       </LoadingButton>

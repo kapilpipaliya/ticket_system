@@ -66,9 +66,9 @@ export const NewTicketModal = (props: NewTicketModalProps) => {
 
   return (
     <Modal show={props.show} onHide={props.onHide} size={'lg'}>
-      <Modal.Header closeButton>
+      <Modal.Header>
         <Modal.Title as="h5">
-          <Trello />
+          <Trello className={'me-2'} />
           Add Ticket
         </Modal.Title>
       </Modal.Header>
@@ -91,7 +91,7 @@ export const NewTicketModal = (props: NewTicketModalProps) => {
           <Col sm={12}>
             <Form.Group controlId="formSubject">
               <Form.Label>Subject</Form.Label>
-              <Form.Control type="text" placeholder="Subject" ref={subjectRef} isInvalid={errors.subject.length} />
+              <Form.Control type="text" placeholder="I did not received burger." ref={subjectRef} isInvalid={errors.subject.length} />
               <DisplayFormError errors={errors.subject} />
             </Form.Group>
           </Col>
@@ -115,7 +115,7 @@ export const NewTicketModal = (props: NewTicketModalProps) => {
       </Modal.Body>
       <Modal.Footer>
         <Button variant="danger" onClick={onClear}>
-          Clear
+          Cancel
         </Button>
         <LoadingButton onClick={handleSubmitForm} loading={mutation.isLoading}>
           Submit

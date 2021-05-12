@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { Button, Card, Col, Container, Row } from 'react-bootstrap';
+import { Button, Card, Col, Collapse, Container, Modal, Row } from 'react-bootstrap';
 import { Plus } from 'react-feather';
 import clsx from 'clsx';
 import { useMutation, useQuery } from 'react-query';
@@ -15,6 +15,7 @@ import { isEmpty } from '../../utils';
 import { TicketTable } from './TicketTable';
 import { TicketPagination } from './TicketPagination';
 import styles from './TicketList.module.scss';
+import { Spinner } from '../../../components/Spinner';
 
 const searchFormInitialState = () => ({
   name: '',
@@ -34,7 +35,9 @@ export const TicketList = () => {
   const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
   const [sortState, setSortState] = useState<SortState>({});
   const [searchState, setSearchState] = useState<SearchState>(searchFormInitialState());
+  const [searchSubmitState, setSearchSubmitState] = useState<SearchState>({} as SearchState);
   const [status, setStatus] = useState<number | string>('');
+  const [statusSubmit, setStatusSubmit] = useState<number | string>('');
   const [statusOptions, setStatusOptions] = useState([]);
 
   useEffect(() => {
@@ -47,7 +50,13 @@ export const TicketList = () => {
     data: ticketData,
     refetch,
     isFetching,
-  } = useQuery(['ticketsData', pageNo, sortState], () => fetchAllTicketData(pageNo, sortState, searchState, status));
+  } = useQuery(['ticketsData'], () => fetchAllTicketData(pageNo, sortState, searchSubmitState, statusSubmit), {
+    enabled: false, // https://react-query.tanstack.com/guides/disabling-queries
+  });
+
+  useEffect(() => {
+    refetch();
+  }, [pageNo, sortState, searchSubmitState, statusSubmit]);
 
   useEffect(() => {
     fetchAllTicketStatusFilter().then(resp => {
@@ -109,14 +118,18 @@ export const TicketList = () => {
     });
   };
   const handleSearchSubmit = () => {
-    refetch();
+    setSearchSubmitState({ ...searchState });
+    setStatusSubmit(status);
   };
   const handleClearSearchForm = () => {
     setSearchState(searchFormInitialState());
     setStatus('');
+    setStatusSubmit('');
+    setSearchSubmitState({} as SearchState);
   };
+  const [isBasic, setIsBasic] = React.useState(false);
   return (
-    <Container>
+    <Container fluid>
       <ToastNotification show={showToast} setShow={setShowToast} message={toastMessage} />
       <ConfirmationDialog
         show={deleteConfirmation}
@@ -147,28 +160,46 @@ export const TicketList = () => {
 
             <Card.Body className={clsx(['shadow border-0', styles['support-table']])}>
               <Card>
-                <Card.Header>Filter</Card.Header>
-                <Card.Body>
-                  <TicketSearch
-                    searchState={searchState}
-                    setSearchState={setSearchState}
-                    status={status}
-                    setStatus={setStatus}
-                    statusOptions={statusOptions}
-                    onSubmit={handleSearchSubmit}
-                    loading={isLoading || isFetching}
-                    onReset={handleClearSearchForm}
-                  />
-                </Card.Body>
+                <Card.Header>
+                  <Button onClick={() => setIsBasic(!isBasic)} aria-controls="basic-collapse" aria-expanded={isBasic}>
+                    Filter
+                  </Button>
+                </Card.Header>
+                <Collapse in={isBasic}>
+                  <div id="basic-collapse">
+                    <Card.Body>
+                      <TicketSearch
+                        searchState={searchState}
+                        setSearchState={setSearchState}
+                        status={status}
+                        setStatus={setStatus}
+                        statusOptions={statusOptions}
+                        onSubmit={handleSearchSubmit}
+                        loading={isLoading || isFetching}
+                        onReset={handleClearSearchForm}
+                      />
+                    </Card.Body>
+                  </div>
+                </Collapse>
               </Card>
               <Card className={'mt-3'}>
                 <Card.Body>
-                  {isLoading || isFetching ? (
-                    'Loading...'
-                  ) : (
-                    <TicketTable sortState={sortState} handleOnSortClick={handleOnSortClick} ticketData={ticketData} onTicketDeleteConfirm={onTicketDeleteConfirm} />
+                  {isLoading ||
+                    (isFetching && (
+                      <Modal show={true} centered>
+                        <Card className={'text-center'}>
+                          <Card.Body>
+                            <Spinner />
+                          </Card.Body>
+                        </Card>
+                      </Modal>
+                    ))}
+                  {ticketData && (
+                    <>
+                      <TicketTable sortState={sortState} handleOnSortClick={handleOnSortClick} ticketData={ticketData} onTicketDeleteConfirm={onTicketDeleteConfirm} />
+                      <TicketPagination ticketData={ticketData} handlePageChange={handlePageChange} />
+                    </>
                   )}
-                  {(!isLoading || !isFetching) && <TicketPagination ticketData={ticketData} handlePageChange={handlePageChange} />}
                 </Card.Body>
               </Card>
             </Card.Body>

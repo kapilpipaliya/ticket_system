@@ -14,6 +14,7 @@ import { LoadingButton } from '../../../components/LoadingButton';
 import { isEmpty } from '../../utils';
 import { NewComponentForm } from './NewComponentForm';
 import { CommentItem } from './CommentItem';
+import { Spinner } from '../../../components/Spinner';
 
 export const TicketEdit = () => {
   const [ticketId, setTicketId] = useState(() => {
@@ -129,7 +130,12 @@ export const TicketEdit = () => {
     ticketDeleteMutation.mutate();
   };
 
-  if (isTicketLoading) return <Container>Loading ...</Container>;
+  if (isTicketLoading)
+    return (
+      <Container>
+        <Spinner />
+      </Container>
+    );
 
   return (
     <Container>
@@ -172,20 +178,22 @@ export const TicketEdit = () => {
               </Row>
             </Card.Body>
 
-            {isCommentLoading
-              ? 'Loading Comments ...'
-              : commentsData.map(comment => {
-                  return (
-                    <CommentItem
-                      key={comment.id}
-                      ticketId={ticketData.id}
-                      currentUser={currentUser}
-                      reFetchComment={reFetchComment}
-                      comment={comment}
-                      onClick={handleDeleteConfirmation(comment.id)}
-                    />
-                  );
-                })}
+            {isCommentLoading ? (
+              <Spinner />
+            ) : (
+              commentsData.map(comment => {
+                return (
+                  <CommentItem
+                    key={comment.id}
+                    ticketId={ticketData.id}
+                    currentUser={currentUser}
+                    reFetchComment={reFetchComment}
+                    comment={comment}
+                    onClick={handleDeleteConfirmation(comment.id)}
+                  />
+                );
+              })
+            )}
             <div className="bg-light p-3">
               <Row className="align-items-center">
                 <Col>

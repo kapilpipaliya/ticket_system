@@ -14,3 +14,9 @@
  *= require_self
  */
 @import 'bootstrap/scss/bootstrap';
+
+// bootstrap 4 classes:
+.sr-only,
+.sr-only-focusable:not(:focus):not(:focus-within) {
+  @include visually-hidden();
+}

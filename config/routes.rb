@@ -6,7 +6,7 @@ Rails.application.routes.draw do
     resource :user, only: :show
     get '/tickets/all_status', to: 'tickets#all_status'
     get '/tickets/all_status_filter', to: 'tickets#all_status_filter'
-    root 'tickets#index', as: :authenticated_root
+    root 'pages#dashboard', as: :authenticated_root
     resources :tickets
     resources :comments, only: %i[create update destroy]
     get '/comments/by_ticket/:id', to: 'comments#by_ticket'

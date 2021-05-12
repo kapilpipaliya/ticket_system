@@ -13,17 +13,17 @@ export const TicketItem = (props: TicketItemProps) => {
     <>
       <td>{props.ticket.name}</td>
       <td>{props.ticket.email}</td>
-      <td className={'text-truncate'} style={{ maxWidth: 300 }}>
+      <td className={'text-truncate'} style={{ maxWidth: 300 }} title={props.ticket.description}>
         {props.ticket.subject}
       </td>
-      <td className={'text-truncate'} style={{ maxWidth: 300 }}>
-        {props.ticket.description}
-      </td>
+      {/*<td className={'text-truncate'} style={{ maxWidth: 300 }}>*/}
+      {/*  {props.ticket.description}*/}
+      {/*</td>*/}
       <td>{props.ticket.assignee_name}</td>
       <td>{props.ticket.status}</td>
       <td>{props.ticket.assignee_comments}</td>
-      <td>{new Date(props.ticket.created_at).toUTCString()}</td>
-      <td>{new Date(props.ticket.last_activity).toUTCString()}</td>
+      <td>{new Date(props.ticket.created_at).toLocaleString()}</td>
+      <td>{new Date(props.ticket.last_activity).toLocaleString()}</td>
       {/*<td>Url: {props.ticket.url}</td>*/}
       <td style={{ display: 'flex', flexWrap: 'nowrap' }}>
         <a href={`tickets/${props.ticket.id}/edit`} className="text-muted">
@@ -59,17 +59,17 @@ export const TicketTable = (props: {
           <th className="border-top-0" onClick={handleOnSortClick('subject')}>
             Subject <SortIcon id={'subject'} />
           </th>
-          <th className="border-top-0" onClick={handleOnSortClick('description')}>
-            Description <SortIcon id={'description'} />
-          </th>
+          {/*<th className="border-top-0" onClick={handleOnSortClick('description')}>*/}
+          {/*  Description <SortIcon id={'description'} />*/}
+          {/*</th>*/}
           <th className="border-top-0" style={{ whiteSpace: 'nowrap' }} onClick={handleOnSortClick('assignee_id')}>
             Assigned to <SortIcon id={'assignee_id'} />
           </th>
           <th className="border-top-0" style={{ whiteSpace: 'nowrap' }} onClick={handleOnSortClick('status')}>
             Status <SortIcon id={'status'} />
           </th>
-          <th className="border-top-0" onClick={handleOnSortClick('comments_count')}>
-            Comments <SortIcon id={'comments_count'} />
+          <th className="border-top-0" onClick={handleOnSortClick('assignee_comments')}>
+            Comments <SortIcon id={'assignee_comments'} />
           </th>
           <th className="border-top-0" onClick={handleOnSortClick('created_at')}>
             Created <SortIcon id={'created_at'} />

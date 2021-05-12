@@ -55,12 +55,12 @@ export const TicketSearch = (props: {
         </Form.Group>
       </Col>
       <Col sm={6} className="align-self-center ">
-        <Button variant="secondary" className={'mr-2'} onClick={props.onReset} {...(props.loading ? { disabled: true } : {})}>
-          Reset
-        </Button>
         <LoadingButton onClick={props.onSubmit} loading={props.loading} showSpinner={false}>
           Search
         </LoadingButton>
+        <Button variant="secondary" className={'m-2'} onClick={props.onReset} {...(props.loading ? { disabled: true } : {})}>
+          Reset
+        </Button>
       </Col>
     </Row>
   );

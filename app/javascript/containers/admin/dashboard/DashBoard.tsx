@@ -75,7 +75,7 @@ const DashBoard = () => {
   };
   if (isLoading || isFetching) return <Container>Loading...</Container>;
   return (
-    <Container>
+    <Container fluid>
       <Row>
         <Col>
           <StatisticCard icon={<AlertTriangle />} title={'Overdue'} subtitle={data.data.overdue_count} />
