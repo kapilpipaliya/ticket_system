@@ -20,7 +20,10 @@ export const HomePage = (props: HomePageProps) => {
                             performance</a><a className="btn btn-outline-dark" href="#">Learn More</a></div>
                     </Col>
                     <Col xs={12} lg={6} className="position-relative">
-                        <img className="position-relative img-fluid" src={zPicture} alt="" />
+                        <img className="d-none d-lg-block position-absolute top-0 end-0 mt-5"
+                             src={yellowDotRightShield} alt=""/>
+                            <img className="position-relative img-fluid" src={zPicture} alt="" />
+                                <img className="d-none d-lg-block position-absolute bottom-0 start-0 mb-5" src={blueDotLeftBars} alt=""/>
                     </Col>
                 </Row>
             </Container>
