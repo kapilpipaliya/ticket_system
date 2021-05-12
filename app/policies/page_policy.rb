@@ -10,5 +10,4 @@ class PagePolicy < ApplicationPolicy
   def dashboard_data?
     @user.support?
   end
-
 end
