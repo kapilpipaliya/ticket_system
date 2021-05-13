@@ -18,6 +18,9 @@
 .bg-blue {
   background: $blue;
 }
+.whitespace-nowrap {
+  white-space: nowrap;
+}
 // bootstrap 4 classes:
 .sr-only,
 .sr-only-focusable:not(:focus):not(:focus-within) {

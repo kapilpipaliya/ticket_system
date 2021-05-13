@@ -74,28 +74,28 @@ export const NewTicketModal = (props: NewTicketModalProps) => {
       </Modal.Header>
       <Modal.Body>
         <Row>
-          <Col sm={6}>
+          <Col sm={6} className={'mb-2'}>
             <Form.Group controlId="formName">
               <Form.Label>Name</Form.Label>
               <Form.Control type="text" placeholder="Name" value={props.currentUser.first_name} ref={nameOfSubmitterRef} disabled isInvalid={errors.name.length} />
               <DisplayFormError errors={errors.name} />
             </Form.Group>
           </Col>
-          <Col sm={6}>
+          <Col sm={6} className={'mb-2'}>
             <Form.Group controlId="formEmail">
               <Form.Label>Email</Form.Label>
               <Form.Control type="email" placeholder="Email" value={props.currentUser.email} ref={emailOfSubmitterRef} disabled isInvalid={errors.email.length} />
               <DisplayFormError errors={errors.email} />
             </Form.Group>
           </Col>
-          <Col sm={12}>
+          <Col sm={12} className={'mb-2'}>
             <Form.Group controlId="formSubject">
               <Form.Label>Subject</Form.Label>
               <Form.Control type="text" placeholder="I did not received burger." ref={subjectRef} isInvalid={errors.subject.length} />
               <DisplayFormError errors={errors.subject} />
             </Form.Group>
           </Col>
-          <Col sm={12}>
+          <Col sm={12} className={'mb-2'}>
             <Form.Group controlId="formDescription">
               <Form.Label>Description</Form.Label>
               <JoditEditor key={2} value={description} config={config as any} onBlur={setDescription} />
@@ -103,7 +103,7 @@ export const NewTicketModal = (props: NewTicketModalProps) => {
               <DisplayFormError errors={errors.description} />
             </Form.Group>
           </Col>
-          <Col sm={12}>
+          <Col sm={12} className={'mb-2'}>
             <div className="form-group fill">
               <label className="floating-label" htmlFor="Icon">
                 Image

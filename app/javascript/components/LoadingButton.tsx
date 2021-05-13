@@ -9,6 +9,7 @@ interface LoadingButtonProps {
   children: React.ReactNode;
   className?: string;
 }
+
 export const LoadingButton = (props: LoadingButtonProps) => {
   const { variant, onClick, loading, showSpinner, children, ...extraProps } = props;
   return (

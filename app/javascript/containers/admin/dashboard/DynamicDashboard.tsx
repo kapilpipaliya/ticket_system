@@ -8,6 +8,8 @@ import { Spinner } from '../../../components/Spinner';
 
 import { LatestActivity } from './LatestActivityParams';
 import PageStatisticCard from '../../../components/statistic/PageStatisticCard';
+import { BiTrendingDown, BiTrendingUp } from 'react-icons/bi';
+import { AiOutlineFolderOpen, FaComment, FaResolving, FaUserMd, GoStop, GoThumbsup, MdToday, VscAdd } from 'react-icons/all';
 
 const dummyFn = async () => {
   return { data: false as any };
@@ -69,88 +71,141 @@ export function DynamicDashboard() {
   };
 
   return (
-    <>
+    <Container className={'mt-2'} fluid>
       <Row>
-        <Col xs={12} md={6}></Col>
-        <Col xs={12} md={6} className="text-end mb-2">
+        <Col xs={12} className="text-end mt-2 mb-2">
           <ButtonGroup>
             <DateSelectDropdown handleRangeSelect={handleOnDateChange} />
           </ButtonGroup>
           {/*<RangeDatePicker startDate={start} endDate={end} onChange={handleOnDateChange} />*/}
         </Col>
       </Row>
-      {isLoading || isFetching ? (
-        <Container className={'mt-2'}>
-          <Spinner />
-        </Container>
+      {isLoading || isFetching || !data ? (
+        <Spinner />
       ) : (
         <>
-          {data && data.data ? (
+          {data?.data && (
             <>
               <Row>
                 <Col>
                   <PageStatisticCard
-                    params={{ iconClass: 'icon-trending-up', iconName: '', variant: 'warning', title: '', primaryText: data.data.unresolved_count, secondaryText: 'Unresolved' }}
-                  />
-                </Col>
-                <Col>
-                  <PageStatisticCard
-                    params={{ iconClass: 'icon-trending-up', iconName: '', variant: 'warning', title: '', primaryText: data.data.new_tickets, secondaryText: 'New Tickets' }}
-                  />
-                </Col>
-                <Col>
-                  <PageStatisticCard params={{ iconClass: 'icon-trending-up', iconName: '', variant: 'warning', title: '', primaryText: data.data.open, secondaryText: 'Open' }} />
-                </Col>
-                <Col>
-                  <PageStatisticCard
-                    params={{ iconClass: 'icon-trending-up', iconName: '', variant: 'warning', title: '', primaryText: data.data.hold, secondaryText: 'On Hold' }}
-                  />
-                </Col>
-                <Col>
-                  <PageStatisticCard
-                    params={{ iconClass: 'icon-trending-up', iconName: '', variant: 'success', title: '', primaryText: data.data.close, secondaryText: 'Closed' }}
-                  />
-                </Col>
-                <Col>
-                  <PageStatisticCard
-                    params={{ iconClass: 'icon-trending-up', iconName: '', variant: 'success', title: '', primaryText: data.data.assigned, secondaryText: 'Assigned' }}
-                  />
-                </Col>
-                <Col>
-                  <PageStatisticCard
-                    params={{ iconClass: 'icon-trending-up', iconName: '', variant: 'success', title: '', primaryText: data.data.replies, secondaryText: 'Replies' }}
+                    params={{
+                      iconClass: 'icon-trending-up',
+                      iconName: <FaResolving />,
+                      footerIcon: <BiTrendingDown />,
+                      variant: 'warning',
+                      title: '',
+                      primaryText: data.data.unresolved_count,
+                      secondaryText: 'Unresolved',
+                    }}
                   />
                 </Col>
                 <Col>
                   <PageStatisticCard
                     params={{
                       iconClass: 'icon-trending-up',
-                      iconName: '',
+                      iconName: <VscAdd />,
+                      footerIcon: <BiTrendingDown />,
+                      variant: 'warning',
+                      title: '',
+                      primaryText: data.data.new_tickets,
+                      secondaryText: 'New Tickets',
+                    }}
+                  />
+                </Col>
+                <Col>
+                  <PageStatisticCard
+                    params={{
+                      iconClass: 'icon-trending-up',
+                      iconName: <AiOutlineFolderOpen />,
+                      footerIcon: <BiTrendingDown />,
+                      variant: 'warning',
+                      title: '',
+                      primaryText: data.data.open,
+                      secondaryText: 'Open',
+                    }}
+                  />
+                </Col>
+                <Col>
+                  <PageStatisticCard
+                    params={{
+                      iconClass: 'icon-trending-up',
+                      iconName: <GoStop />,
+                      footerIcon: <BiTrendingDown />,
+                      variant: 'warning',
+                      title: '',
+                      primaryText: data.data.hold,
+                      secondaryText: 'On Hold',
+                    }}
+                  />
+                </Col>
+                <Col>
+                  <PageStatisticCard
+                    params={{
+                      iconClass: 'icon-trending-up',
+                      iconName: <GoThumbsup />,
+                      footerIcon: <BiTrendingUp />,
+                      variant: 'success',
+                      title: '',
+                      primaryText: data.data.close,
+                      secondaryText: 'Closed',
+                    }}
+                  />
+                </Col>
+                <Col>
+                  <PageStatisticCard
+                    params={{
+                      iconClass: 'icon-trending-up',
+                      iconName: <FaUserMd />,
+                      footerIcon: <BiTrendingUp />,
+                      variant: 'success',
+                      title: '',
+                      primaryText: data.data.assigned,
+                      secondaryText: 'Assigned',
+                    }}
+                  />
+                </Col>
+                <Col>
+                  <PageStatisticCard
+                    params={{
+                      iconClass: 'icon-trending-up',
+                      iconName: <FaComment />,
+                      footerIcon: <BiTrendingUp />,
+                      variant: 'success',
+                      title: '',
+                      primaryText: data.data.replies,
+                      secondaryText: 'Replies',
+                    }}
+                  />
+                </Col>
+                <Col>
+                  <PageStatisticCard
+                    params={{
+                      iconClass: 'icon-trending-up',
+                      iconName: <MdToday />,
                       variant: 'success',
                       title: '',
                       primaryText: data.data.tickets_per_day,
                       secondaryText: 'Tickets Per Day',
+                      footerIcon: <BiTrendingUp />,
                     }}
                   />
                 </Col>
               </Row>
               <Row className={'mt-1'}>
                 <Col xl={12} md={12}>
-                  {!lastActivityIsLoading && lastActivityData && lastActivityData.data ? (
-                    <LatestActivity rows={lastActivityData.data.latest_activity} handleGetAllActivity={handleGetAllActivity} showFetchAllButton={lastActivityCount != 0} />
-                  ) : (
-                    <Spinner />
-                  )}
+                  <LatestActivity
+                    data={lastActivityData?.data}
+                    handleGetAllActivity={handleGetAllActivity}
+                    showFetchAllButton={lastActivityCount != 0}
+                    loading={lastActivityIsLoading || lastActivityIsFetching}
+                  />
                 </Col>
               </Row>
             </>
-          ) : (
-            <Container className={'mt-2'}>
-              <Spinner />
-            </Container>
           )}
         </>
       )}
-    </>
+    </Container>
   );
 }

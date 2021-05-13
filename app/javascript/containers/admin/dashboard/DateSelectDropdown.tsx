@@ -8,99 +8,83 @@ import { endOfDay, startOfISOWeek, startOfMonth, startOfYear, sub } from 'date-f
 interface DateSelectDropdownProps {
   handleRangeSelect: (startDate: Date, endDate: Date) => void;
 }
+
 export const DateSelectDropdown = (props: DateSelectDropdownProps) => {
-  const handleTodayClick = () => {
-    const endDate = endOfDay(new Date());
-    props.handleRangeSelect(sub(endDate, { days: 1 }), endDate);
-  };
-  const handleThisWeekClick = () => {
-    const endDate = endOfDay(new Date());
-    props.handleRangeSelect(sub(endDate, { weeks: 1 }), endDate);
-  };
-  const handleLastWeekClick = () => {
-    const endDate = startOfISOWeek(new Date());
-    props.handleRangeSelect(sub(endDate, { weeks: 1 }), endDate);
-  };
-  const handleThisMonthClick = () => {
-    const endDate = endOfDay(new Date());
-    props.handleRangeSelect(sub(endDate, { months: 1 }), endDate);
-  };
-  const handleLastMonthClick = () => {
-    const endDate = startOfMonth(new Date());
-    props.handleRangeSelect(sub(endDate, { weeks: 1 }), endDate);
-  };
-  const handleYearToDateClick = () => {
-    const endDate = endOfDay(new Date());
-    props.handleRangeSelect(sub(endDate, { years: 1 }), endDate);
-  };
-  const handleLastYearClick = () => {
-    const endDate = startOfYear(new Date());
-    props.handleRangeSelect(sub(endDate, { years: 1 }), endDate);
-  };
-  const [selectedRange, setSelectedRange] = useState('This Month');
+  const [selectedRange, setSelectedRange] = useState('this_month');
   const options = {
     today: {
       label: 'Today',
-      onClick: () => {
-        setSelectedRange('Today');
-        handleTodayClick();
-      },
     },
     this_week: {
       label: 'This Week',
-      onClick: () => {
-        setSelectedRange('This Week');
-        handleThisWeekClick();
-      },
     },
     last_week: {
       label: 'Last Week',
-      onClick: () => {
-        setSelectedRange('Last Week');
-        handleLastWeekClick();
-      },
     },
     this_month: {
       label: 'This Month',
-      onClick: () => {
-        setSelectedRange('This Month');
-        handleThisMonthClick();
-      },
     },
     last_month: {
       label: 'Last Month',
-      onClick: () => {
-        setSelectedRange('Last Month');
-        handleLastMonthClick();
-      },
     },
     year_to_date: {
       label: 'Year to Date',
-      onClick: () => {
-        setSelectedRange('Year to Date');
-        handleYearToDateClick();
-      },
     },
     last_year: {
       label: 'Last Year',
-      onClick: () => {
-        setSelectedRange('Last Year');
-        handleLastYearClick();
-      },
     },
   };
-
+  const handleRangeChange = (id: string) => () => {
+    setSelectedRange(id);
+    switch (id) {
+      case 'today': {
+        const endDate = endOfDay(new Date());
+        props.handleRangeSelect(sub(endDate, { days: 1 }), endDate);
+        break;
+      }
+      case 'this_week': {
+        const endDate = endOfDay(new Date());
+        props.handleRangeSelect(sub(endDate, { weeks: 1 }), endDate);
+        break;
+      }
+      case 'last_week': {
+        const endDate = startOfISOWeek(new Date());
+        props.handleRangeSelect(sub(endDate, { weeks: 1 }), endDate);
+        break;
+      }
+      case 'this_month': {
+        const endDate = endOfDay(new Date());
+        props.handleRangeSelect(sub(endDate, { months: 1 }), endDate);
+        break;
+      }
+      case 'last_month': {
+        const endDate = startOfMonth(new Date());
+        props.handleRangeSelect(sub(endDate, { weeks: 1 }), endDate);
+        break;
+      }
+      case 'year_to_date': {
+        const endDate = endOfDay(new Date());
+        props.handleRangeSelect(sub(endDate, { years: 1 }), endDate);
+        break;
+      }
+      case 'last_year': {
+        const endDate = startOfYear(new Date());
+        props.handleRangeSelect(sub(endDate, { years: 1 }), endDate);
+        break;
+      }
+    }
+  };
   useEffect(() => {
-    handleThisMonthClick();
+    handleRangeChange('this_month')();
   }, []);
   return (
     <Dropdown>
       <Dropdown.Toggle as={Button} size="sm" variant="outline-primary">
-        <Filter /> {selectedRange}
+        <Filter /> {options[selectedRange].label}
       </Dropdown.Toggle>
       <Dropdown.Menu className="dropdown-menu-end">
         {Object.keys(options).map(o => (
-          <Dropdown.Item key={o} onClick={options[o].onClick}>
+          <Dropdown.Item key={o} onClick={handleRangeChange(o)}>
             {options[o].label}
           </Dropdown.Item>
         ))}

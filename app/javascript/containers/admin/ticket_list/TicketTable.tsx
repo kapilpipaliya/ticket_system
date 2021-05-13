@@ -11,20 +11,16 @@ interface TicketItemProps {
 export const TicketItem = (props: TicketItemProps) => {
   return (
     <>
-      <td>{props.ticket.name}</td>
-      <td>{props.ticket.email}</td>
+      <td className={'whitespace-nowrap'}>{props.ticket.name}</td>
+      <td className={'whitespace-nowrap'}>{props.ticket.email}</td>
       <td className={'text-truncate'} style={{ maxWidth: 300 }} title={props.ticket.description}>
         {props.ticket.subject}
       </td>
-      {/*<td className={'text-truncate'} style={{ maxWidth: 300 }}>*/}
-      {/*  {props.ticket.description}*/}
-      {/*</td>*/}
-      <td>{props.ticket.assignee_name}</td>
-      <td>{props.ticket.status}</td>
-      <td>{props.ticket.assignee_comments}</td>
-      <td>{new Date(props.ticket.created_at).toLocaleString()}</td>
-      <td>{new Date(props.ticket.last_activity).toLocaleString()}</td>
-      {/*<td>Url: {props.ticket.url}</td>*/}
+      <td className={'whitespace-nowrap'}>{props.ticket.assignee_name}</td>
+      <td className={'whitespace-nowrap'}>{props.ticket.status}</td>
+      <td className={'whitespace-nowrap'}>{props.ticket.assignee_comments}</td>
+      <td className={'whitespace-nowrap'}>{new Date(props.ticket.created_at).toLocaleString()}</td>
+      <td className={'whitespace-nowrap'}>{new Date(props.ticket.last_activity).toLocaleString()}</td>
       <td style={{ display: 'flex', flexWrap: 'nowrap' }}>
         <a href={`tickets/${props.ticket.id}`} className="text-muted">
           <Eye className={'me-1'} />
@@ -62,9 +58,6 @@ export const TicketTable = (props: {
           <th className="border-top-0" onClick={handleOnSortClick('subject')}>
             Subject <SortIcon id={'subject'} />
           </th>
-          {/*<th className="border-top-0" onClick={handleOnSortClick('description')}>*/}
-          {/*  Description <SortIcon id={'description'} />*/}
-          {/*</th>*/}
           <th className="border-top-0" style={{ whiteSpace: 'nowrap' }} onClick={handleOnSortClick('assignee_id')}>
             Assigned to <SortIcon id={'assignee_id'} />
           </th>

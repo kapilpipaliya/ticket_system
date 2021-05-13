@@ -19,25 +19,30 @@ export const TicketSearch = (props: {
       <Col sm={6}>
         <Form.Group controlId="formName">
           <Form.Label>Name</Form.Label>
-          <Form.Control type="text" value={props.searchState.name} onChange={e => setSearchState({ ...searchState, name: e.target.value })} />
+          <Form.Control placeholder="John" type="text" value={props.searchState.name} onChange={e => setSearchState({ ...searchState, name: e.target.value })} />
         </Form.Group>
       </Col>
       <Col sm={6}>
         <Form.Group controlId="formName">
           <Form.Label>Email</Form.Label>
-          <Form.Control type="text" value={props.searchState.email} onChange={e => setSearchState({ ...searchState, email: e.target.value })} />
+          <Form.Control placeholder="john@example.com" type="text" value={props.searchState.email} onChange={e => setSearchState({ ...searchState, email: e.target.value })} />
         </Form.Group>
       </Col>
       <Col sm={6}>
         <Form.Group controlId="formName">
           <Form.Label>Subject</Form.Label>
-          <Form.Control type="text" value={props.searchState.subject} onChange={e => setSearchState({ ...searchState, subject: e.target.value })} />
+          <Form.Control placeholder="order status" type="text" value={props.searchState.subject} onChange={e => setSearchState({ ...searchState, subject: e.target.value })} />
         </Form.Group>
       </Col>
       <Col sm={6}>
         <Form.Group controlId="formName">
           <Form.Label>Description</Form.Label>
-          <Form.Control type="text" value={props.searchState.description} onChange={e => setSearchState({ ...searchState, description: e.target.value })} />
+          <Form.Control
+            placeholder="description"
+            type="text"
+            value={props.searchState.description}
+            onChange={e => setSearchState({ ...searchState, description: e.target.value })}
+          />
         </Form.Group>
       </Col>
       <Col sm={6}>

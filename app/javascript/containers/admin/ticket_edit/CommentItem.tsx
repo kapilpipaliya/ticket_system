@@ -12,6 +12,7 @@ import clsx from 'clsx';
 const initialErrorState = () => {
   return { description: [] as string[] };
 };
+
 interface CommentItemProps {
   comment: CommentType;
   onClick?: () => void;
@@ -20,6 +21,7 @@ interface CommentItemProps {
   reFetchComment?: () => void;
   editable: boolean;
 }
+
 export function CommentItem(props: CommentItemProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [errors, setErrors] = useState(initialErrorState());

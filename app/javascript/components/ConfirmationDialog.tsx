@@ -11,27 +11,29 @@ interface ConfirmationDialogProps {
   body: string;
   okButtonLabel: string;
   loading: boolean;
+  variant?: string;
 }
 
 export const ConfirmationDialog = (props: ConfirmationDialogProps) => {
-  const handleClose = () => props.onCancel();
+  const { onCancel, show, setShow, title, body, okButtonLabel, onSubmit, loading, ...extraProps } = props;
+  const handleClose = () => onCancel();
   const handleSubmit = () => {
-    props.onSubmit().then(r => {});
+    onSubmit().then(r => {});
   };
 
   return (
     <>
-      <Modal show={props.show} onHide={handleClose}>
+      <Modal show={show} onHide={handleClose}>
         <Modal.Header>
-          <Modal.Title>{props.title}</Modal.Title>
+          <Modal.Title>{title}</Modal.Title>
         </Modal.Header>
-        <Modal.Body>{props.body}</Modal.Body>
+        <Modal.Body>{body}</Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>
             Close
           </Button>
-          <LoadingButton onClick={handleSubmit} loading={props.loading}>
-            {props.okButtonLabel}
+          <LoadingButton onClick={handleSubmit} loading={loading} {...extraProps}>
+            {okButtonLabel}
           </LoadingButton>
         </Modal.Footer>
       </Modal>

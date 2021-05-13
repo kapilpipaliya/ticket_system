@@ -182,7 +182,7 @@ export const TicketList = () => {
                 <Card.Body>
                   {isLoading ||
                     (isFetching && (
-                      <Modal show={true} centered>
+                      <Modal show={true} centered animation={false} backdrop={false}>
                         <Card className={'text-center'}>
                           <Card.Body>
                             <Spinner />

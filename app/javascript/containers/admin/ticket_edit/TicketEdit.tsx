@@ -1,38 +1,30 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { Button, Card, Col, Container, Form, Row } from 'react-bootstrap';
-import { CommentType, CurrentUser } from '../../Types';
-import { CheckCircle, FileText, MessageSquare, Save, Trash2 } from 'react-feather';
+import { Card, Col, Container, Form, Row } from 'react-bootstrap';
+import { CheckCircle, FileText, Save, Trash2 } from 'react-feather';
 import { useMutation, useQuery } from 'react-query';
 import { fetchAllTicketStatus, fetchTicketData, ticketDelete, ticketUpdate } from '../../../services/serviceTicket';
-import { deleteComment, fetchCommentData, submitTicketReply } from '../../../services/serviceComment';
-import { fetchAllUsers, fetchCurrentUser } from '../../../services/serviceUser';
+import { fetchCommentData } from '../../../services/serviceComment';
+import { fetchAllUsers } from '../../../services/serviceUser';
 
 import { ConfirmationDialog } from '../../../components/ConfirmationDialog';
-import * as UrlPattern from 'url-pattern';
 import { LoadingButton } from '../../../components/LoadingButton';
 import { isEmpty } from '../../utils';
-import { NewComponentForm } from './NewComponentForm';
 import { CommentItem } from './CommentItem';
 import { Spinner } from '../../../components/Spinner';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-export const TicketEdit = () => {
-  const [ticketId, setTicketId] = useState(() => {
-    const pattern = new UrlPattern('/tickets/(:id)/edit');
-    const matches = pattern.match(window.location.pathname);
-    return matches.id;
-  });
-  const [isReplyEditorOpen, setIsReplyEditorOpen] = useState(false);
+interface TicketEditProps {
+  ticketId: string;
+}
+
+export const TicketEdit = (props: TicketEditProps) => {
   const [allStatus, setAllStatus] = useState([]);
   const [allUsers, setAllUsers] = useState([]);
   const [newStatus, setNewStatus] = useState('open');
   const [newAssignedToID, setNewAssignedToID] = useState<'' | number>('');
   const [ticketDeleteConfirmation, setTicketDeleteConfirmation] = useState(false);
-  const [commentDeleteConfirmation, setCommentDeleteConfirmation] = useState(false);
-  const [selectedComment, setSelectedComment] = useState(0);
-  const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
 
   const {
     isLoading: isTicketLoading,
@@ -43,7 +35,7 @@ export const TicketEdit = () => {
   } = useQuery(
     'ticketData',
     async () => {
-      const resp = await fetchTicketData(ticketId);
+      const resp = await fetchTicketData(props.ticketId);
       setNewStatus(resp.status);
       setNewAssignedToID(resp.assignee_id || '');
       return resp;
@@ -61,7 +53,7 @@ export const TicketEdit = () => {
   } = useQuery(
     'commentsData',
     async () => {
-      return await fetchCommentData(ticketId);
+      return await fetchCommentData(props.ticketId);
     },
     {
       enabled: false,
@@ -71,47 +63,9 @@ export const TicketEdit = () => {
   useEffect(() => {
     reFetchTicket();
     reFetchComment();
-    fetchCurrentUser().then(resp => setCurrentUser(resp));
     fetchAllTicketStatus().then(resp => setAllStatus(resp));
     fetchAllUsers().then(resp => setAllUsers(resp));
   }, []);
-
-  const newCommentMutation = useMutation(async (data: any) => {
-    const result = await submitTicketReply({
-      description: data.description,
-      ticket_id: ticketData.id,
-      commenter_id: currentUser ? currentUser.id : currentUser,
-    });
-    if (result && result.id) {
-      //replySubjectRef.current.value = '';
-      //setDescription('');
-      setIsReplyEditorOpen(false);
-      await reFetchComment();
-    } else {
-      alert('Reply submit error');
-    }
-    return result;
-  });
-
-  const handleDeleteConfirmation = commentId => () => {
-    setCommentDeleteConfirmation(true);
-    setSelectedComment(commentId);
-  };
-
-  const commentDeleteMutation = useMutation(async () => {
-    const result = await deleteComment(selectedComment);
-    setCommentDeleteConfirmation(false);
-    if (result.base) {
-      alert(result.base);
-    } else {
-      await reFetchComment();
-      toast('Comment deleted successfully');
-    }
-  });
-
-  const handleDeleteComment = async () => {
-    commentDeleteMutation.mutate();
-  };
 
   const ticketUpdateMutation = useMutation(async () => {
     const result = await ticketUpdate(ticketData.id, { status: newStatus, assignee_id: newAssignedToID });
@@ -160,17 +114,9 @@ export const TicketEdit = () => {
         body={'Ticket and its comments will be deleted permanently.'}
         okButtonLabel={'Confirm'}
         loading={ticketDeleteMutation.isLoading}
+        variant="danger"
       />
-      <ConfirmationDialog
-        show={commentDeleteConfirmation}
-        setShow={setCommentDeleteConfirmation}
-        onCancel={() => setCommentDeleteConfirmation(false)}
-        onSubmit={handleDeleteComment}
-        title={'Are you sure?'}
-        body={'Comment will be deleted permanently.'}
-        okButtonLabel={'Confirm'}
-        loading={commentDeleteMutation.isLoading}
-      />
+
       <Row>
         <Col lg={8}>
           <Card>
@@ -193,44 +139,8 @@ export const TicketEdit = () => {
               <Spinner />
             ) : (
               commentsData.map(comment => {
-                return (
-                  <CommentItem
-                    key={comment.id}
-                    ticketId={ticketData.id}
-                    currentUser={currentUser}
-                    reFetchComment={reFetchComment}
-                    comment={comment}
-                    onClick={handleDeleteConfirmation(comment.id)}
-                    editable={true}
-                  />
-                );
+                return <CommentItem key={comment.id} ticketId={ticketData.id} comment={comment} editable={false} />;
               })
-            )}
-            <div className="bg-light p-3">
-              <Row className="align-items-center">
-                <Col>
-                  <Button
-                    variant="secondary"
-                    className={'text-uppercase'}
-                    onClick={() => {
-                      setIsReplyEditorOpen(!isReplyEditorOpen);
-                    }}
-                  >
-                    <MessageSquare className={'me-2'} />
-                    Post a reply
-                  </Button>
-                </Col>
-              </Row>
-            </div>
-            {isReplyEditorOpen && (
-              <NewComponentForm
-                key={2}
-                comment={{ description: '' } as CommentType}
-                onSubmit={newCommentMutation.mutate}
-                errors={{ description: [] }}
-                loading={newCommentMutation.isLoading}
-                toggleComment={() => setIsReplyEditorOpen(!isReplyEditorOpen)}
-              />
             )}
           </Card>
         </Col>
