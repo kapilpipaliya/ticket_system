@@ -1,6 +1,7 @@
 class ApplicationController < ActionController::Base
   include AuthHelper
   include Pundit
+  protect_from_forgery with: :null_session
   rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
 
   before_action :configure_permitted_parameters, if: :devise_controller?

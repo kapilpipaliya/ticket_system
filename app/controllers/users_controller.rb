@@ -1,9 +1,8 @@
 class UsersController < ApplicationController
-  protect_from_forgery with: :null_session
   before_action :authenticate_user!, only: %i[]
+  before_action :authorize_actions
 
   def all
-    authorize User
     @users =
       if !current_user
         []
@@ -19,7 +18,17 @@ class UsersController < ApplicationController
   end
 
   def show
-    authorize User
     render json: current_user.to_json
+  end
+
+  private
+
+  def authorize_actions
+    case action_name
+    when 'all', 'show'
+      authorize User
+    else
+      raise NotImplementedError
+    end
   end
 end

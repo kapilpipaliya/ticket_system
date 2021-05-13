@@ -1,4 +1,16 @@
 class TicketPolicy < ApplicationPolicy
+  class Scope < Scope
+    def resolve
+      if user.customer?
+        scope.tickets_from(current_user)
+      elsif user.support?
+        scope
+      else
+        scope.limit(0)
+      end
+    end
+  end
+
   def index?
     @user.support? || @user.customer?
   end

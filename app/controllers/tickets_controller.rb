@@ -1,50 +1,31 @@
 class TicketsController < ApplicationController
   include Pagy::Backend
 
-  protect_from_forgery with: :null_session
   before_action :authenticate_user!, only: %i[index edit show update destroy]
   before_action :set_ticket, only: %i[edit show update destroy]
   before_action :check_ticket_permission, only: %i[edit show]
+  before_action :authorize_actions
 
   def index
-    if customer?
-      @q = Ticket.tickets_from(current_user).ransack(params[:q])
-      @pagy, @tickets = pagy(@q.result)
-      @tickets = TicketWithAssigneeComment.new(@tickets).tickets
-      @pagy_meta = pagy_metadata(@pagy)
-    elsif supporter?
-      @q = Ticket.ransack(params[:q])
-      @pagy, @tickets = pagy(@q.result)
-      @tickets = TicketWithAssigneeComment.new(@tickets).tickets
-      @pagy_meta = pagy_metadata(@pagy)
-    else
-      @tickets = []
-      @pagy_meta = {}
-    end
-    authorize @tickets
+    @q = policy_scope(Ticket).ransack(params[:q])
+    @pagy, @tickets = pagy(@q.result)
+    @tickets = TicketWithAssigneeComment.new(@tickets).tickets
+    @pagy_meta = pagy_metadata(@pagy)
   end
 
   def all_status
-    authorize Ticket
     render json: status_options
   end
 
   def all_status_filter
-    authorize Ticket
     render json: status_options_filter
   end
 
-  def new
-    authorize Ticket
-  end
+  def new; end
 
-  def edit
-    authorize @ticket
-  end
+  def edit; end
 
-  def show
-    authorize @ticket
-  end
+  def show; end
 
   def create
     @ticket = authorize Ticket.new(ticket_params)
@@ -57,7 +38,6 @@ class TicketsController < ApplicationController
   end
 
   def update
-    authorize @ticket
     return user_not_authorized if customer? && !params[:assignee_id].empty? && params[:assignee_id].to_i != @ticket.assignee_id
     if @ticket.update(ticket_params)
       render :show, status: :ok, location: @ticket
@@ -67,7 +47,6 @@ class TicketsController < ApplicationController
   end
 
   def destroy
-    authorize @ticket
     if supporter?
       @ticket.destroy
       render json: @ticket.errors.messages
@@ -79,8 +58,19 @@ class TicketsController < ApplicationController
 
   private
 
+  def authorize_actions
+    case action_name
+    when 'index', 'all_status', 'all_status_filter', 'new', 'create'
+      authorize Ticket
+    when 'edit', 'show', 'create', 'update', 'destroy'
+      authorize @ticket
+    else
+      raise NotImplementedError
+    end
+  end
+
   def set_ticket
-    @ticket = Ticket.find(params[:id])
+    @ticket ||= Ticket.find(params[:id])
   end
 
   def ticket_params

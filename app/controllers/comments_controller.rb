@@ -1,7 +1,7 @@
 class CommentsController < ApplicationController
-  protect_from_forgery with: :null_session
   before_action :authenticate_user!, only: %i[index update destroy]
   before_action :set_comment, only: %i[show update destroy]
+  before_action :authorize_actions
 
   def index
     @comments = authorize Comment.all
@@ -13,9 +13,7 @@ class CommentsController < ApplicationController
     render :index
   end
 
-  def show
-    authorize @ticket
-  end
+  def show; end
 
   def create
     @comment = authorize Comment.new(comment_params)
@@ -27,7 +25,6 @@ class CommentsController < ApplicationController
   end
 
   def update
-    authorize @comment
     if @comment.update(comment_params)
       render :show, status: :ok, location: @comment
     else
@@ -36,15 +33,25 @@ class CommentsController < ApplicationController
   end
 
   def destroy
-    authorize @comment
     @comment.destroy
     render json: @comment.errors.messages
   end
 
   private
 
+  def authorize_actions
+    case action_name
+    when 'index', 'by_ticket', 'new', 'create'
+      authorize Comment
+    when 'edit', 'show', 'create', 'update', 'destroy'
+      authorize @comment
+    else
+      raise NotImplementedError
+    end
+  end
+
   def set_comment
-    @comment = Comment.find(params[:id])
+    @comment ||= Comment.find(params[:id])
   end
 
   def comment_params

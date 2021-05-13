@@ -12,16 +12,14 @@ export const HomePage = (props: HomePageProps) => {
       <Container className={'mt-8'}>
         <Row className="align-items-center">
           <Col xs={12} lg={6} className="mb-5 mb-lg-0">
-            <span className="small text-info fw-bold">What's new at Shuffle</span>
-            <h1 className="mt-8 mb-8 mb-lg-12">Take care of your performance every day.</h1>
-            <p className="lead text-muted mb-8 mb-lg-12">
-              Build a well-presented brand that everyone will love. Take care to develop resources continually and integrity them with previous projects.
-            </p>
+            <span className="small text-info fw-bold">What's new at Mentor</span>
+            <h1 className="mt-8 mb-8 mb-lg-12">Lets' talk.</h1>
+            <p className="lead text-muted mb-8 mb-lg-12">Didn’t Find Any Solution? Just create a ticket. our team will respond in 24 hours.</p>
             <div className="d-flex flex-wrap">
-              <a className="btn btn-primary me-4" href="#">
-                Track your performance
+              <a className="btn btn-primary me-4" href="/tickets/new">
+                Create Ticket
               </a>
-              <a className="btn btn-outline-dark" href="#">
+              <a className="btn btn-outline-dark" href="/tickets/new">
                 Learn More
               </a>
             </div>
