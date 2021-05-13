@@ -1,15 +1,21 @@
 import { Ticket } from '../../Types';
-import { ButtonGroup, Card, Col, Container, Row } from 'react-bootstrap';
+import { Button, ButtonGroup, Card, Col, Container, Row } from 'react-bootstrap';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
-import { fetchDashBoardData } from '../../../services/serviceDashBoard';
+import { fetchDashBoardData, fetchLastActivityData } from '../../../services/serviceDashBoard';
 import { DateSelectDropdown } from './DateSelectDropdown';
 import { Spinner } from '../../../components/Spinner';
 import { AlertTriangle, FilePlus } from 'react-feather';
 import { StatisticCard } from './StatisticCard';
 
-const LatestActivity = (props: { rows: Ticket[] }) => {
+interface LatestActivityParams {
+  rows: Ticket[];
+  handleGetAllActivity: () => void;
+  showFetchAllButton: boolean;
+}
+
+const LatestActivity = (props: LatestActivityParams) => {
   return (
     <Card className="feed-card">
       <Card.Header>
@@ -33,11 +39,7 @@ const LatestActivity = (props: { rows: Ticket[] }) => {
           );
         })}
       </Card.Body>
-      <Card.Footer className="text-center">
-        <a href={'#'} className="b-b-primary text-primary">
-          View all Feeds
-        </a>
-      </Card.Footer>
+      <Card.Footer className="text-center">{props.showFetchAllButton && <Button onClick={props.handleGetAllActivity}>View all Feeds</Button>}</Card.Footer>
     </Card>
   );
 };
@@ -49,6 +51,7 @@ const dummyFn = async () => {
 export function DynamicDashboard() {
   const [start, setStart] = useState<Date | false>(false);
   const [end, setEnd] = useState<Date | false>(false);
+  const [lastActivityCount, setLastActivityCount] = useState(5);
   const { isLoading, error, data, refetch, isFetching } = useQuery(
     ['dashboard_data', start, end],
     () => {
@@ -61,10 +64,34 @@ export function DynamicDashboard() {
       enabled: false,
     },
   );
+  const {
+    isLoading: lastActivityIsLoading,
+    data: lastActivityData,
+    refetch: lastActivityReFetch,
+    isFetching: lastActivityIsFetching,
+  } = useQuery(
+    ['last_activity_data', start, end, lastActivityCount],
+    () => {
+      if (start && end) return fetchLastActivityData(start.valueOf() / 1000, end.valueOf() / 1000, lastActivityCount);
+      else {
+        return dummyFn();
+      }
+    },
+    {
+      enabled: false,
+    },
+  );
 
   useEffect(() => {
-    if (start && end) refetch();
+    if (start && end) {
+      setLastActivityCount(5);
+      refetch();
+      lastActivityReFetch();
+    }
   }, [start, end]);
+  useEffect(() => {
+    lastActivityReFetch();
+  }, [lastActivityCount]);
 
   const handleOnDateChange = React.useCallback((startDate, endDate) => {
     if (startDate && endDate) {
@@ -72,6 +99,9 @@ export function DynamicDashboard() {
       setEnd(endDate);
     }
   }, []);
+  const handleGetAllActivity = () => {
+    setLastActivityCount(0);
+  };
 
   return (
     <>
@@ -120,7 +150,11 @@ export function DynamicDashboard() {
               </Row>
               <Row className={'mt-1'}>
                 <Col xl={12} md={12}>
-                  <LatestActivity rows={data.data.latest_activity} />
+                  {!lastActivityIsLoading && lastActivityData && lastActivityData.data ? (
+                    <LatestActivity rows={lastActivityData.data.latest_activity} handleGetAllActivity={handleGetAllActivity} showFetchAllButton={lastActivityCount != 0} />
+                  ) : (
+                    <Spinner />
+                  )}
                 </Col>
               </Row>
             </>

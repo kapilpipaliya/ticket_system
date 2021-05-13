@@ -19,4 +19,8 @@ class PagesController < ApplicationController
     authorize :page
     @dashboard_data = Dashboard.new(params[:from], params[:to]).data
   end
+  def latest_activity
+    authorize :page
+    @dashboard_data = LatestActivity.new(params[:from], params[:to], params[:limit]).data
+  end
 end

@@ -13,6 +13,7 @@ Rails.application.routes.draw do
     get '/users/all', to: 'users#all'
     get '/dashboard_api', to: 'pages#dashboard_data'
     get '/dashboard_static_api', to: 'pages#dashboard_static_data'
+    get '/latest_activity', to: 'pages#latest_activity'
 
   end
 

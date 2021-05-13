@@ -1,12 +1,39 @@
-export const fetchDashBoardData = async (from_date: number, to_date: number): Promise<{ data: any }> => {
+interface DashboardData {
+  data: {
+    assigned: number;
+    close: number;
+    hold: number;
+    new_tickets: number;
+    open: number;
+    replies: number;
+    tickets_per_day: number;
+    unresolved_count: number;
+  };
+}
+export const fetchDashBoardData = async (from_date: number, to_date: number): Promise<DashboardData> => {
   try {
     const response = await fetch(`/dashboard_api.json?from=${from_date}&to=${to_date}`);
     return await response.json();
   } catch (err) {
     alert(err);
-    return { data: {} };
+    return { data: {} } as DashboardData;
   }
 };
+
+interface LastActivityData {
+  data: { last_activity: [] };
+}
+export const fetchLastActivityData = async (from_date: number, to_date: number, limit: number = 5): Promise<LastActivityData> => {
+  try {
+    const limitQuery = limit ? `&limit=${limit}` : '';
+    const response = await fetch(`/latest_activity.json?from=${from_date}&to=${to_date}${limitQuery}`);
+    return await response.json();
+  } catch (err) {
+    alert(err);
+    return { data: {} } as LastActivityData;
+  }
+};
+
 interface DashBordStaticData {
   data: { overdue_count: number; due_today: number };
 }

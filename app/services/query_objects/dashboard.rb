@@ -8,7 +8,6 @@ class Dashboard
     new_tickets_count = new_tickets.count
     tickets_per_day = new_tickets_count / ((@to - @from).to_i / 60 / 60 / 24)
     {
-      latest_activity: latest_activity,
       open: open.count,
       hold: hold.count,
       close: close.count,
@@ -45,10 +44,6 @@ class Dashboard
 
   def replies
     apply_date_rage(Comment)
-  end
-
-  def latest_activity
-    apply_date_rage(Ticket).order(created_at: :desc).limit(5)
   end
 
   def new_tickets
