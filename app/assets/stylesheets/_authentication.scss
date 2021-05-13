@@ -1,0 +1,71 @@
+/**  =====================
+      Authentication css start
+==========================  **/
+$border-color: #f1f1f1;
+$header-color: #525b69;
+$blue: #7267ef;
+$primary: $blue;
+.auth-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  min-width: 100%;
+  min-height: 100vh;
+  background: $primary;
+  @media (min-width: 1200px) {
+    .container {
+      max-width: 1140px;
+    }
+  }
+  @media (-ms-high-contrast: none), (-ms-high-contrast: active) {
+    display: block;
+    margin: 0 auto;
+
+    > .row {
+      min-height: 100vh;
+
+      > .aut-bg-img {
+        min-height: 100vh;
+      }
+    }
+  }
+
+  a,
+  p > a {
+    color: $header-color;
+    font-weight: 600;
+  }
+
+  .input-group {
+    background: transparent;
+  }
+
+  .card {
+    margin-bottom: 0;
+    padding: 8px;
+
+    .card-body {
+      padding: 20px 25px 20px 40px;
+    }
+    @media (-ms-high-contrast: none), (-ms-high-contrast: active) {
+      display: block;
+    }
+  }
+
+  > div {
+    z-index: 5;
+  }
+
+  @media only screen and (max-width: 767px) {
+    .card {
+      .card-body {
+        padding: 30px 15px;
+      }
+    }
+  }
+}
+
+/* image varient End */
+/**====== Authentication css end ======**/

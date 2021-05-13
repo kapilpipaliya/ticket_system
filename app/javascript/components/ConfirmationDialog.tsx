@@ -22,7 +22,7 @@ export const ConfirmationDialog = (props: ConfirmationDialogProps) => {
   return (
     <>
       <Modal show={props.show} onHide={handleClose}>
-        <Modal.Header closeButton>
+        <Modal.Header>
           <Modal.Title>{props.title}</Modal.Title>
         </Modal.Header>
         <Modal.Body>{props.body}</Modal.Body>

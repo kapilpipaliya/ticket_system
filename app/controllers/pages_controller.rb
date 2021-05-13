@@ -10,6 +10,11 @@ class PagesController < ApplicationController
     authorize :page
   end
 
+  def dashboard_static_data
+    authorize :page
+    @dashboard_data = DashboardStatic.new.data
+  end
+
   def dashboard_data
     authorize :page
     @dashboard_data = Dashboard.new(params[:from], params[:to]).data

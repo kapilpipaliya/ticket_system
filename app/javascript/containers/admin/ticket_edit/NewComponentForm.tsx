@@ -22,7 +22,7 @@ export const NewComponentForm = (props: {
     <Form>
       <Card>
         <Card.Body>
-          <Card.Title>Reply:</Card.Title>
+          <Card.Title>Reply</Card.Title>
           <Row>
             <Col sm={12}>
               <Form.Group controlId="formReply">

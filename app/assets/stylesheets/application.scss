@@ -14,7 +14,10 @@
  *= require_self
  */
 @import 'bootstrap/scss/bootstrap';
-
+@import 'authentication';
+.bg-blue {
+  background: $blue;
+}
 // bootstrap 4 classes:
 .sr-only,
 .sr-only-focusable:not(:focus):not(:focus-within) {

@@ -1,7 +1,7 @@
 import { Pagy, SortDirection, SortState, Ticket } from '../../Types';
 import * as React from 'react';
 import { Table } from 'react-bootstrap';
-import { Edit, Trash2 } from 'react-feather';
+import { Edit, Trash2, Eye } from 'react-feather';
 
 interface TicketItemProps {
   ticket: Ticket;
@@ -26,8 +26,11 @@ export const TicketItem = (props: TicketItemProps) => {
       <td>{new Date(props.ticket.last_activity).toLocaleString()}</td>
       {/*<td>Url: {props.ticket.url}</td>*/}
       <td style={{ display: 'flex', flexWrap: 'nowrap' }}>
+        <a href={`tickets/${props.ticket.id}`} className="text-muted">
+          <Eye className={'me-1'} />
+        </a>
         <a href={`tickets/${props.ticket.id}/edit`} className="text-muted">
-          <Edit className={'mr-1'} />
+          <Edit className={'me-1'} />
         </a>
         <Trash2 style={{ cursor: 'pointer' }} onClick={props.onDelete} />
       </td>

@@ -65,7 +65,7 @@ export const NewTicketModal = (props: NewTicketModalProps) => {
   };
 
   return (
-    <Modal show={props.show} onHide={props.onHide} size={'lg'}>
+    <Modal show={props.show} onHide={props.onHide} size={'xl'}>
       <Modal.Header>
         <Modal.Title as="h5">
           <Trello className={'me-2'} />

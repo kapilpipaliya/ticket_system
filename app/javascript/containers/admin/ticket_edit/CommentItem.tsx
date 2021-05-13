@@ -6,12 +6,21 @@ import { submitCommentEdit } from '../../../services/serviceComment';
 import { NewComponentForm } from './NewComponentForm';
 import { Card, Col, Row } from 'react-bootstrap';
 import { Edit2, Trash2 } from 'react-feather';
+import styles from './CommentItem.module.scss';
+import clsx from 'clsx';
 
 const initialErrorState = () => {
   return { description: [] as string[] };
 };
-
-export function CommentItem(props: { comment: CommentType; onClick: () => void; ticketId: number; currentUser: CurrentUser; reFetchComment: () => void }) {
+interface CommentItemProps {
+  comment: CommentType;
+  onClick?: () => void;
+  ticketId: number;
+  currentUser?: CurrentUser;
+  reFetchComment?: () => void;
+  editable: boolean;
+}
+export function CommentItem(props: CommentItemProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [errors, setErrors] = useState(initialErrorState());
 
@@ -33,7 +42,7 @@ export function CommentItem(props: { comment: CommentType; onClick: () => void; 
   });
   return (
     <>
-      {isEditing ? (
+      {props.editable && isEditing ? (
         <NewComponentForm
           key={2}
           onSubmit={editCommentMutation.mutate}
@@ -43,11 +52,11 @@ export function CommentItem(props: { comment: CommentType; onClick: () => void; 
           toggleComment={() => setIsEditing(false)}
         />
       ) : (
-        <Card.Body className="hd-detail hdd-admin border-bottom">
+        <Card.Body className={clsx(styles['hd-detail'], 'hdd-admin border-bottom')}>
           <Row>
             <Col sm="auto">
               <p>
-                <i className="fas fa-thumbs-up mr-1 text-primary" />#{props.comment.id}
+                <i className="fas fa-thumbs-up me-1 text-primary" />#{props.comment.id}
               </p>
             </Col>
             <Col>
@@ -59,20 +68,22 @@ export function CommentItem(props: { comment: CommentType; onClick: () => void; 
               </div>
               <div dangerouslySetInnerHTML={{ __html: props.comment.description }}></div>
             </Col>
-            <Col sm="auto" className="pl-0 col-right">
+            <Col sm="auto" className={clsx(styles['col-right'], 'pl-0')}>
               <Card.Body className="text-center">
-                <ul className="list-unstyled mb-0 edit-del">
-                  <li className="d-inline-block f-20 mr-1">
-                    <span>
-                      <Edit2 className={'text-muted'} style={{ cursor: 'pointer' }} onClick={() => setIsEditing(true)} />
-                    </span>
-                  </li>
-                  <li className="d-inline-block f-20">
-                    <span>
-                      <Trash2 className={'text-muted'} style={{ cursor: 'pointer' }} onClick={props.onClick} />
-                    </span>
-                  </li>
-                </ul>
+                {props.editable && (
+                  <ul className={clsx(styles['edit-del'], 'list-unstyled mb-0')}>
+                    <li className="d-inline-block f-20 me-1">
+                      <span>
+                        <Edit2 className={'text-muted'} style={{ cursor: 'pointer' }} onClick={() => setIsEditing(true)} />
+                      </span>
+                    </li>
+                    <li className="d-inline-block f-20">
+                      <span>
+                        <Trash2 className={'text-muted'} style={{ cursor: 'pointer' }} onClick={props.onClick} />
+                      </span>
+                    </li>
+                  </ul>
+                )}
               </Card.Body>
             </Col>
           </Row>

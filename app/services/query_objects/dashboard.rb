@@ -8,8 +8,6 @@ class Dashboard
     new_tickets_count = new_tickets.count
     tickets_per_day = new_tickets_count / ((@to - @from).to_i / 60 / 60 / 24)
     {
-      overdue_count: overdue_count.count,
-      due_today: due_today.count,
       latest_activity: latest_activity,
       open: open.count,
       hold: hold.count,
@@ -23,14 +21,6 @@ class Dashboard
   end
 
   private
-
-  def overdue_count
-    Ticket.where('due_date < :today', { today: Date.today }).not_close
-  end
-
-  def due_today
-    Ticket.where(due_date: Date.today).not_close
-  end
 
   def unresolved_count
     # open + hold

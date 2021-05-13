@@ -12,6 +12,7 @@ Rails.application.routes.draw do
     get '/comments/by_ticket/:id', to: 'comments#by_ticket'
     get '/users/all', to: 'users#all'
     get '/dashboard_api', to: 'pages#dashboard_data'
+    get '/dashboard_static_api', to: 'pages#dashboard_static_data'
 
   end
 

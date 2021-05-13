@@ -7,7 +7,7 @@ import { useMutation, useQuery } from 'react-query';
 import { fetchAllTicketStatus, fetchTicketData, ticketDelete, ticketUpdate } from '../../../services/serviceTicket';
 import { deleteComment, fetchCommentData, submitTicketReply } from '../../../services/serviceComment';
 import { fetchAllUsers, fetchCurrentUser } from '../../../services/serviceUser';
-import { ToastNotification } from '../../../components/ToastNotification';
+
 import { ConfirmationDialog } from '../../../components/ConfirmationDialog';
 import * as UrlPattern from 'url-pattern';
 import { LoadingButton } from '../../../components/LoadingButton';
@@ -15,6 +15,8 @@ import { isEmpty } from '../../utils';
 import { NewComponentForm } from './NewComponentForm';
 import { CommentItem } from './CommentItem';
 import { Spinner } from '../../../components/Spinner';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export const TicketEdit = () => {
   const [ticketId, setTicketId] = useState(() => {
@@ -30,9 +32,7 @@ export const TicketEdit = () => {
   const [ticketDeleteConfirmation, setTicketDeleteConfirmation] = useState(false);
   const [commentDeleteConfirmation, setCommentDeleteConfirmation] = useState(false);
   const [selectedComment, setSelectedComment] = useState(0);
-  const [showToast, setShowToast] = useState(false);
   const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
-  const [toastMessage, setToastMessage] = useState('');
 
   const {
     isLoading: isTicketLoading,
@@ -40,23 +40,37 @@ export const TicketEdit = () => {
     data: ticketData,
     isFetching,
     refetch: reFetchTicket,
-  } = useQuery('ticketData', async () => {
-    const resp = await fetchTicketData(ticketId);
-    setNewStatus(resp.status);
-    setNewAssignedToID(resp.assignee_id || '');
-    return resp;
-  });
+  } = useQuery(
+    'ticketData',
+    async () => {
+      const resp = await fetchTicketData(ticketId);
+      setNewStatus(resp.status);
+      setNewAssignedToID(resp.assignee_id || '');
+      return resp;
+    },
+    {
+      enabled: false,
+    },
+  );
 
   const {
     isLoading: isCommentLoading,
     error: commentError,
     data: commentsData,
     refetch: reFetchComment,
-  } = useQuery('commentsData', async () => {
-    return await fetchCommentData(ticketId);
-  });
+  } = useQuery(
+    'commentsData',
+    async () => {
+      return await fetchCommentData(ticketId);
+    },
+    {
+      enabled: false,
+    },
+  );
 
   useEffect(() => {
+    reFetchTicket();
+    reFetchComment();
     fetchCurrentUser().then(resp => setCurrentUser(resp));
     fetchAllTicketStatus().then(resp => setAllStatus(resp));
     fetchAllUsers().then(resp => setAllUsers(resp));
@@ -91,8 +105,7 @@ export const TicketEdit = () => {
       alert(result.base);
     } else {
       await reFetchComment();
-      setToastMessage('Comment deleted successfully');
-      setShowToast(true);
+      toast('Comment deleted successfully');
     }
   });
 
@@ -104,8 +117,7 @@ export const TicketEdit = () => {
     const result = await ticketUpdate(ticketData.id, { status: newStatus, assignee_id: newAssignedToID });
     if (result.id) {
       await reFetchTicket();
-      setToastMessage('Ticket updated successfully');
-      setShowToast(true);
+      toast('Ticket updated successfully');
     } else if (result.base) {
       alert(result.base);
     }
@@ -119,8 +131,7 @@ export const TicketEdit = () => {
     const resp = await ticketDelete(ticketData.id);
     setTicketDeleteConfirmation(false);
     if (isEmpty(resp)) {
-      setToastMessage('Ticket deleted successfully');
-      setShowToast(true);
+      toast('Ticket deleted successfully');
       window.history.back();
     }
     return resp;
@@ -132,14 +143,14 @@ export const TicketEdit = () => {
 
   if (isTicketLoading)
     return (
-      <Container>
+      <Container className={'mt-2'}>
         <Spinner />
       </Container>
     );
-
+  if (!ticketData && !commentsData) return <Container className={'mt-2'}>No Data found</Container>;
   return (
-    <Container>
-      <ToastNotification show={showToast} setShow={setShowToast} message={toastMessage} />
+    <Container className={'mt-2'}>
+      <ToastContainer />
       <ConfirmationDialog
         show={ticketDeleteConfirmation}
         setShow={setTicketDeleteConfirmation}
@@ -165,7 +176,7 @@ export const TicketEdit = () => {
           <Card>
             <Card.Header>
               <h5>
-                <FileText className={'mr-1'} />
+                <FileText className={'me-1'} />
                 {ticketData.subject}
               </h5>
             </Card.Header>
@@ -190,6 +201,7 @@ export const TicketEdit = () => {
                     reFetchComment={reFetchComment}
                     comment={comment}
                     onClick={handleDeleteConfirmation(comment.id)}
+                    editable={true}
                   />
                 );
               })
@@ -204,7 +216,7 @@ export const TicketEdit = () => {
                       setIsReplyEditorOpen(!isReplyEditorOpen);
                     }}
                   >
-                    <MessageSquare className={'mr-2'} />
+                    <MessageSquare className={'me-2'} />
                     Post a reply
                   </Button>
                 </Col>
@@ -230,13 +242,13 @@ export const TicketEdit = () => {
             <Card.Body>
               {!isCommentLoading && !!commentsData.length && (
                 <div className="alert alert-success d-block text-center text-uppercase">
-                  <CheckCircle className={'mr-2'} />
+                  <CheckCircle className={'me-2'} />
                   Replied
                 </div>
               )}
               <Form.Group controlId="ticketEdit.changeStatus">
                 <Form.Label>Status</Form.Label>
-                <Form.Control as="select" custom value={newStatus} onChange={event => setNewStatus(event.target.value)}>
+                <Form.Control as="select" value={newStatus} onChange={event => setNewStatus(event.target.value)}>
                   {allStatus.map(op => {
                     return (
                       <option key={op.id} value={op.id}>
@@ -246,9 +258,9 @@ export const TicketEdit = () => {
                   })}
                 </Form.Control>
               </Form.Group>
-              <Form.Group controlId="ticketEdit.changeAssignedTo">
+              <Form.Group controlId="ticketEdit.changeAssignedTo" className={'mt-2'}>
                 <Form.Label>Assigned To</Form.Label>
-                <Form.Control as="select" custom value={newAssignedToID} onChange={event => setNewAssignedToID(event.target.value)}>
+                <Form.Control as="select" value={newAssignedToID} onChange={event => setNewAssignedToID(event.target.value)}>
                   {allUsers.map(user => {
                     return (
                       <option key={user.id} value={user.id}>
@@ -278,7 +290,7 @@ export const TicketEdit = () => {
               </Row>
               <Row>
                 <Col sm={3}>
-                  <label className="mb-0 wid-100 mr-2">Created:</label>
+                  <label className="mb-0 wid-100 me-2">Created:</label>
                 </Col>
                 <Col sm={9}>
                   <span>{new Date(ticketData.created_at).toUTCString()}</span>
@@ -286,7 +298,7 @@ export const TicketEdit = () => {
               </Row>
               <Row>
                 <Col sm={3}>
-                  <label className="mb-0 wid-100 mr-2">Response:</label>
+                  <label className="mb-0 wid-100 me-2">Response:</label>
                 </Col>
                 <Col sm={9}>
                   <span>{new Date(ticketData.updated_at).toUTCString()}</span>
@@ -295,13 +307,12 @@ export const TicketEdit = () => {
             </Container>
             <ul className="list-group list-group-flush">
               <li className="list-group-item py-3">
-                <LoadingButton onClick={handleUpdateTicket} loading={ticketUpdateMutation.isLoading}>
-                  <Save className={'mr-2'} />
+                <LoadingButton onClick={handleUpdateTicket} loading={ticketUpdateMutation.isLoading} className={'me-2'}>
+                  <Save />
                   Update
-                </LoadingButton>{' '}
+                </LoadingButton>
                 <LoadingButton onClick={() => setTicketDeleteConfirmation(true)} loading={ticketDeleteMutation.isLoading} variant={'danger'}>
-                  {' '}
-                  <Trash2 className={'mr-2'} />
+                  <Trash2 className={'me-2'} />
                   Delete Ticket
                 </LoadingButton>
               </li>

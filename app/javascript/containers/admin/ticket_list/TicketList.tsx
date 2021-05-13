@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { Button, Card, Col, Collapse, Container, Modal, Row } from 'react-bootstrap';
-import { Plus } from 'react-feather';
+import { Plus, Filter } from 'react-feather';
 import clsx from 'clsx';
 import { useMutation, useQuery } from 'react-query';
 import { CurrentUser, SearchState, SortDirection, SortState, Ticket } from '../../Types';
 import { fetchAllTicketData, fetchAllTicketStatusFilter, ticketDelete } from '../../../services/serviceTicket';
 import { fetchCurrentUser } from '../../../services/serviceUser';
-import { ToastNotification } from '../../../components/ToastNotification';
+
 import { ConfirmationDialog } from '../../../components/ConfirmationDialog';
 import { NewTicketModal } from './NewTicketModal';
 import { TicketSearch } from './TicketSearch';
@@ -16,6 +16,8 @@ import { TicketTable } from './TicketTable';
 import { TicketPagination } from './TicketPagination';
 import styles from './TicketList.module.scss';
 import { Spinner } from '../../../components/Spinner';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const searchFormInitialState = () => ({
   name: '',
@@ -28,8 +30,6 @@ export const TicketList = () => {
 
   const [deleteConfirmation, setDeleteConfirmation] = useState(false);
   const [selectedTicket, setSelectedTicket] = useState(0);
-  const [showToast, setShowToast] = useState(false);
-  const [toastMessage, setToastMessage] = useState('');
 
   const [pageNo, setPageNo] = useState<number | string>(1);
   const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
@@ -51,7 +51,7 @@ export const TicketList = () => {
     refetch,
     isFetching,
   } = useQuery(['ticketsData'], () => fetchAllTicketData(pageNo, sortState, searchSubmitState, statusSubmit), {
-    enabled: false, // https://react-query.tanstack.com/guides/disabling-queries
+    enabled: false,
   });
 
   useEffect(() => {
@@ -77,8 +77,7 @@ export const TicketList = () => {
     setDeleteConfirmation(false);
     if (isEmpty(resp)) {
       await refetch();
-      setToastMessage('Ticket deleted successfully');
-      setShowToast(true);
+      toast('Ticket deleted successfully');
     }
     return resp;
   });
@@ -89,8 +88,7 @@ export const TicketList = () => {
   const onNewTicket = (ticket: Ticket) => {
     setSearchState(searchFormInitialState());
     refetch();
-    setToastMessage('Ticket created successfully');
-    setShowToast(true);
+    toast('Ticket created successfully');
   };
 
   const handlePageChange = (page_number: number | string) => () => {
@@ -129,8 +127,8 @@ export const TicketList = () => {
   };
   const [isBasic, setIsBasic] = React.useState(false);
   return (
-    <Container fluid>
-      <ToastNotification show={showToast} setShow={setShowToast} message={toastMessage} />
+    <Container fluid className={'mt-2'}>
+      <ToastContainer />
       <ConfirmationDialog
         show={deleteConfirmation}
         setShow={setDeleteConfirmation}
@@ -147,25 +145,24 @@ export const TicketList = () => {
           <Card className="shadow-none">
             <Card.Header>
               <Row>
-                <Col sm={6}>
+                <Col>
                   <h5>All Tickets</h5>
                 </Col>
-                <Col sm={6} className="text-right">
-                  <Button variant="success" className="btn-sm btn-round has-ripple" onClick={() => setIsOpen(true)}>
+                <Col className="text-end">
+                  <Button type="button" className={'btn-sm me-2'} onClick={() => setIsBasic(!isBasic)} aria-controls="basic-collapse" aria-expanded={isBasic}>
+                    <Filter />
+                    Filter
+                  </Button>
+                  <Button type="button" className="btn-sm" onClick={() => setIsOpen(true)}>
                     <Plus /> Add Ticket
                   </Button>
                 </Col>
               </Row>
             </Card.Header>
 
-            <Card.Body className={clsx(['shadow border-0', styles['support-table']])}>
-              <Card>
-                <Card.Header>
-                  <Button onClick={() => setIsBasic(!isBasic)} aria-controls="basic-collapse" aria-expanded={isBasic}>
-                    Filter
-                  </Button>
-                </Card.Header>
-                <Collapse in={isBasic}>
+            <Card.Body>
+              <Collapse in={isBasic}>
+                <Card>
                   <div id="basic-collapse">
                     <Card.Body>
                       <TicketSearch
@@ -180,8 +177,9 @@ export const TicketList = () => {
                       />
                     </Card.Body>
                   </div>
-                </Collapse>
-              </Card>
+                </Card>
+              </Collapse>
+
               <Card className={'mt-3'}>
                 <Card.Body>
                   {isLoading ||
