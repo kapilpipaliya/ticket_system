@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { Button, Card, Col, Collapse, Container, Modal, Row } from 'react-bootstrap';
-import { Plus, Filter } from 'react-feather';
-import clsx from 'clsx';
+import { Filter, Plus } from 'react-feather';
 import { useMutation, useQuery } from 'react-query';
 import { CurrentUser, SearchState, SortDirection, SortState, Ticket } from '../../Types';
 import { fetchAllTicketData, fetchAllTicketStatusFilter, ticketDelete } from '../../../services/serviceTicket';
@@ -14,9 +13,8 @@ import { TicketSearch } from './TicketSearch';
 import { isEmpty } from '../../utils';
 import { TicketTable } from './TicketTable';
 import { TicketPagination } from './TicketPagination';
-import styles from './TicketList.module.scss';
 import { Spinner } from '../../../components/Spinner';
-import { ToastContainer, toast } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const searchFormInitialState = () => ({

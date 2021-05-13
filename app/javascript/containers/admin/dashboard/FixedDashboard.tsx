@@ -3,9 +3,9 @@ import * as React from 'react';
 import { useEffect } from 'react';
 import { Col, Container, Row } from 'react-bootstrap';
 import { Spinner } from '../../../components/Spinner';
-import { AlertTriangle } from 'react-feather';
-import { StatisticCard } from './StatisticCard';
-import { fetchDashBoardData, fetchDashBoardStaticData } from '../../../services/serviceDashBoard';
+
+import { fetchDashBoardStaticData } from '../../../services/serviceDashBoard';
+import PageStatisticCard from '../../../components/statistic/PageStatisticCard';
 
 export const FixedDashboard = () => {
   const { isLoading, error, data, refetch, isFetching } = useQuery(
@@ -31,11 +31,13 @@ export const FixedDashboard = () => {
   if (!data) return <Container className={'mt-2'}>No Data found</Container>;
   return (
     <Row>
-      <Col>
-        <StatisticCard icon={<AlertTriangle />} title={'Overdue'} subtitle={data.data.overdue_count} />
+      <Col xs={3} md={2}>
+        <PageStatisticCard
+          params={{ iconClass: 'icon-trending-up', iconName: '', variant: 'warning', title: '', primaryText: data.data.overdue_count, secondaryText: 'Overdue' }}
+        />
       </Col>
-      <Col>
-        <StatisticCard icon={<AlertTriangle />} title={'Due Today'} subtitle={data.data.due_today} />
+      <Col xs={3} md={2}>
+        <PageStatisticCard params={{ iconClass: 'icon-trending-up', iconName: '', variant: 'warning', title: '', primaryText: data.data.due_today, secondaryText: 'Due Today' }} />
       </Col>
     </Row>
   );

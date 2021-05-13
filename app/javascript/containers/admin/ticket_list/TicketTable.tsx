@@ -1,7 +1,7 @@
 import { Pagy, SortDirection, SortState, Ticket } from '../../Types';
 import * as React from 'react';
 import { Table } from 'react-bootstrap';
-import { Edit, Trash2, Eye } from 'react-feather';
+import { Edit, Eye, Trash2 } from 'react-feather';
 
 interface TicketItemProps {
   ticket: Ticket;

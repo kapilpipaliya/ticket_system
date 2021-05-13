@@ -1,9 +1,10 @@
 import * as React from 'react';
-import { Button, Dropdown } from 'react-bootstrap';
-import { Filter, Link } from 'react-feather';
 import { useEffect, useState } from 'react';
+import { Button, Dropdown } from 'react-bootstrap';
+import { Filter } from 'react-feather';
 
-import { sub, endOfDay, startOfISOWeek, startOfMonth, startOfYear } from 'date-fns';
+import { endOfDay, startOfISOWeek, startOfMonth, startOfYear, sub } from 'date-fns';
+
 interface DateSelectDropdownProps {
   handleRangeSelect: (startDate: Date, endDate: Date) => void;
 }

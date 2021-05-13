@@ -15,7 +15,7 @@ import { isEmpty } from '../../utils';
 import { NewComponentForm } from './NewComponentForm';
 import { CommentItem } from './CommentItem';
 import { Spinner } from '../../../components/Spinner';
-import { ToastContainer, toast } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 export const TicketEdit = () => {
