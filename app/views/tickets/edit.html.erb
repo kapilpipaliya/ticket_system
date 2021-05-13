@@ -1,3 +1,5 @@
-<div id="ticket_edit" data-id="<%= @ticket.id %>"></div>
+<% content_for :content do %>
+<%= react_component('ticket_edit', ticketId: @ticket.id) %>
 <%= javascript_pack_tag 'support/TicketEdit' %>
 <%= stylesheet_pack_tag 'support/TicketEdit' %>
+<% end %>

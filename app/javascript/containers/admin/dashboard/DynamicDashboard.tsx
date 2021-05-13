@@ -71,7 +71,7 @@ export function DynamicDashboard() {
   };
 
   return (
-    <Container className={'mt-2'} fluid>
+    <>
       <Row>
         <Col xs={12} className="text-end mt-2 mb-2">
           <ButtonGroup>
@@ -206,6 +206,6 @@ export function DynamicDashboard() {
           )}
         </>
       )}
-    </Container>
+    </>
   );
 }
