@@ -3,18 +3,7 @@ class UsersController < ApplicationController
   before_action :authorize_actions
 
   def all
-    @users =
-      if !current_user
-        []
-      else
-        if current_user.customer?
-          User.where(id: current_user.id)
-        elsif current_user.support?
-          User.where(role: 'support').order(created_at: :asc)
-        else
-          []
-        end
-      end
+    @users = policy_scope(User)
   end
 
   def show
