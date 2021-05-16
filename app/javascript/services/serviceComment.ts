@@ -2,7 +2,7 @@ import { CommentType } from '../containers/Types';
 
 export const fetchCommentData = async (ticketId: string): Promise<CommentType[]> => {
   try {
-    const responseComments = await fetch(`/comments/by_ticket/${ticketId}.json`);
+    const responseComments = await fetch(`/api/comments/by_ticket/${ticketId}.json`);
     return await responseComments.json();
   } catch (err) {
     alert(err);
@@ -13,7 +13,7 @@ export const fetchCommentData = async (ticketId: string): Promise<CommentType[]>
 export const submitTicketReply = async (data): Promise<CommentType | null> => {
   const csrfToken = (document.querySelector('[name=csrf-token]') as HTMLMetaElement).content;
   try {
-    const response = await fetch('/comments', {
+    const response = await fetch('/api/comments', {
       method: 'POST',
       headers: {
         'X-CSRF-TOKEN': csrfToken,
@@ -32,7 +32,7 @@ export const submitTicketReply = async (data): Promise<CommentType | null> => {
 export const submitCommentEdit = async (commentId, data: { [key: string]: any }): Promise<any> => {
   const csrfToken = (document.querySelector('[name=csrf-token]') as HTMLMetaElement).content;
   try {
-    const response = await fetch(`/comments/${commentId}`, {
+    const response = await fetch(`/api/comments/${commentId}`, {
       method: 'PATCH',
       headers: {
         'X-CSRF-TOKEN': csrfToken,
@@ -50,7 +50,7 @@ export const submitCommentEdit = async (commentId, data: { [key: string]: any })
 export const deleteComment = async commentId => {
   const csrfToken = (document.querySelector('[name=csrf-token]') as HTMLMetaElement).content;
   try {
-    const response = await fetch(`/comments/${commentId}`, {
+    const response = await fetch(`/api/comments/${commentId}`, {
       method: 'DELETE',
       headers: {
         'X-CSRF-TOKEN': csrfToken,

@@ -15,10 +15,6 @@ class ApplicationController < ActionController::Base
     devise_parameter_sanitizer.permit(:account_update, keys: attributes)
   end
 
-  def user_not_authorized
-    render json: { 'base' => :unauthorized }, status: :unprocessable_entity
-  end
-
   def set_current_user
     Current.current_user = current_user
   end

@@ -3,6 +3,10 @@ module AuthHelper
 
   private
 
+  def user_not_authorized
+    render json: { 'base' => :unauthorized }, status: :unprocessable_entity
+  end
+
   def guest?
     Current.current_user.nil?
   end

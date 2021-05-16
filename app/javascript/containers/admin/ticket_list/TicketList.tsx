@@ -114,10 +114,12 @@ export const TicketList = () => {
     });
   };
   const handleSearchSubmit = () => {
+    setPageNo(1);
     setSearchSubmitState({ ...searchState });
     setStatusSubmit(status);
   };
   const handleClearSearchForm = () => {
+    setPageNo(1);
     setSearchState(searchFormInitialState());
     setStatus('');
     setStatusSubmit('');

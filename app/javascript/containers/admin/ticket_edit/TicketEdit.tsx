@@ -86,7 +86,7 @@ export const TicketEdit = (props: TicketEditProps) => {
     setTicketDeleteConfirmation(false);
     if (isEmpty(resp)) {
       toast('Ticket deleted successfully');
-      window.history.back();
+      window.location.href = '/tickets';
     }
     return resp;
   });
