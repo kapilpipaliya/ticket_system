@@ -1,5 +1,5 @@
 class PagesController < ApplicationController
-  before_action :authenticate_user!, only: %i[index dashboard]
+  before_action :authenticate_user!, only: %i[dashboard]
   before_action :authorize_actions
 
   def index; end

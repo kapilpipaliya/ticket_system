@@ -44,7 +44,7 @@ export const fetchAllTicketData = async (
   try {
     const search_query = searchQuery(search_state);
     const sort_query = sortQuery(sort_state);
-    const response = await fetch(`/api/tickets.json?page=${page_number}${search_query ? `&${search_query}` : ''}${sort_query ? `&${sort_query}` : ''}&q[status_eq]=${status}`);
+    const response = await fetch(`/api/v1/tickets.json?page=${page_number}${search_query ? `&${search_query}` : ''}${sort_query ? `&${sort_query}` : ''}&q[status_eq]=${status}`);
     return await response.json();
   } catch (err) {
     alert(err);
@@ -55,7 +55,7 @@ export const fetchAllTicketData = async (
 export const ticketCreate = async (data: { [key: string]: any }) => {
   try {
     const csrfToken = (document.querySelector('[name=csrf-token]') as HTMLMetaElement).content;
-    const response = await fetch('/api/tickets', {
+    const response = await fetch('/api/v1/tickets', {
       method: 'POST',
       headers: {
         'X-CSRF-TOKEN': csrfToken,
@@ -90,7 +90,7 @@ export const getInitialTicketState = (): Ticket => {
 
 export const fetchTicketData = async (ticketId: string): Promise<Ticket> => {
   try {
-    const response = await fetch(`/api/tickets/${ticketId}.json`);
+    const response = await fetch(`/api/v1/tickets/${ticketId}.json`);
     return await response.json();
   } catch (err) {
     alert(err);
@@ -101,7 +101,7 @@ export const fetchTicketData = async (ticketId: string): Promise<Ticket> => {
 export const ticketUpdate = async (ticketId, data: { [key: string]: any }) => {
   try {
     const csrfToken = (document.querySelector('[name=csrf-token]') as HTMLMetaElement).content;
-    const response = await fetch(`/api/tickets/${ticketId}`, {
+    const response = await fetch(`/api/v1/tickets/${ticketId}`, {
       method: 'PATCH',
       headers: {
         'X-CSRF-TOKEN': csrfToken,
@@ -119,7 +119,7 @@ export const ticketUpdate = async (ticketId, data: { [key: string]: any }) => {
 
 export const fetchAllTicketStatus = async (): Promise<TicketStatus[]> => {
   try {
-    const response = await fetch(`/api/tickets/all_status.json`, {
+    const response = await fetch(`/api/v1/tickets/all_status.json`, {
       headers: {
         'Content-Type': 'application/json',
         Accept: 'application/json',
@@ -134,7 +134,7 @@ export const fetchAllTicketStatus = async (): Promise<TicketStatus[]> => {
 
 export const fetchAllTicketStatusFilter = async (): Promise<TicketStatus[]> => {
   try {
-    const response = await fetch(`/api/tickets/all_status_filter.json`, {
+    const response = await fetch(`/api/v1/tickets/all_status_filter.json`, {
       headers: {
         'Content-Type': 'application/json',
         Accept: 'application/json',
@@ -150,7 +150,7 @@ export const fetchAllTicketStatusFilter = async (): Promise<TicketStatus[]> => {
 export const ticketDelete = async ticketId => {
   try {
     const csrfToken = (document.querySelector('[name=csrf-token]') as HTMLMetaElement).content;
-    const response = await fetch(`/api/tickets/${ticketId}`, {
+    const response = await fetch(`/api/v1/tickets/${ticketId}`, {
       method: 'DELETE',
       headers: {
         'X-CSRF-TOKEN': csrfToken,
