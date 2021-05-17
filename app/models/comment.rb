@@ -13,13 +13,12 @@ class Comment < ApplicationRecord
 
   private
 
-  def update_ticket_comments_count_create
+  def update_ticket_comments_count
     TicketCommentsCountUpdateJob.perform_later self.ticket.id
   end
 
-  def update_ticket_comments_count_update
-    TicketCommentsCountUpdateJob.perform_later self.ticket.id
-  end
+  alias update_ticket_comments_count_create update_ticket_comments_count
+  alias update_ticket_comments_count_update update_ticket_comments_count
 
   def update_ticket_last_activity
     TicketLastActivityUpdateJob.perform_later self.ticket.id, Time.current

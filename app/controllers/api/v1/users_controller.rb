@@ -8,7 +8,7 @@ module Api
         @users = policy_scope(User)
       end
 
-      def show
+      def profile
         render json: current_user.to_json
       end
 
@@ -16,7 +16,7 @@ module Api
 
       def authorize_actions
         case action_name
-        when 'all', 'show'
+        when 'all', 'profile'
           authorize User
         else
           raise NotImplementedError

@@ -19,29 +19,13 @@ class TicketPolicy < ApplicationPolicy
     true
   end
 
-  def all_status_filter?
-    true
-  end
+  alias all_status_filter? all_status?
+  alias new? all_status?
+  alias create? all_status?
 
-  def new?
-    true
-  end
-
-  def edit?
-    @user.support? || @user.customer?
-  end
-
-  def show?
-    @user.support? || @user.customer?
-  end
-
-  def create?
-    true
-  end
-
-  def update?
-    @user.support? || @user.customer?
-  end
+  alias edit? index?
+  alias show? index?
+  alias update? index?
 
   def destroy?
     @user.support?

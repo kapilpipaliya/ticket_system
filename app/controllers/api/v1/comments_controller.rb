@@ -45,7 +45,7 @@ module Api
         case action_name
         when 'index', 'by_ticket', 'new', 'create'
           authorize Comment
-        when 'edit', 'show', 'create', 'update', 'destroy'
+        when 'edit', 'show', 'update', 'destroy'
           authorize @comment
         else
           raise NotImplementedError

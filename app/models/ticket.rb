@@ -13,12 +13,14 @@ class Ticket < ApplicationRecord
 
   enum status: %i[open hold close]
 
+  validates :subject, presence: true, length: { minimum: 10 }
+  validates :description, presence: true, length: { minimum: 10 }
+  validates :name, presence: true
+  validates :email, presence: true, format: { with: URI::MailTo::EMAIL_REGEXP }
   validates :status, inclusion: { in: statuses.keys }
-  validates :email, :name, :subject, :description, presence: true
-  validates :subject, :description, length: { minimum: 10 }
-  validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }
   validates :creator, absence: true, if: :guest?
   validates :creator, presence: true, on: :create, if: -> { supporter? || customer? }
+
   before_create :set_due_date
   after_create_commit :send_new_ticket_email
   after_update_commit :send_status_change_email

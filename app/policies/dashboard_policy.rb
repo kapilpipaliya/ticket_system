@@ -3,11 +3,7 @@ class DashboardPolicy < ApplicationPolicy
     @user.support?
   end
 
-  def data?
-    @user.support?
-  end
+  alias data? static?
 
-  def latest_activity?
-    @user.support?
-  end
+  alias latest_activity? static?
 end

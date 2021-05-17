@@ -7,8 +7,8 @@ class User < ApplicationRecord
   enum role: %i[customer support]
   after_initialize :set_default_role, if: :new_record?
 
-  validates :role, inclusion: { in: roles.keys }
-  validates :first_name, :role, presence: true
+  validates :first_name, presence: true
+  validates :role, presence: true, inclusion: { in: roles.keys }
 
   def set_default_role
     self.role ||= :customer

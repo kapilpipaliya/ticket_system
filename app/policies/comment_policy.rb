@@ -11,15 +11,9 @@ class CommentPolicy < ApplicationPolicy
     false
   end
 
-  def create?
-    @user.support? || @user.customer?
-  end
+  alias create? by_ticket?
 
-  def update?
-    @user.support?
-  end
+  alias update? index?
 
-  def destroy?
-    @user.support?
-  end
+  alias destroy? index?
 end

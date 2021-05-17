@@ -4,6 +4,7 @@ module Api
     include Pundit
     rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
     before_action :set_current_user
+    respond_to :json
 
     private
 

@@ -15,7 +15,7 @@ class UserPolicy < ApplicationPolicy
     @user && (@user.support? || @user.customer?)
   end
 
-  def show?
+  def profile?
     true
   end
 end

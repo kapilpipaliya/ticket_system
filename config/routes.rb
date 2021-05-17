@@ -6,8 +6,10 @@ Rails.application.routes.draw do
 
     namespace :api do
       namespace :v1 do
-        resource :user, only: %i[show] do
-          get 'all'
+        resources :users, only: %i[index] do
+          collection do
+            get 'profile'
+          end
         end
 
         resources :tickets, only: %i[index show create update destroy] do
@@ -43,7 +45,11 @@ Rails.application.routes.draw do
 
     namespace :api do
       namespace :v1 do
-        resource :user, only: :show
+        resources :users, only: %i[] do
+          collection do
+            get 'profile'
+          end
+        end
         resources :tickets, only: %i[create]
       end
     end
