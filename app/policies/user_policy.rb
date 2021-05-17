@@ -10,6 +10,7 @@ class UserPolicy < ApplicationPolicy
       end
     end
   end
+
   def all?
     @user && (@user.support? || @user.customer?)
   end

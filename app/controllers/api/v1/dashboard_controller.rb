@@ -3,11 +3,11 @@ module Api
     class DashboardController < Api::ApiController
       before_action :authenticate_user!, only: %i[dashboard_static_data dashboard_data latest_activity]
       before_action :authorize_actions
-      def dashboard_static_data
+      def static
         @dashboard_data = DashboardStatic.new.data
       end
 
-      def dashboard_data
+      def data
         @dashboard_data = Dashboard.new(params[:from], params[:to]).data
       end
 
@@ -19,7 +19,7 @@ module Api
 
       def authorize_actions
         case action_name
-        when 'dashboard_static_data', 'dashboard_data', 'latest_activity'
+        when 'static', 'data', 'latest_activity'
           authorize :dashboard
         else
           raise NotImplementedError

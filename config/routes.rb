@@ -1,7 +1,46 @@
 Rails.application.routes.draw do
   devise_for :users
 
+  authenticated :user do
+    root 'pages#dashboard', as: :authenticated_root
+
+    namespace :api do
+      namespace :v1 do
+        resource :user, only: %i[show] do
+          get 'all'
+        end
+
+        resources :tickets, only: %i[index show create update destroy] do
+          collection do
+            get 'all_status'
+            get 'all_status_filter'
+          end
+        end
+
+        resources :comments, only: %i[create update destroy] do
+          get 'by_ticket', on: :member
+        end
+
+        resources :dashboard, only: %i[] do
+          collection do
+            get 'data'
+            get 'static'
+            get 'latest_activity'
+          end
+        end
+
+      end
+    end
+
+    get '/dashboard', to: 'pages#dashboard'
+
+    resources :tickets, only: %i[index edit show]
+
+  end
+
   unauthenticated do
+    root 'pages#index'
+
     namespace :api do
       namespace :v1 do
         resource :user, only: :show
@@ -9,34 +48,7 @@ Rails.application.routes.draw do
       end
     end
 
-    root 'pages#index'
     resources :tickets, only: %i[new]
 
   end
-
-  authenticated :user do
-    namespace :api do
-      namespace :v1 do
-        resource :user, only: :show
-        get '/tickets/all_status', to: 'tickets#all_status'
-        get '/tickets/all_status_filter', to: 'tickets#all_status_filter'
-        resources :tickets, only: %i[index show create update destroy]
-
-        resources :comments, only: %i[create update destroy]
-        get '/comments/by_ticket/:id', to: 'comments#by_ticket'
-
-        get '/users/all', to: 'users#all'
-
-        get '/dashboard_api', to: 'dashboard#dashboard_data'
-        get '/dashboard_static_api', to: 'dashboard#dashboard_static_data'
-        get '/latest_activity', to: 'dashboard#latest_activity'
-      end
-    end
-    root 'pages#dashboard', as: :authenticated_root
-    resources :tickets, only: %i[index edit show]
-    get '/dashboard', to: 'pages#dashboard'
-
-  end
-
-
 end

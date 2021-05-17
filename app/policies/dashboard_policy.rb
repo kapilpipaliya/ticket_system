@@ -1,9 +1,9 @@
 class DashboardPolicy < ApplicationPolicy
-  def dashboard_static_data?
+  def static?
     @user.support?
   end
 
-  def dashboard_data?
+  def data?
     @user.support?
   end
 

@@ -20,7 +20,7 @@ export const fetchCurrentUser = async (): Promise<CurrentUser | null> => {
 export const fetchAllUsers = async (): Promise<User[]> => {
   const csrfToken = (document.querySelector('[name=csrf-token]') as HTMLMetaElement).content;
   try {
-    const response = await fetch('/api/v1/users/all', {
+    const response = await fetch('/api/v1/user/all', {
       headers: {
         'X-CSRF-TOKEN': csrfToken,
         'Content-Type': 'application/json',

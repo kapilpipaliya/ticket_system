@@ -2,7 +2,7 @@ import { CommentType } from '../containers/Types';
 
 export const fetchCommentData = async (ticketId: string): Promise<CommentType[]> => {
   try {
-    const responseComments = await fetch(`/api/v1/comments/by_ticket/${ticketId}.json`);
+    const responseComments = await fetch(`/api/v1/comments/${ticketId}/by_ticket.json`);
     return await responseComments.json();
   } catch (err) {
     alert(err);
