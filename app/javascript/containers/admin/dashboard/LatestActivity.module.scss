@@ -1,0 +1,15 @@
+.container {
+  margin-top: 10px;
+}
+.content {
+  display: flex;
+  flex-direction: column;
+}
+.row {
+  display: flex;
+  flex-wrap: wrap;
+}
+.row > div:last-child {
+  margin-left: auto;
+  color: #6c757d;
+}

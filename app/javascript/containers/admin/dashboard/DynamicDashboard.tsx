@@ -1,27 +1,14 @@
-import { ButtonGroup, Col, Container, Row } from 'react-bootstrap';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
 import { fetchDashBoardData, fetchLastActivityData } from '../../../services/serviceDashBoard';
 import { DateSelectDropdown } from './DateSelectDropdown';
 import { Spinner } from '../../../components/Spinner';
-
-import { LatestActivity } from './LatestActivityParams';
-
+import { LatestActivity } from './LatestActivity';
 import { BiTrendingDown, BiTrendingUp } from 'react-icons/bi';
-import {
-  AiOutlineFolderOpen,
-  FaComment,
-  FaResolving,
-  FaUserMd,
-  GoAlert,
-  GoStop,
-  GoThumbsup,
-  MdToday,
-  VscAdd
-} from 'react-icons/all';
-import styles from './DynamicDashboard.module.scss'
-import {Card} from "../../../components/card/Card";
+import { AiOutlineFolderOpen, FaComment, FaResolving, FaUserMd, GoStop, GoThumbsup, MdToday, VscAdd } from 'react-icons/all';
+import styles from './DynamicDashboard.module.scss';
+import { Card } from '../../../components/card/Card';
 
 const dummyFn = async () => {
   return { data: false as any };
@@ -84,14 +71,7 @@ export function DynamicDashboard() {
 
   return (
     <>
-      <Row>
-        <Col xs={12} className="text-end mt-2 mb-2">
-          <ButtonGroup>
-            <DateSelectDropdown handleRangeSelect={handleOnDateChange} />
-          </ButtonGroup>
-          {/*<RangeDatePicker startDate={start} endDate={end} onChange={handleOnDateChange} />*/}
-        </Col>
-      </Row>
+      <DateSelectDropdown handleRangeSelect={handleOnDateChange} className={styles.filterButton} />
       {isLoading || isFetching || !data ? (
         <Spinner />
       ) : (
@@ -99,113 +79,117 @@ export function DynamicDashboard() {
           {data?.data && (
             <>
               <div className={styles.cards}>
-              
-                  <Card
-                       style={{margin: '10px 10px 0 0'}}
-                      footer={
-                        <>
-                          <div>Unresolved</div>
-                          <BiTrendingDown />
-                        </>
-                      }
-                  > {data.data.unresolved_count}
-                    <FaResolving /></Card>
-              
-              
-                  <Card
-                       style={{margin: '10px 10px 0 0'}}
-                      footer={
-                        <>
-                          <div>New Tickets</div>
-                          <BiTrendingDown />
-                        </>
-                      }
-                  > {data.data.new_tickets}
-                    <VscAdd /></Card>
-              
-               
-                  <Card
-                       style={{margin: '10px 10px 0 0'}}
-                      footer={
-                        <>
-                          <div>Open</div>
-                          <BiTrendingDown />
-                        </>
-                      }
-                  > {data.data.open}
-                    <AiOutlineFolderOpen /></Card>
-        
-               
-                  <Card
-                       style={{margin: '10px 10px 0 0'}}
-                      footer={
-                        <>
-                          <div>On Hold</div>
-                          <BiTrendingDown />
-                        </>
-                      }
-                  > {data.data.hold}
-                    <GoStop /></Card>
-            
-            
-                  <Card
-                       style={{margin: '10px 10px 0 0'}}
-                      footer={
-                        <>
-                          <div>Closed</div>
-                          <BiTrendingUp />
-                        </>
-                      }
-                  > {data.data.close}
-                    <GoThumbsup /></Card>
-           
-             
-                  <Card
-                       style={{margin: '10px 10px 0 0'}}
-                      footer={
-                        <>
-                          <div>Assigned</div>
-                          <BiTrendingUp />
-                        </>
-                      }
-                  > {data.data.assigned}
-                    <FaUserMd /></Card>
-       
-             
-                  <Card
-                       style={{margin: '10px 10px 0 0'}}
-                      footer={
-                        <>
-                          <div>Replies</div>
-                          <BiTrendingUp />
-                        </>
-                      }
-                  > {data.data.replies}
-                    <FaComment /></Card>
-           
-         
-                  <Card
-                       style={{margin: '10px 10px 0 0'}}
-                      footer={
-                        <>
-                          <div>Unresolved</div>
-                          <BiTrendingUp />
-                        </>
-                      }
-                  > {data.data.tickets_per_day}
-                    <MdToday /></Card>
-                
+                <Card
+                  footerClassName={styles.bgWarning}
+                  footer={
+                    <>
+                      <div>Unresolved</div>
+                      <BiTrendingDown />
+                    </>
+                  }
+                >
+                  <span className={styles.warning}>{data.data.unresolved_count}</span>
+                  <FaResolving />
+                </Card>
+
+                <Card
+                  footerClassName={styles.bgWarning}
+                  footer={
+                    <>
+                      <div>New Tickets</div>
+                      <BiTrendingDown />
+                    </>
+                  }
+                >
+                  <span className={styles.warning}>{data.data.new_tickets}</span>
+                  <VscAdd />
+                </Card>
+
+                <Card
+                  footerClassName={styles.bgWarning}
+                  footer={
+                    <>
+                      <div>Open</div>
+                      <BiTrendingDown />
+                    </>
+                  }
+                >
+                  <span className={styles.warning}>{data.data.open}</span>
+                  <AiOutlineFolderOpen />
+                </Card>
+
+                <Card
+                  footerClassName={styles.bgWarning}
+                  footer={
+                    <>
+                      <div>On Hold</div>
+                      <BiTrendingDown />
+                    </>
+                  }
+                >
+                  <span className={styles.warning}>{data.data.hold}</span>
+                  <GoStop />
+                </Card>
+
+                <Card
+                  footerClassName={styles.bgSuccess}
+                  footer={
+                    <>
+                      <div>Closed</div>
+                      <BiTrendingUp />
+                    </>
+                  }
+                >
+                  <span className={styles.success}>{data.data.close}</span>
+                  <GoThumbsup />
+                </Card>
+
+                <Card
+                  footerClassName={styles.bgSuccess}
+                  footer={
+                    <>
+                      <div>Assigned</div>
+                      <BiTrendingUp />
+                    </>
+                  }
+                >
+                  <span className={styles.success}>{data.data.assigned}</span>
+                  <FaUserMd />
+                </Card>
+
+                <Card
+                  footerClassName={styles.bgSuccess}
+                  footer={
+                    <>
+                      <div>Replies</div>
+                      <BiTrendingUp />
+                    </>
+                  }
+                >
+                  <span className={styles.success}>{data.data.replies}</span>
+                  <FaComment />
+                </Card>
+
+                <Card
+                  footerClassName={styles.bgSuccess}
+                  footer={
+                    <>
+                      <div>Unresolved</div>
+                      <BiTrendingUp />
+                    </>
+                  }
+                >
+                  <span className={styles.success}>{data.data.tickets_per_day}</span>
+                  <MdToday />
+                </Card>
               </div>
-              <Row className={'mt-1'}>
-                <Col xl={12} md={12}>
-                  <LatestActivity
-                    data={lastActivityData?.data}
-                    handleGetAllActivity={handleGetAllActivity}
-                    showFetchAllButton={lastActivityCount != 0}
-                    loading={lastActivityIsLoading || lastActivityIsFetching}
-                  />
-                </Col>
-              </Row>
+
+              <LatestActivity
+                data={lastActivityData?.data}
+                handleGetAllActivity={handleGetAllActivity}
+                showFetchAllButton={lastActivityCount != 0}
+                loading={lastActivityIsLoading || lastActivityIsFetching}
+              />
             </>
           )}
         </>

@@ -1,0 +1,22 @@
+.dropdown {
+  display: inline-block;
+  position: relative;
+}
+
+.dropdownLabel {
+  padding: 0.5em 1.5em;
+  border: 1px solid #ccc;
+  background-color: #eee;
+}
+
+.dropdownMenu {
+  display: none;
+  position: absolute;
+  left: 0;
+  top: 2.1em;
+  min-width: 100%;
+  background-color: #eee;
+}
+.open {
+  display: block;
+}

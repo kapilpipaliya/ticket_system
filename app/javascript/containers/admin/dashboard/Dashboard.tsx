@@ -1,15 +1,14 @@
 import * as React from 'react';
-import { Container } from 'react-bootstrap';
-import 'react-google-flight-datepicker/dist/main.css';
 import { DynamicDashboard } from './DynamicDashboard';
 import { FixedDashboard } from './FixedDashboard';
+import styles from './Dashboard.module.scss';
 
-const DashBoard = () => {
+const Dashboard = () => {
   return (
-    <Container fluid className={'mt-2'}>
+    <div className={styles.container}>
       <FixedDashboard />
       <DynamicDashboard />
-    </Container>
+    </div>
   );
 };
-export default DashBoard;
+export default Dashboard;

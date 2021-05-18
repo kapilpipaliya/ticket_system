@@ -1,4 +1,35 @@
+.filterButton {
+  margin: 1em 0 0.5em 0;
+}
 .cards {
   display: flex;
   flex-wrap: wrap;
+  gap: 10px;
+
+  > div {
+    width: calc(50% - 10px);
+    min-width: 130px;
+  }
+}
+.bgWarning {
+  background-color: orange;
+  color: white;
+}
+.bgSuccess {
+  background-color: #1e7e34;
+  color: white;
+}
+.warning {
+  color: orange;
+}
+.success {
+  color: #1e7e34;
+}
+@media (min-width: 560px) {
+  .cards {
+    > div {
+      width: unset;
+      min-width: 150px;
+    }
+  }
 }

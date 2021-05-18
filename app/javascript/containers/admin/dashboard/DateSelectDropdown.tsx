@@ -1,12 +1,13 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { Button, Dropdown } from 'react-bootstrap';
 import { Filter } from 'react-feather';
-
 import { endOfDay, startOfISOWeek, startOfMonth, startOfYear, sub } from 'date-fns';
+import styles from './DateSelectDropdown.module.scss';
+import { Dropdown as Dropdown2 } from '../../../components/dropdown/Dropdown';
 
 interface DateSelectDropdownProps {
   handleRangeSelect: (startDate: Date, endDate: Date) => void;
+  className?: string;
 }
 
 export const DateSelectDropdown = (props: DateSelectDropdownProps) => {
@@ -78,17 +79,22 @@ export const DateSelectDropdown = (props: DateSelectDropdownProps) => {
     handleRangeChange('this_month')();
   }, []);
   return (
-    <Dropdown>
-      <Dropdown.Toggle as={Button} size="sm" variant="outline-primary">
-        <Filter /> {options[selectedRange].label}
-      </Dropdown.Toggle>
-      <Dropdown.Menu className="dropdown-menu-end">
+    <Dropdown2
+      className={props.className}
+      label={
+        <>
+          <Filter />
+          {options[selectedRange].label}
+        </>
+      }
+    >
+      <ul className={styles.submenu}>
         {Object.keys(options).map(o => (
-          <Dropdown.Item key={o} onClick={handleRangeChange(o)}>
-            {options[o].label}
-          </Dropdown.Item>
+          <li key={o} onClick={handleRangeChange(o)}>
+            <span>{options[o].label}</span>
+          </li>
         ))}
-      </Dropdown.Menu>
-    </Dropdown>
+      </ul>
+    </Dropdown2>
   );
 };
