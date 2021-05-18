@@ -7,9 +7,21 @@ import { DateSelectDropdown } from './DateSelectDropdown';
 import { Spinner } from '../../../components/Spinner';
 
 import { LatestActivity } from './LatestActivityParams';
-import PageStatisticCard from '../../../components/statistic/PageStatisticCard';
+
 import { BiTrendingDown, BiTrendingUp } from 'react-icons/bi';
-import { AiOutlineFolderOpen, FaComment, FaResolving, FaUserMd, GoStop, GoThumbsup, MdToday, VscAdd } from 'react-icons/all';
+import {
+  AiOutlineFolderOpen,
+  FaComment,
+  FaResolving,
+  FaUserMd,
+  GoAlert,
+  GoStop,
+  GoThumbsup,
+  MdToday,
+  VscAdd
+} from 'react-icons/all';
+import styles from './DynamicDashboard.module.scss'
+import {Card} from "../../../components/card/Card";
 
 const dummyFn = async () => {
   return { data: false as any };
@@ -86,112 +98,104 @@ export function DynamicDashboard() {
         <>
           {data?.data && (
             <>
-              <Row>
-                <Col>
-                  <PageStatisticCard
-                    params={{
-                      iconClass: 'icon-trending-up',
-                      iconName: <FaResolving />,
-                      footerIcon: <BiTrendingDown />,
-                      variant: 'warning',
-                      title: '',
-                      primaryText: data.data.unresolved_count,
-                      secondaryText: 'Unresolved',
-                    }}
-                  />
-                </Col>
-                <Col>
-                  <PageStatisticCard
-                    params={{
-                      iconClass: 'icon-trending-up',
-                      iconName: <VscAdd />,
-                      footerIcon: <BiTrendingDown />,
-                      variant: 'warning',
-                      title: '',
-                      primaryText: data.data.new_tickets,
-                      secondaryText: 'New Tickets',
-                    }}
-                  />
-                </Col>
-                <Col>
-                  <PageStatisticCard
-                    params={{
-                      iconClass: 'icon-trending-up',
-                      iconName: <AiOutlineFolderOpen />,
-                      footerIcon: <BiTrendingDown />,
-                      variant: 'warning',
-                      title: '',
-                      primaryText: data.data.open,
-                      secondaryText: 'Open',
-                    }}
-                  />
-                </Col>
-                <Col>
-                  <PageStatisticCard
-                    params={{
-                      iconClass: 'icon-trending-up',
-                      iconName: <GoStop />,
-                      footerIcon: <BiTrendingDown />,
-                      variant: 'warning',
-                      title: '',
-                      primaryText: data.data.hold,
-                      secondaryText: 'On Hold',
-                    }}
-                  />
-                </Col>
-                <Col>
-                  <PageStatisticCard
-                    params={{
-                      iconClass: 'icon-trending-up',
-                      iconName: <GoThumbsup />,
-                      footerIcon: <BiTrendingUp />,
-                      variant: 'success',
-                      title: '',
-                      primaryText: data.data.close,
-                      secondaryText: 'Closed',
-                    }}
-                  />
-                </Col>
-                <Col>
-                  <PageStatisticCard
-                    params={{
-                      iconClass: 'icon-trending-up',
-                      iconName: <FaUserMd />,
-                      footerIcon: <BiTrendingUp />,
-                      variant: 'success',
-                      title: '',
-                      primaryText: data.data.assigned,
-                      secondaryText: 'Assigned',
-                    }}
-                  />
-                </Col>
-                <Col>
-                  <PageStatisticCard
-                    params={{
-                      iconClass: 'icon-trending-up',
-                      iconName: <FaComment />,
-                      footerIcon: <BiTrendingUp />,
-                      variant: 'success',
-                      title: '',
-                      primaryText: data.data.replies,
-                      secondaryText: 'Replies',
-                    }}
-                  />
-                </Col>
-                <Col>
-                  <PageStatisticCard
-                    params={{
-                      iconClass: 'icon-trending-up',
-                      iconName: <MdToday />,
-                      variant: 'success',
-                      title: '',
-                      primaryText: data.data.tickets_per_day,
-                      secondaryText: 'Tickets Per Day',
-                      footerIcon: <BiTrendingUp />,
-                    }}
-                  />
-                </Col>
-              </Row>
+              <div className={styles.cards}>
+              
+                  <Card
+                       style={{margin: '10px 10px 0 0'}}
+                      footer={
+                        <>
+                          <div>Unresolved</div>
+                          <BiTrendingDown />
+                        </>
+                      }
+                  > {data.data.unresolved_count}
+                    <FaResolving /></Card>
+              
+              
+                  <Card
+                       style={{margin: '10px 10px 0 0'}}
+                      footer={
+                        <>
+                          <div>New Tickets</div>
+                          <BiTrendingDown />
+                        </>
+                      }
+                  > {data.data.new_tickets}
+                    <VscAdd /></Card>
+              
+               
+                  <Card
+                       style={{margin: '10px 10px 0 0'}}
+                      footer={
+                        <>
+                          <div>Open</div>
+                          <BiTrendingDown />
+                        </>
+                      }
+                  > {data.data.open}
+                    <AiOutlineFolderOpen /></Card>
+        
+               
+                  <Card
+                       style={{margin: '10px 10px 0 0'}}
+                      footer={
+                        <>
+                          <div>On Hold</div>
+                          <BiTrendingDown />
+                        </>
+                      }
+                  > {data.data.hold}
+                    <GoStop /></Card>
+            
+            
+                  <Card
+                       style={{margin: '10px 10px 0 0'}}
+                      footer={
+                        <>
+                          <div>Closed</div>
+                          <BiTrendingUp />
+                        </>
+                      }
+                  > {data.data.close}
+                    <GoThumbsup /></Card>
+           
+             
+                  <Card
+                       style={{margin: '10px 10px 0 0'}}
+                      footer={
+                        <>
+                          <div>Assigned</div>
+                          <BiTrendingUp />
+                        </>
+                      }
+                  > {data.data.assigned}
+                    <FaUserMd /></Card>
+       
+             
+                  <Card
+                       style={{margin: '10px 10px 0 0'}}
+                      footer={
+                        <>
+                          <div>Replies</div>
+                          <BiTrendingUp />
+                        </>
+                      }
+                  > {data.data.replies}
+                    <FaComment /></Card>
+           
+         
+                  <Card
+                       style={{margin: '10px 10px 0 0'}}
+                      footer={
+                        <>
+                          <div>Unresolved</div>
+                          <BiTrendingUp />
+                        </>
+                      }
+                  > {data.data.tickets_per_day}
+                    <MdToday /></Card>
+                
+              </div>
               <Row className={'mt-1'}>
                 <Col xl={12} md={12}>
                   <LatestActivity

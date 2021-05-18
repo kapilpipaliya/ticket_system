@@ -5,9 +5,11 @@ import { Col, Container, Row } from 'react-bootstrap';
 import { Spinner } from '../../../components/Spinner';
 
 import { fetchDashBoardStaticData } from '../../../services/serviceDashBoard';
-import PageStatisticCard from '../../../components/statistic/PageStatisticCard';
+
 import { BiTrendingDown } from 'react-icons/bi';
 import { GoAlert, GrAlert } from 'react-icons/all';
+import { Card } from '../../../components/card/Card';
+import styles from './FixedDashboard.module.scss';
 
 export const FixedDashboard = () => {
   const { isLoading, error, data, refetch, isFetching } = useQuery(
@@ -32,31 +34,31 @@ export const FixedDashboard = () => {
     );
   if (!data) return <Container className={'mt-2'}>No Data found</Container>;
   return (
-    <Row>
-      <Col xs={6} md={2}>
-        <PageStatisticCard
-          params={{
-            iconName: <GoAlert />,
-            footerIcon: <BiTrendingDown />,
-            variant: 'warning',
-            title: '',
-            primaryText: data.data.overdue_count,
-            secondaryText: 'Overdue',
-          }}
-        />
-      </Col>
-      <Col xs={6} md={2}>
-        <PageStatisticCard
-          params={{
-            iconName: <GrAlert />,
-            footerIcon: <BiTrendingDown />,
-            variant: 'warning',
-            title: '',
-            primaryText: data.data.due_today,
-            secondaryText: 'Due Today',
-          }}
-        />
-      </Col>
-    </Row>
+    <div className={styles.cards}>
+      <Card
+          style={{marginRight: 10}}
+        footer={
+          <>
+            <div>Overdue</div>
+            <BiTrendingDown />
+          </>
+        }
+      >
+        {data.data.overdue_count}
+        <GoAlert />
+      </Card>
+      <Card
+
+        footer={
+          <>
+            <div>Due Today</div>
+            <BiTrendingDown />
+          </>
+        }
+      >
+        {data.data.due_today}
+        <GoAlert />
+      </Card>
+    </div>
   );
 };

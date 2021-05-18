@@ -1,0 +1,20 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #ccc;
+  min-width: 150px;
+}
+.card .content{
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 10px;
+  border-bottom: 1px solid black;
+  align-items: center;
+}
+.footer {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  border-radius: 0 0 5px 5px;
+  align-items: center;
+}
