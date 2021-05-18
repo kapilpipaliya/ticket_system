@@ -1,10 +1,10 @@
 module Api
   module V1
     class UsersController < Api::ApiController
-      before_action :authenticate_user!, only: %i[all]
+      before_action :authenticate_user!, only: %i[idnex]
       before_action :authorize_actions
 
-      def all
+      def index
         @users = policy_scope(User)
       end
 
@@ -16,7 +16,7 @@ module Api
 
       def authorize_actions
         case action_name
-        when 'all', 'profile'
+        when 'index', 'profile'
           authorize User
         else
           raise NotImplementedError

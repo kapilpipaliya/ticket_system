@@ -12,12 +12,14 @@ class Ticket < ApplicationRecord
   scope :tickets_from, ->(user) { where(creator: user.id) }
 
   enum status: %i[open hold close]
+  enum sentiment: %i[negative positive neutral]
 
   validates :subject, presence: true, length: { minimum: 10 }
   validates :description, presence: true, length: { minimum: 10 }
   validates :name, presence: true
   validates :email, presence: true, format: { with: URI::MailTo::EMAIL_REGEXP }
   validates :status, inclusion: { in: statuses.keys }
+  # validates :sentiment, inclusion: { in: sentiments.keys }
   validates :creator, absence: true, if: :guest?
   validates :creator, presence: true, on: :create, if: -> { supporter? || customer? }
 
@@ -25,7 +27,7 @@ class Ticket < ApplicationRecord
   after_create_commit :send_new_ticket_email
   after_update_commit :send_status_change_email
 
-  after_save_commit :update_ticket_last_activity
+  after_save_commit :update_ticket_last_activity, :update_sentiment
 
   private
 
@@ -44,5 +46,9 @@ class Ticket < ApplicationRecord
 
   def update_ticket_last_activity
     TicketLastActivityUpdateJob.perform_later self.id, Time.current
+  end
+
+  def update_sentiment
+    TicketSentimentJob.perform_later self.id
   end
 end

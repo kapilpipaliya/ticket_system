@@ -11,7 +11,7 @@ class UserPolicy < ApplicationPolicy
     end
   end
 
-  def all?
+  def index?
     @user && (@user.support? || @user.customer?)
   end
 

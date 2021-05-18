@@ -4,23 +4,20 @@ class Comment < ApplicationRecord
 
   default_scope { order(created_at: :asc) }
 
+  enum sentiment: %i[negative positive neutral]
+
   validates :description, :ticket, :commenter, presence: true
+  # validates :sentiment, inclusion: { in: sentiments.keys }
 
-  after_create_commit :update_ticket_comments_count_create
-  after_destroy_commit :update_ticket_comments_count_update
-
-  after_commit :update_ticket_last_activity
+  after_commit :update_ticket_last_activity, :update_sentiment
 
   private
 
-  def update_ticket_comments_count
-    TicketCommentsCountUpdateJob.perform_later self.ticket.id
-  end
-
-  alias update_ticket_comments_count_create update_ticket_comments_count
-  alias update_ticket_comments_count_update update_ticket_comments_count
-
   def update_ticket_last_activity
     TicketLastActivityUpdateJob.perform_later self.ticket.id, Time.current
+  end
+
+  def update_sentiment
+    CommentSentimentJob.perform_later self.id
   end
 end
