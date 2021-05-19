@@ -4,6 +4,10 @@
 .content {
   display: flex;
   flex-direction: column;
+
+  a{
+    text-decoration: none;
+  }
 }
 .row {
   display: flex;

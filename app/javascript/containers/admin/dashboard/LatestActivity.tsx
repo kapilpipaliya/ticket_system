@@ -38,7 +38,7 @@ export const LatestActivity = (props: LatestActivity) => {
                   <MdRssFeed />
                 </div>
                 <div>
-                  <a href={`/tickets/${row.id}`} className={'text-decoration-none'}>
+                  <a href={`/tickets/${row.id}`}>
                     <h6>{row.subject}</h6>
                   </a>
                 </div>

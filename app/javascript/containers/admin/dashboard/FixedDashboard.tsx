@@ -1,7 +1,6 @@
 import { useQuery } from 'react-query';
 import * as React from 'react';
 import { useEffect } from 'react';
-import { Container } from 'react-bootstrap';
 import { Spinner } from '../../../components/Spinner';
 
 import { fetchDashBoardStaticData } from '../../../services/serviceDashBoard';
@@ -28,11 +27,11 @@ export const FixedDashboard = () => {
 
   if (isLoading || isFetching)
     return (
-      <Container className={'mt-2'}>
+      <div>
         <Spinner />
-      </Container>
+      </div>
     );
-  if (!data) return <Container className={'mt-2'}>No Data found</Container>;
+  if (!data) return <div>No Data found</div>;
   return (
     <div className={styles.cards}>
       <Card
