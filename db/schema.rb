@@ -54,6 +54,7 @@ ActiveRecord::Schema.define(version: 2021_05_18_133024) do
 
   create_table "comments", force: :cascade do |t|
     t.text "description", null: false
+    t.integer "sentiment", default: 0
     t.bigint "ticket_id", null: false
     t.bigint "commenter_id"
     t.datetime "created_at", precision: 6, null: false
@@ -68,7 +69,7 @@ ActiveRecord::Schema.define(version: 2021_05_18_133024) do
     t.string "email", null: false
     t.string "name", null: false
     t.integer "status", default: 0
-    t.integer "comments_count", default: 0
+    t.integer "sentiment", default: 0
     t.datetime "last_activity"
     t.date "due_date"
     t.bigint "creator_id"
