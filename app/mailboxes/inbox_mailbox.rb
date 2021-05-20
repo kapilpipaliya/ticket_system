@@ -12,7 +12,7 @@ class InboxMailbox < ApplicationMailbox
 
     if ticket_id_
       ticket = Ticket.find(ticket_id)
-      ticket.comments.create!(commenter: @user, description: email_text) if @user if ticket
+      ticket&.comments&.create!(commenter: @user, description: email_text)
     else
       created_at = Time.zone.now
       ticket =

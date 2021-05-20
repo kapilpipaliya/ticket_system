@@ -1,6 +1,6 @@
 class Comment < ApplicationRecord
   belongs_to :ticket
-  belongs_to :commenter, class_name: 'User'
+  belongs_to :commenter, class_name: 'User', optional: true
 
   default_scope { order(created_at: :asc) }
 
