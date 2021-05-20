@@ -10,7 +10,8 @@ class Comment < ApplicationRecord
 
   enum sentiment: %i[negative positive neutral], _suffix: true
 
-  validates :description, :ticket, :commenter, presence: true
+  validates :description, :ticket, presence: true
+  validates :commenter, presence: true, on: :create, if: -> { supporter? || customer? }
   # validates :sentiment, inclusion: { in: sentiments.keys }
 
   after_commit :send_email, :update_ticket_last_activity, :update_sentiment
