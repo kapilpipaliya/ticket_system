@@ -17,14 +17,7 @@ class InboxMailbox < ApplicationMailbox
       created_at = Time.zone.now
       ticket =
         Ticket.new(
-          {
-            subject: mail.subject,
-            description: email_text,
-            email: mail.from.first,
-            name: mail.from.first.split('@').first,
-            created_at: created_at,
-            due_date: created_at + 5.days
-          }
+          { subject: mail.subject, description: email_text, email: mail.from.first, name: mail.from.first.split('@').first, created_at: created_at, due_date: created_at + 5.days },
         )
       ticket.save!(validate: false)
     end
@@ -33,7 +26,7 @@ class InboxMailbox < ApplicationMailbox
   private
 
   def ticket_id
-    match = /ticket-([0-9])+/i.match(mail.subject)
+    match = /Case #([0-9])+/i.match(mail.subject)
     match &&= match[1]
     match
   end

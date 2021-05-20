@@ -22,6 +22,7 @@ class TicketPolicy < ApplicationPolicy
   alias all_status_filter? all_status?
   alias new? all_status?
   alias create? all_status?
+  alias sentiments_options_filter? all_status?
 
   alias edit? index?
   alias show? index?

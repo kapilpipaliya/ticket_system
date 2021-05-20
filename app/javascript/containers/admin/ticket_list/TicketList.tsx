@@ -4,7 +4,7 @@ import { Button, Card, Col, Collapse, Container, Modal, Row } from 'react-bootst
 import { Filter, Plus } from 'react-feather';
 import { useMutation, useQuery } from 'react-query';
 import { CurrentUser, SearchState, SortDirection, SortState, Ticket } from '../../Types';
-import { fetchAllTicketData, fetchAllTicketStatusFilter, ticketDelete } from '../../../services/serviceTicket';
+import { fetchAllTicketData, fetchAllTicketStatusFilter, fetchSentimentFilter, ticketDelete } from '../../../services/serviceTicket';
 import { fetchCurrentUser } from '../../../services/serviceUser';
 
 import { ConfirmationDialog } from '../../../components/ConfirmationDialog';
@@ -35,8 +35,11 @@ export const TicketList = () => {
   const [searchState, setSearchState] = useState<SearchState>(searchFormInitialState());
   const [searchSubmitState, setSearchSubmitState] = useState<SearchState>({} as SearchState);
   const [status, setStatus] = useState<number | string>('');
+  const [sentiment, setSentiment] = useState<number | string>('');
   const [statusSubmit, setStatusSubmit] = useState<number | string>('');
+  const [sentimentSubmit, setSentimentSubmit] = useState<number | string>('');
   const [statusOptions, setStatusOptions] = useState([]);
+  const [sentimentOptions, setSentimentOptions] = useState([]);
 
   useEffect(() => {
     fetchCurrentUser().then(resp => setCurrentUser(resp));
@@ -48,7 +51,7 @@ export const TicketList = () => {
     data: ticketData,
     refetch,
     isFetching,
-  } = useQuery(['ticketsData'], () => fetchAllTicketData(pageNo, sortState, searchSubmitState, statusSubmit), {
+  } = useQuery(['ticketsData'], () => fetchAllTicketData(pageNo, sortState, searchSubmitState, statusSubmit, sentimentSubmit), {
     enabled: false,
   });
 
@@ -59,6 +62,11 @@ export const TicketList = () => {
   useEffect(() => {
     fetchAllTicketStatusFilter().then(resp => {
       setStatusOptions(resp);
+    });
+  }, []);
+  useEffect(() => {
+    fetchSentimentFilter().then(resp => {
+      setSentimentOptions(resp);
     });
   }, []);
 
@@ -117,12 +125,15 @@ export const TicketList = () => {
     setPageNo(1);
     setSearchSubmitState({ ...searchState });
     setStatusSubmit(status);
+    setSentimentSubmit(sentiment);
   };
   const handleClearSearchForm = () => {
     setPageNo(1);
     setSearchState(searchFormInitialState());
     setStatus('');
+    setSentiment('');
     setStatusSubmit('');
+    setSentimentSubmit('');
     setSearchSubmitState({} as SearchState);
   };
   const [isBasic, setIsBasic] = React.useState(false);
@@ -169,8 +180,11 @@ export const TicketList = () => {
                         searchState={searchState}
                         setSearchState={setSearchState}
                         status={status}
+                        sentiment={sentiment}
                         setStatus={setStatus}
+                        setSentiment={setSentiment}
                         statusOptions={statusOptions}
+                        sentimentOptions={sentimentOptions}
                         onSubmit={handleSearchSubmit}
                         loading={isLoading || isFetching}
                         onReset={handleClearSearchForm}

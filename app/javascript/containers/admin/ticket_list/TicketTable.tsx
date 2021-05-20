@@ -18,6 +18,7 @@ export const TicketItem = (props: TicketItemProps) => {
       </td>
       <td className={'whitespace-nowrap'}>{props.ticket.assignee_name}</td>
       <td className={'whitespace-nowrap'}>{props.ticket.status}</td>
+      <td className={'whitespace-nowrap'}>{props.ticket.sentiment}</td>
       <td className={'whitespace-nowrap'}>{props.ticket.assignee_comments}</td>
       <td className={'whitespace-nowrap'}>{new Date(props.ticket.created_at).toLocaleString()}</td>
       <td className={'whitespace-nowrap'}>{new Date(props.ticket.last_activity).toLocaleString()}</td>
@@ -63,6 +64,9 @@ export const TicketTable = (props: {
           </th>
           <th className="border-top-0" style={{ whiteSpace: 'nowrap' }} onClick={handleOnSortClick('status')}>
             Status <SortIcon id={'status'} />
+          </th>
+          <th className="border-top-0" style={{ whiteSpace: 'nowrap' }} onClick={handleOnSortClick('sentiment')}>
+            Sentiment <SortIcon id={'sentiment'} />
           </th>
           <th className="border-top-0" onClick={handleOnSortClick('assignee_comments')}>
             Comments <SortIcon id={'assignee_comments'} />

@@ -40,11 +40,14 @@ export const fetchAllTicketData = async (
   sort_state: SortState,
   search_state: SearchState,
   status: number | string,
+  sentiment: number | string,
 ): Promise<{ data: Ticket[]; pagy: Pagy }> => {
   try {
     const search_query = searchQuery(search_state);
     const sort_query = sortQuery(sort_state);
-    const response = await fetch(`/api/v1/tickets.json?page=${page_number}${search_query ? `&${search_query}` : ''}${sort_query ? `&${sort_query}` : ''}&q[status_eq]=${status}`);
+    const response = await fetch(
+      `/api/v1/tickets.json?page=${page_number}${search_query ? `&${search_query}` : ''}${sort_query ? `&${sort_query}` : ''}&q[status_eq]=${status}&q[sentiment_eq]=${sentiment}`,
+    );
     return await response.json();
   } catch (err) {
     alert(err);
@@ -146,7 +149,20 @@ export const fetchAllTicketStatusFilter = async (): Promise<TicketStatus[]> => {
     return [];
   }
 };
-
+export const fetchSentimentFilter = async (): Promise<TicketStatus[]> => {
+  try {
+    const response = await fetch(`/api/v1/tickets/sentiments_options_filter.json`, {
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+    });
+    return await response.json();
+  } catch (err) {
+    alert(err);
+    return [];
+  }
+};
 export const ticketDelete = async ticketId => {
   try {
     const csrfToken = (document.querySelector('[name=csrf-token]') as HTMLMetaElement).content;

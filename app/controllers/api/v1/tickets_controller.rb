@@ -53,12 +53,15 @@ module Api
       def all_status_filter
         render json: status_options_filter
       end
+      def sentiments_options_filter
+        render json: Ticket.sentiments.map { |x, i| { 'id' => i, :label => x.titleize } }.prepend({ 'id' => '', :label => 'All' })
+      end
 
       private
 
       def authorize_actions
         case action_name
-        when 'index', 'all_status', 'all_status_filter', 'create'
+        when 'index', 'all_status', 'all_status_filter', 'create', 'sentiments_options_filter'
           authorize Ticket
         when 'show', 'update', 'destroy'
           authorize @ticket

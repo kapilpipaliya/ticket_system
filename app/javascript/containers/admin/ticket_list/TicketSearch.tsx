@@ -7,13 +7,16 @@ export const TicketSearch = (props: {
   searchState: SearchState;
   setSearchState: React.Dispatch<React.SetStateAction<SearchState>>;
   status: string | number;
+  sentiment: string | number;
   setStatus: React.Dispatch<React.SetStateAction<string | number>>;
+  setSentiment: React.Dispatch<React.SetStateAction<string | number>>;
   statusOptions: any[];
+  sentimentOptions: any[];
   onSubmit: () => void;
   loading: boolean;
   onReset: () => void;
 }) => {
-  const { searchState, setSearchState, status, setStatus } = props;
+  const { searchState, setSearchState, status, sentiment, setStatus, setSentiment } = props;
   return (
     <Row>
       <Col sm={6}>
@@ -50,6 +53,20 @@ export const TicketSearch = (props: {
           <Form.Label>Status</Form.Label>
           <Form.Control as="select" value={status} onChange={e => setStatus(e.target.value)}>
             {props.statusOptions.map(s => {
+              return (
+                <option key={s.id} value={s.id}>
+                  {s.label}
+                </option>
+              );
+            })}
+          </Form.Control>
+        </Form.Group>
+      </Col>
+      <Col sm={6}>
+        <Form.Group controlId="formName">
+          <Form.Label>Sentiment</Form.Label>
+          <Form.Control as="select" value={sentiment} onChange={e => setSentiment(e.target.value)}>
+            {props.sentimentOptions.map(s => {
               return (
                 <option key={s.id} value={s.id}>
                   {s.label}

@@ -4,10 +4,33 @@
   <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
 </head>
 <body>
-<h1>Welcome <%= @ticket.name %> to Mentor Ticket System</h1>
-<p>
-  your ticket id <%= @ticket.id %> is processed.
-</p>
-<p>Thanks for contacting and have a great day!</p>
+
+<div style="background-color: #f7f7f7; margin: 0; padding: 70px 0; width: 100%;">
+  <div style="border: 3px dotted #ebecec; width: 600px; display: block; margin: 0 auto; background: #fff;">
+    <div style="padding: 15px 20px; background: #3e4095; color: #fff; font-size: 16px; font-weight: bold; text-transform: uppercase; border-bottom: 1px solid #4b4b4d;">Mentor Help Desk</div>
+    <div style="padding: 30px; text-align: center; font-weight: bold; background: #576cf1; color: #fff; text-transform: capitalize; font-size: 22px;"><%= @site_title %>: Ticket Reply</div>
+    <div style="padding: 40px 20px 20px;">
+      <div style="padding-bottom: 20px; border-bottom: 1px solid #ebecec;">
+        <div style="color: #727376; line-height: 2;">A new reply of ticket (<strong style="color: #4b4b4d;"><%= @subject %></strong>) has been submitted with the following details.</div>
+      </div>
+      <div style="border: 1px solid #ebecec;">
+        <div style="border-bottom: 1px solid #ebecec; color: #727376; padding: 15px;">Tracking ID: <%= @tracking_id %></div>
+        <div style="border-bottom: 1px solid #ebecec; color: #727376; padding: 15px;">Email: <%= @email %></div>
+        <div style="border-bottom: 1px solid #ebecec; color: #727376; padding: 15px;">Message: <%= raw @message %></div>
+      </div>
+      <div style="padding: 20px 0;">
+        <div style="font-weight: bold; font-size: 16px; margin-bottom: 10px; color: #4b4b4d;">You can view the status of your ticket here:</div>
+      </div>
+      <div style="padding: 0 0 30px; text-align: center;"><a style="display: inline-block; padding: 15px; background: #576cf1; width: 40%; text-align: center; text-decoration: none; color: #ffff; text-transform: capitalize; border-bottom: 3px solid #4b4b4d;" href="<%= @ticket_url %>">View Ticket</a></div>
+      <div style="background: #fef2ef; padding: 15px; margin-bottom: 20px; border: 1px solid #eba7a8;">
+        <div style="font-weight: bold; font-size: 14px; margin-bottom: 5px; color: #983133; text-transform: uppercase;">Do not reply on this E-Mail</div>
+        <div style="color: #727376; line-height: 2;">This is an automated e-mail message sent from our support system. Do not reply to this e-mail as we cannot receive your reply!</div>
+      </div>
+      <div style="color: #727376; line-height: 2;">This email was sent from <a href="https://www.mentor.com"><span style="color: #3e4095; display: inline-block; text-decoration: underline; cursor: pointer;">Mentor Help Desk System</span></a> to <span style="color: #606062; display: inline-block; text-decoration: underline;"><%= @email %></span></div>
+    </div>
+    <div style="background: #4b4b4d; padding: 20px; color: #fff; text-align: center; border-bottom: 5px solid #576cf1;">© 2014-<%= @current_year %> All rights reserved - <a href="https://www.mentor.com"><span style="color: white; display: inline-block; text-decoration: underline; cursor: pointer;">Mentor Help Desk System</span></a></div>
+  </div>
+</div>
+
 </body>
 </html>

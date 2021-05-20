@@ -27,15 +27,15 @@ class Dashboard
   end
 
   def open
-    apply_date_rage(Ticket).open
+    apply_date_rage(Ticket).open_status
   end
 
   def hold
-    apply_date_rage(Ticket).hold
+    apply_date_rage(Ticket).hold_status
   end
 
   def close
-    apply_date_rage(Ticket).close
+    apply_date_rage(Ticket).close_status
   end
 
   def assigned

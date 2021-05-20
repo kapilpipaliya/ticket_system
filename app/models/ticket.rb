@@ -11,8 +11,8 @@ class Ticket < ApplicationRecord
 
   scope :tickets_from, ->(user) { where(creator: user.id) }
 
-  enum status: %i[open hold close]
-  enum sentiment: %i[negative positive neutral]
+  enum status: %i[open hold close], _suffix: true
+  enum sentiment: %i[negative positive neutral], _suffix: true
 
   validates :subject, presence: true, length: { minimum: 10 }
   validates :description, presence: true, length: { minimum: 10 }
@@ -36,19 +36,20 @@ class Ticket < ApplicationRecord
   end
 
   def send_new_ticket_email
-    NewTicketEmailJob.perform_later self.id if @send_notification
+    NewTicketEmailJob.perform_later id if @send_notification
   end
 
   def send_status_change_email
-    send_status_change_email = self.status != self.status_before_last_save
-    TicketStatusChangeEmailJob.perform_later self.id if send_status_change_email
+    send_status_change_email = status != status_before_last_save && !close_status?
+    TicketStatusChangeEmailJob.perform_later id if send_status_change_email
+    CloseTicketEmailJob.perform_later id if close_status?
   end
 
   def update_ticket_last_activity
-    TicketLastActivityUpdateJob.perform_later self.id, Time.current
+    TicketLastActivityUpdateJob.perform_later id, Time.current
   end
 
   def update_sentiment
-    TicketSentimentJob.perform_later self.id
+    TicketSentimentJob.perform_later id
   end
 end

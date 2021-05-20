@@ -3,6 +3,8 @@ export interface Ticket {
   subject: string;
   description: string;
   status: string;
+  sentiment?: string;
+  sentiment_score?: number;
   email: string;
   name: string;
   assignee_id: '' | number;
@@ -20,6 +22,8 @@ export interface CommentType {
   id: number;
   description: string;
   ticket_id: number;
+  sentiment?: string;
+  sentiment_score?: number;
   created_at: string;
   updated_at: string;
   url: string;

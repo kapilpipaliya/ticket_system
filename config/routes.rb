@@ -16,6 +16,7 @@ Rails.application.routes.draw do
           collection do
             get 'all_status'
             get 'all_status_filter'
+            get 'sentiments_options_filter'
           end
         end
 

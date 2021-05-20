@@ -6,10 +6,10 @@ class DashboardStatic
   private
 
   def overdue_count
-    Ticket.where('due_date < :today', { today: Date.today }).not_close
+    Ticket.where('due_date < :today', { today: Date.today }).not_close_status
   end
 
   def due_today
-    Ticket.where(due_date: Date.today).not_close
+    Ticket.where(due_date: Date.today).not_close_status
   end
 end

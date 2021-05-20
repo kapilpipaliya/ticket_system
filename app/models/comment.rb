@@ -4,7 +4,7 @@ class Comment < ApplicationRecord
 
   default_scope { order(created_at: :asc) }
 
-  enum sentiment: %i[negative positive neutral]
+  enum sentiment: %i[negative positive neutral], _suffix: true
 
   validates :description, :ticket, :commenter, presence: true
   # validates :sentiment, inclusion: { in: sentiments.keys }
@@ -14,7 +14,7 @@ class Comment < ApplicationRecord
   private
 
   def send_email
-    TicketReplyJob.perform_later ticket.id if commenter.email != ticket.email
+    TicketReplyJob.perform_later ticket.id, id if commenter.email != ticket.email
   end
 
   def update_ticket_last_activity
