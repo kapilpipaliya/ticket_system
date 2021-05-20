@@ -1,4 +1,8 @@
 class Comment < ApplicationRecord
+  attr_accessor :send_notification
+
+  after_initialize { |comment| @send_notification = true }
+
   belongs_to :ticket
   belongs_to :commenter, class_name: 'User', optional: true
 
@@ -14,6 +18,8 @@ class Comment < ApplicationRecord
   private
 
   def send_email
+    return unless @send_notification
+
     TicketReplyJob.perform_later ticket.id, id if commenter.email != ticket.email
   end
 

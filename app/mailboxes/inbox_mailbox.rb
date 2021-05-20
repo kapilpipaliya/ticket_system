@@ -12,7 +12,15 @@ class InboxMailbox < ApplicationMailbox
 
     if ticket_id_
       ticket = Ticket.find(ticket_id)
-      ticket&.comments&.create!(commenter: @user, description: email_text)
+      if ticket
+        comment = Comment.new({
+                                ticket: ticket,
+                                description: email_text,
+                                commenter: @user
+                              })
+        comment.send_notification = false
+        comment.save!
+      end
     else
       created_at = Time.zone.now
       ticket =
@@ -26,7 +34,7 @@ class InboxMailbox < ApplicationMailbox
   private
 
   def ticket_id
-    match = /Case #([0-9])+/i.match(mail.subject)
+    match = /.*Case #([0-9])+/i.match(mail.subject)
     match &&= match[1]
     match
   end
