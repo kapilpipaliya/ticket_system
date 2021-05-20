@@ -3,16 +3,23 @@ class InboxMailbox < ApplicationMailbox
 
   def process
     ticket_id_ = ticket_id
+    email_text = ''
+    if mail.multipart?
+      email_text = mail.parts[0].body.decoded
+    else
+      email_html = mail.decoded
+    end
+
     if ticket_id_
       ticket = Ticket.find(ticket_id)
-      ticket.comments.create!(commenter: @user, description: mail.decoded) if @user if ticket
+      ticket.comments.create!(commenter: @user, description: email_text) if @user if ticket
     else
       created_at = Time.zone.now
       ticket =
         Ticket.new(
           {
             subject: mail.subject,
-            description: mail.decoded,
+            description: email_text,
             email: mail.from.first,
             name: mail.from.first.split('@').first,
             created_at: created_at,

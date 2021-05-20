@@ -82,6 +82,10 @@ test:
 #
 production:
   <<: *default
-  database:  <%= ENV['DATABASE_URL']%>
+#  database:  <%= ENV['DATABASE_URL']%>
 #  username: ticket_system
 #  password: <%#= ENV['TICKET_SYSTEM_DATABASE_PASSWORD'] %>
+  host: localhost
+  database:  ticket_system
+  username: postgres
+  password: postgres
