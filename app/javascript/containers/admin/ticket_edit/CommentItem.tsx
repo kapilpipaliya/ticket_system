@@ -64,9 +64,10 @@ export function CommentItem(props: CommentItemProps) {
             <Col>
               <div className="comment-top">
                 <h4>
-                  {props.comment.commenter_name} <small className="text-muted f-w-400">replied</small>
+                  {props.comment.commenter_name && <>{props.comment.commenter_name} <small className="text-muted f-w-400">replied</small></>}
                 </h4>
                 <p>{new Date(props.comment.created_at).toUTCString()}</p>
+                <p>Sentiment: {props.comment.sentiment} ({props.comment.sentiment_score})</p>
               </div>
               <div dangerouslySetInnerHTML={{ __html: props.comment.description }}></div>
             </Col>

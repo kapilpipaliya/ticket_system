@@ -6,6 +6,6 @@ class CommentSentimentJob < ApplicationJob
     analyzer = Sentimental.new(threshold: 0.1)
     analyzer.load_defaults
     sentiment = analyzer.sentiment ActionController::Base.helpers.strip_tags(comment.description)
-    comment.update_column(:sentiment, Comment.sentiments[sentiment])
+    comment.update_columns(sentiment: Comment.sentiments[sentiment], sentiment_score: analyzer.score(comment.description))
   end
 end
