@@ -19,7 +19,19 @@ class TicketMailer < ApplicationMailer
 
   def ticket_status_change
     @ticket = Ticket.find(params[:ticket_id])
-    mail(to: @ticket.email, subject: 'Welcome to My Awesome Site')
+    @site_title = 'Mentor'
+    @username = ''
+    @subject = @ticket.subject
+    @tracking_id = @ticket.id
+    @help_topic = ''
+    @email = @ticket.email
+    @message = @ticket.description
+    @status = @ticket.status
+    @ticket_url = "https://mentor.com//tickets/#{@ticket.id}/edit"
+    @department = ''
+    @priority = ''
+    @current_year = 2021
+    mail(to: @ticket.email, subject: "Case ##{@ticket.id}")
   end
 
   def ticket_reply
