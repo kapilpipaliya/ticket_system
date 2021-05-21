@@ -5,7 +5,10 @@ class InboxMailbox < ApplicationMailbox
     ticket_id_ = ticket_id
     email_text = ''
     if mail.multipart?
-      email_text = mail.parts[0].body.decoded
+        part = mail.html_part || mail.text_part
+        body = part.body
+        body.split!('<!-- start -->')
+        email_text = part.body.preamble
     else
       email_html = mail.decoded
     end
