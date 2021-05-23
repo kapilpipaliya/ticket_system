@@ -9,7 +9,9 @@ class InboxMailbox < ApplicationMailbox
         part = mail.html_part || mail.text_part
         html = part.body.decoded
         doc = Nokogiri::HTML(html)
-        doc.css(".remove").remove
+        # gmail is modifying id and removing className from email template
+        doc.css('[id$="remove"]').remove
+        byebug
         email_text = doc.to_html
     else
       email_text = mail.decoded
