@@ -4,13 +4,15 @@ class InboxMailbox < ApplicationMailbox
   def process
     ticket_id_ = ticket_id
     email_text = ''
+
     if mail.multipart?
         part = mail.html_part || mail.text_part
-        body = part.body
-        body.split!('<!-- start -->')
-        email_text = part.body.preamble
+        html = part.body.decoded
+        doc = Nokogiri::HTML(html)
+        doc.css(".remove").remove
+        email_text = doc.to_html
     else
-      email_html = mail.decoded
+      email_text = mail.decoded
     end
 
     if ticket_id_
