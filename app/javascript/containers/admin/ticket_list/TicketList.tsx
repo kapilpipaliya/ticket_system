@@ -54,6 +54,7 @@ export const TicketList = () => {
     isFetching,
   } = useQuery(['ticketsData'], () => fetchAllTicketData(pageNo, sortState, searchSubmitState, statusSubmit, sentimentSubmit), {
     enabled: false,
+    keepPreviousData: true,
   });
 
   useEffect(() => {

@@ -46,6 +46,7 @@ export const TicketView = (props: TicketViewProps) => {
     },
     {
       enabled: false,
+      keepPreviousData: true,
     },
   );
 
@@ -61,6 +62,7 @@ export const TicketView = (props: TicketViewProps) => {
     },
     {
       enabled: false,
+      keepPreviousData: true,
     },
   );
 

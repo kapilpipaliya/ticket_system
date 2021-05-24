@@ -37,14 +37,14 @@ export const LatestActivity = (props: LatestActivity) => {
             );
           })}
         </div>
-        <div className={styles.footer}>
-          {props.loading && <Spinner />}
-          {!props.loading && props.showFetchAllButton && (
+        {!props?.data?.latest_activity.length && <div className={styles.noData}>No Data...</div>}
+        {!props.loading && props.showFetchAllButton && !!props?.data?.latest_activity.length && (
+          <div className={styles.footer}>
             <Button variant="secondary" onClick={props.handleGetAllActivity}>
               View all activities
             </Button>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </>
   );

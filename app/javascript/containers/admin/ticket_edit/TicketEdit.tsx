@@ -42,6 +42,7 @@ export const TicketEdit = (props: TicketEditProps) => {
     },
     {
       enabled: false,
+      keepPreviousData: true,
     },
   );
 
@@ -57,6 +58,7 @@ export const TicketEdit = (props: TicketEditProps) => {
     },
     {
       enabled: false,
+      keepPreviousData: true,
     },
   );
 
