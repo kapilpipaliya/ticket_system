@@ -14,6 +14,13 @@
  *= require_self
  */
 @import 'bootstrap/scss/bootstrap';
+
+body {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1em;
+}
+
 @import 'authentication';
 .bg-blue {
   background: $blue;

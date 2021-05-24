@@ -27,6 +27,7 @@ export function DynamicDashboard() {
     },
     {
       enabled: false,
+      keepPreviousData: true,
     },
   );
   const {

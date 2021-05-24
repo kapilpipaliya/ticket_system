@@ -5,6 +5,7 @@ import { MdRssFeed } from 'react-icons/all';
 import { Card } from '../../../components/card/Card';
 import { Button } from '../../../components/button/Button';
 import styles from './LatestActivity.module.scss';
+import { SpinnerModal } from '../../../components/SpinnerModal';
 
 interface LatestActivity {
   data: { latest_activity: Ticket[] };
@@ -19,6 +20,7 @@ export const LatestActivity = (props: LatestActivity) => {
       <div className={styles.container}>
         <div className={styles.header}>Latest Activity</div>
         <div className={styles.content}>
+          <SpinnerModal loading={props.loading} />
           {props?.data?.latest_activity.map(row => {
             return (
               <div key={row.id} className={styles.row}>
@@ -28,7 +30,9 @@ export const LatestActivity = (props: LatestActivity) => {
                     <span className={styles.title}>{row.subject}</span>
                   </a>
                 </div>
-                <div className={styles.lastColumn}>{new Date(row.created_at).toLocaleString(undefined, { hour12: true })}</div>
+                <div className={styles.lastColumn}>
+                  {new Date(row.created_at).toLocaleString(undefined, { hour12: true, year: 'numeric', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                </div>
               </div>
             );
           })}

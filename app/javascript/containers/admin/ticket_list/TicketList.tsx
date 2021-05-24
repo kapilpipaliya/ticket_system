@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { Button, Card, Col, Collapse, Container, Modal, Row } from 'react-bootstrap';
+import { Button, Card, Col, Collapse, Container, Row } from 'react-bootstrap';
 import { Filter, Plus } from 'react-feather';
 import { useMutation, useQuery } from 'react-query';
 import { CurrentUser, SearchState, SortDirection, SortState, Ticket } from '../../Types';
@@ -13,9 +13,9 @@ import { TicketSearch } from './TicketSearch';
 import { isEmpty } from '../../utils';
 import { TicketTable } from './TicketTable';
 import { TicketPagination } from './TicketPagination';
-import { Spinner } from '../../../components/Spinner';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { SpinnerModal } from '../../../components/SpinnerModal';
 
 const searchFormInitialState = () => ({
   name: '',
@@ -23,6 +23,7 @@ const searchFormInitialState = () => ({
   subject: '',
   description: '',
 });
+
 export const TicketList = () => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -196,16 +197,7 @@ export const TicketList = () => {
 
               <Card className={'mt-3'}>
                 <Card.Body>
-                  {isLoading ||
-                    (isFetching && (
-                      <Modal show={true} centered animation={false} backdrop={false}>
-                        <Card className={'text-center'}>
-                          <Card.Body>
-                            <Spinner />
-                          </Card.Body>
-                        </Card>
-                      </Modal>
-                    ))}
+                  <SpinnerModal loading={isLoading || isFetching} />
                   {ticketData && (
                     <>
                       <TicketTable sortState={sortState} handleOnSortClick={handleOnSortClick} ticketData={ticketData} onTicketDeleteConfirm={onTicketDeleteConfirm} />
