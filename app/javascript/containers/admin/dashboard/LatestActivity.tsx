@@ -3,8 +3,8 @@ import { Ticket } from '../../Types';
 import { Spinner } from '../../../components/Spinner';
 import { MdRssFeed } from 'react-icons/all';
 import { Card } from '../../../components/card/Card';
-import styles from './LatestActivity.module.scss';
 import { Button } from '../../../components/button/Button';
+import styles from './LatestActivity.module.scss';
 
 interface LatestActivity {
   data: { latest_activity: Ticket[] };
@@ -16,38 +16,32 @@ interface LatestActivity {
 export const LatestActivity = (props: LatestActivity) => {
   return (
     <>
-      <Card
-        className={styles.container}
-        header="Latest Activity"
-        footer={
-          <>
-            {props.loading && <Spinner />}
-            {!props.loading && props.showFetchAllButton && (
-              <Button variant="primary" onClick={props.handleGetAllActivity}>
-                View all activities
-              </Button>
-            )}
-          </>
-        }
-      >
+      <div className={styles.container}>
+        <div className={styles.header}>Latest Activity</div>
         <div className={styles.content}>
           {props?.data?.latest_activity.map(row => {
             return (
               <div key={row.id} className={styles.row}>
+                <MdRssFeed className={styles.feedIcon} />
                 <div>
-                  <MdRssFeed />
-                </div>
-                <div>
-                  <a href={`/tickets/${row.id}`}>
-                    <h6>{row.subject}</h6>
+                  <a href={`/tickets/${row.id}`} className={styles.link}>
+                    <span className={styles.title}>{row.subject}</span>
                   </a>
                 </div>
-                <div>{new Date(row.created_at).toLocaleString()}</div>
+                <div className={styles.lastColumn}>{new Date(row.created_at).toLocaleString(undefined, { hour12: true })}</div>
               </div>
             );
           })}
         </div>
-      </Card>
+        <div className={styles.footer}>
+          {props.loading && <Spinner />}
+          {!props.loading && props.showFetchAllButton && (
+            <Button variant="secondary" onClick={props.handleGetAllActivity}>
+              View all activities
+            </Button>
+          )}
+        </div>
+      </div>
     </>
   );
 };

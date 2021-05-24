@@ -9,6 +9,7 @@ import { BiTrendingDown } from 'react-icons/bi';
 import { GoAlert } from 'react-icons/all';
 import { Card } from '../../../components/card/Card';
 import styles from './DynamicDashboard.module.scss';
+import clsx from 'clsx';
 
 export const FixedDashboard = () => {
   const { isLoading, error, data, refetch, isFetching } = useQuery(
@@ -34,30 +35,24 @@ export const FixedDashboard = () => {
   if (!data) return <div>No Data found</div>;
   return (
     <div className={styles.cards}>
-      <Card
-        footerClassName={styles.bgWarning}
-        footer={
-          <>
-            <div>Overdue</div>
-            <BiTrendingDown />
-          </>
-        }
-      >
-        <span className={styles.warning}>{data.data.overdue_count}</span>
-        <GoAlert />
-      </Card>
-      <Card
-        footerClassName={styles.bgWarning}
-        footer={
-          <>
-            <div>Due Today</div>
-            <BiTrendingDown />
-          </>
-        }
-      >
-        <span className={styles.warning}>{data.data.due_today}</span>
-        <GoAlert />
-      </Card>
+      <div className={styles.card}>
+        <div className={styles.cardHeader}>
+          <span className={styles.warning}>{data.data.overdue_count}</span>
+        </div>
+
+        <div className={clsx(styles.cardFooter, styles.bgWarning)}>
+          <div>Overdue</div>
+        </div>
+      </div>
+
+      <div className={styles.card}>
+        <div className={styles.cardHeader}>
+          <span className={styles.warning}>{data.data.due_today}</span>
+        </div>
+        <div className={clsx(styles.cardFooter, styles.bgWarning)}>
+          <div>Due Today</div>
+        </div>
+      </div>
     </div>
   );
 };

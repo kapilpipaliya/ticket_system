@@ -6,13 +6,14 @@ class InboxMailbox < ApplicationMailbox
     email_text = ''
 
     if mail.multipart?
-        part = mail.html_part || mail.text_part
-        html = part.body.decoded
-        doc = Nokogiri::HTML(html)
-        # gmail is modifying id and removing className from email template
-        doc.css('[id$="remove"]').remove
-        byebug
-        email_text = doc.to_html
+      part = mail.html_part || mail.text_part
+      html = part.body.decoded
+      doc = Nokogiri.HTML(html)
+
+      # gmail is modifying id and removing className from email template
+      doc.css('[id$="remove"]').remove
+      byebug
+      email_text = doc.to_html
     else
       email_text = mail.decoded
     end
@@ -20,11 +21,7 @@ class InboxMailbox < ApplicationMailbox
     if ticket_id_
       ticket = Ticket.find(ticket_id)
       if ticket
-        comment = Comment.new({
-                                ticket: ticket,
-                                description: email_text,
-                                commenter: @user
-                              })
+        comment = Comment.new({ ticket: ticket, description: email_text, commenter: @user })
         comment.send_notification = false
         comment.save!
       end

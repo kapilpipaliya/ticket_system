@@ -1,19 +1,34 @@
 .container {
-  margin-top: 10px;
+  margin-top: 20px;
+}
+.header {
+  background-color: #eae9e9;
+  padding: 10px;
+  font-size: 18px;
 }
 .content {
   display: flex;
   flex-direction: column;
-
-  a {
-    text-decoration: none;
-  }
+}
+.feedIcon {
+  margin-right: 10px;
+}
+.link {
+  text-decoration: none;
+}
+.title {
+  font-weight: 400;
 }
 .row {
   display: flex;
   flex-wrap: wrap;
+  padding: 5px;
 }
-.row > div:last-child {
+.lastColumn {
   margin-left: auto;
   color: #6c757d;
+}
+.footer {
+  background-color: #eae9e9;
+  padding: 10px;
 }

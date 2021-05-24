@@ -5,10 +5,8 @@ import { fetchDashBoardData, fetchLastActivityData } from '../../../services/ser
 import { DateSelectDropdown } from './DateSelectDropdown';
 import { Spinner } from '../../../components/Spinner';
 import { LatestActivity } from './LatestActivity';
-import { BiTrendingDown, BiTrendingUp } from 'react-icons/bi';
-import { AiOutlineFolderOpen, FaComment, FaResolving, FaUserMd, GoStop, GoThumbsup, MdToday, VscAdd } from 'react-icons/all';
 import styles from './DynamicDashboard.module.scss';
-import { Card } from '../../../components/card/Card';
+import clsx from 'clsx';
 
 const dummyFn = async () => {
   return { data: false as any };
@@ -18,6 +16,7 @@ export function DynamicDashboard() {
   const [start, setStart] = useState<Date | false>(false);
   const [end, setEnd] = useState<Date | false>(false);
   const [lastActivityCount, setLastActivityCount] = useState(5);
+
   const { isLoading, error, data, refetch, isFetching } = useQuery(
     ['dashboard_data', start, end],
     () => {
@@ -71,7 +70,7 @@ export function DynamicDashboard() {
 
   return (
     <>
-      <DateSelectDropdown handleRangeSelect={handleOnDateChange} className={styles.filterButton} />
+      <DateSelectDropdown handleRangeSelect={handleOnDateChange} className={styles.filterButton} isDisabled={isLoading || isFetching || !data} />
       {isLoading || isFetching || !data ? (
         <Spinner />
       ) : (
@@ -79,109 +78,77 @@ export function DynamicDashboard() {
           {data?.data && (
             <>
               <div className={styles.cards}>
-                <Card
-                  footerClassName={styles.bgWarning}
-                  footer={
-                    <>
-                      <div>Unresolved</div>
-                      <BiTrendingDown />
-                    </>
-                  }
-                >
-                  <span className={styles.warning}>{data.data.unresolved_count}</span>
-                  <FaResolving />
-                </Card>
+                <div className={styles.card}>
+                  <div className={styles.cardHeader}>
+                    <span className={styles.warning}>{data.data.unresolved_count}</span>
+                  </div>
+                  <div className={clsx(styles.cardFooter, styles.bgWarning)}>
+                    <div>Unresolved</div>
+                  </div>
+                </div>
 
-                <Card
-                  footerClassName={styles.bgWarning}
-                  footer={
-                    <>
-                      <div>New Tickets</div>
-                      <BiTrendingDown />
-                    </>
-                  }
-                >
-                  <span className={styles.warning}>{data.data.new_tickets}</span>
-                  <VscAdd />
-                </Card>
+                <div className={styles.card}>
+                  <div className={styles.cardHeader}>
+                    <span className={styles.warning}>{data.data.new_tickets}</span>
+                  </div>
+                  <div className={clsx(styles.cardFooter, styles.bgWarning)}>
+                    <div>New Tickets</div>
+                  </div>
+                </div>
 
-                <Card
-                  footerClassName={styles.bgWarning}
-                  footer={
-                    <>
-                      <div>Open</div>
-                      <BiTrendingDown />
-                    </>
-                  }
-                >
-                  <span className={styles.warning}>{data.data.open}</span>
-                  <AiOutlineFolderOpen />
-                </Card>
+                <div className={styles.card}>
+                  <div className={styles.cardHeader}>
+                    <span className={styles.warning}>{data.data.open}</span>
+                  </div>
+                  <div className={clsx(styles.cardFooter, styles.bgWarning)}>
+                    <div>Open</div>
+                  </div>
+                </div>
 
-                <Card
-                  footerClassName={styles.bgWarning}
-                  footer={
-                    <>
-                      <div>On Hold</div>
-                      <BiTrendingDown />
-                    </>
-                  }
-                >
-                  <span className={styles.warning}>{data.data.hold}</span>
-                  <GoStop />
-                </Card>
+                <div className={styles.card}>
+                  <div className={styles.cardHeader}>
+                    <span className={styles.warning}>{data.data.hold}</span>
+                  </div>
+                  <div className={clsx(styles.cardFooter, styles.bgWarning)}>
+                    <div>On Hold</div>
+                  </div>
+                </div>
 
-                <Card
-                  footerClassName={styles.bgSuccess}
-                  footer={
-                    <>
-                      <div>Closed</div>
-                      <BiTrendingUp />
-                    </>
-                  }
-                >
-                  <span className={styles.success}>{data.data.close}</span>
-                  <GoThumbsup />
-                </Card>
+                <div className={styles.card}>
+                  <div className={styles.cardHeader}>
+                    <span className={styles.success}>{data.data.close}</span>
+                  </div>
+                  <div className={clsx(styles.cardFooter, styles.bgSuccess)}>
+                    <div>Closed</div>
+                  </div>
+                </div>
 
-                <Card
-                  footerClassName={styles.bgSuccess}
-                  footer={
-                    <>
-                      <div>Assigned</div>
-                      <BiTrendingUp />
-                    </>
-                  }
-                >
-                  <span className={styles.success}>{data.data.assigned}</span>
-                  <FaUserMd />
-                </Card>
+                <div className={styles.card}>
+                  <div className={styles.cardHeader}>
+                    <span className={styles.success}>{data.data.assigned}</span>
+                  </div>
+                  <div className={clsx(styles.cardFooter, styles.bgSuccess)}>
+                    <div>Assigned</div>
+                  </div>
+                </div>
 
-                <Card
-                  footerClassName={styles.bgSuccess}
-                  footer={
-                    <>
-                      <div>Replies</div>
-                      <BiTrendingUp />
-                    </>
-                  }
-                >
-                  <span className={styles.success}>{data.data.replies}</span>
-                  <FaComment />
-                </Card>
+                <div className={styles.card}>
+                  <div className={styles.cardHeader}>
+                    <span className={styles.success}>{data.data.replies}</span>
+                  </div>
+                  <div className={clsx(styles.cardFooter, styles.bgSuccess)}>
+                    <div>Replies</div>
+                  </div>
+                </div>
 
-                <Card
-                  footerClassName={styles.bgSuccess}
-                  footer={
-                    <>
-                      <div>Unresolved</div>
-                      <BiTrendingUp />
-                    </>
-                  }
-                >
-                  <span className={styles.success}>{data.data.tickets_per_day}</span>
-                  <MdToday />
-                </Card>
+                <div className={styles.card}>
+                  <div className={styles.cardHeader}>
+                    <span className={styles.success}>{data.data.tickets_per_day}</span>
+                  </div>
+                  <div className={clsx(styles.cardFooter, styles.bgSuccess)}>
+                    <div>Tickets per day</div>
+                  </div>
+                </div>
               </div>
 
               <LatestActivity

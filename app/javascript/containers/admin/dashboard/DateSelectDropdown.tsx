@@ -1,43 +1,43 @@
 import * as React from 'react';
-import { useEffect, useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Filter } from 'react-feather';
 import { endOfDay, startOfISOWeek, startOfMonth, startOfYear, sub } from 'date-fns';
 import styles from './DateSelectDropdown.module.scss';
-import { Dropdown as Dropdown2 } from '../../../components/dropdown/Dropdown';
+import { Select } from 'react-functional-select';
 
 interface DateSelectDropdownProps {
   handleRangeSelect: (startDate: Date, endDate: Date) => void;
   className?: string;
+  isDisabled: boolean;
 }
 
+type Option = Readonly<{
+  id: string;
+  label: string;
+}>;
+
+type SingleSelectDemoProps = Readonly<{}>;
+
+const _cityOptions: Option[] = [
+  { id: 'today', label: 'Today' },
+  { id: 'this_week', label: 'This Week' },
+  { id: 'last_week', label: 'Last Week' },
+  { id: 'this_month', label: 'This Month' },
+  { id: 'last_month', label: 'Last Month' },
+  { id: 'year_to_date', label: 'Year to Date' },
+  { id: 'last_year', label: 'Last Year' },
+];
+
 export const DateSelectDropdown = (props: DateSelectDropdownProps) => {
-  const [selectedRange, setSelectedRange] = useState('this_month');
-  const options = {
-    today: {
-      label: 'Today',
-    },
-    this_week: {
-      label: 'This Week',
-    },
-    last_week: {
-      label: 'Last Week',
-    },
-    this_month: {
-      label: 'This Month',
-    },
-    last_month: {
-      label: 'Last Month',
-    },
-    year_to_date: {
-      label: 'Year to Date',
-    },
-    last_year: {
-      label: 'Last Year',
-    },
-  };
-  const handleRangeChange = (id: string) => () => {
-    setSelectedRange(id);
-    switch (id) {
+  const [isInvalid, setIsInvalid] = useState<boolean>(false);
+  const [selectedOption, setSelectedOption] = useState<Option | null>(_cityOptions[3]);
+
+  const getOptionValue = useCallback((option: Option): string => option.id, []);
+  const onOptionChange = useCallback((option: Option | null): void => setSelectedOption(option), []);
+  const getOptionLabel = useCallback((option: Option): string => `${option.label}`, []);
+
+  useEffect(() => {
+    switch (selectedOption.id) {
       case 'today': {
         const endDate = endOfDay(new Date());
         props.handleRangeSelect(sub(endDate, { days: 1 }), endDate);
@@ -74,27 +74,24 @@ export const DateSelectDropdown = (props: DateSelectDropdownProps) => {
         break;
       }
     }
-  };
+  }, [selectedOption]);
+
   useEffect(() => {
-    handleRangeChange('this_month')();
-  }, []);
+    props.isDisabled && setIsInvalid(false);
+  }, [props.isDisabled]);
+
   return (
-    <Dropdown2
-      className={props.className}
-      label={
-        <>
-          <Filter />
-          {options[selectedRange].label}
-        </>
-      }
-    >
-      <ul className={styles.submenu}>
-        {Object.keys(options).map(o => (
-          <li key={o} onClick={handleRangeChange(o)}>
-            <span>{options[o].label}</span>
-          </li>
-        ))}
-      </ul>
-    </Dropdown2>
+    <div className={props.className}>
+      <Select
+        isClearable
+        isInvalid={isInvalid}
+        options={_cityOptions}
+        isDisabled={props.isDisabled}
+        onOptionChange={onOptionChange}
+        getOptionValue={getOptionValue}
+        getOptionLabel={getOptionLabel}
+        initialValue={selectedOption}
+      />
+    </div>
   );
 };
