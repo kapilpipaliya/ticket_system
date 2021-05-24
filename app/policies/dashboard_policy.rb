@@ -4,6 +4,4 @@ class DashboardPolicy < ApplicationPolicy
   end
 
   alias data? static?
-
-  alias latest_activity? static?
 end

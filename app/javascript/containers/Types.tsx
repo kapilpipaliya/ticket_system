@@ -105,3 +105,9 @@ export interface SearchState {
   subject: string;
   description: string;
 }
+export interface Log {
+  id: number;
+  activity: string;
+  created_at: string;
+  updated_at: string;
+}

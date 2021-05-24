@@ -28,6 +28,11 @@ Rails.application.routes.draw do
           collection do
             get 'data'
             get 'static'
+          end
+        end
+
+        resources :logs, only: %i[] do
+          collection do
             get 'latest_activity'
           end
         end

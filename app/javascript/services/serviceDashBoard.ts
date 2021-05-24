@@ -30,7 +30,7 @@ export interface LastActivityData {
 export const fetchLastActivityData = async (from_date: number, to_date: number, limit: number = 5): Promise<LastActivityData> => {
   try {
     const limitQuery = limit ? `&limit=${limit}` : '';
-    const response = await fetch(`/api/v1/dashboard/latest_activity.json?from=${from_date}&to=${to_date}${limitQuery}`);
+    const response = await fetch(`/api/v1/logs/latest_activity.json?from=${from_date}&to=${to_date}${limitQuery}`);
     return await response.json();
   } catch (err) {
     alert(err);

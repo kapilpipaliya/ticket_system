@@ -12,7 +12,7 @@ class LatestActivity
   private
 
   def latest_activity
-    apply_date_rage(Ticket).order(created_at: :desc).limit(@limit)
+    apply_date_rage(Log).order(created_at: :desc).limit(@limit)
   end
 
   def apply_date_rage(model)

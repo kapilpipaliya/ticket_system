@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Ticket } from '../../Types';
+import { Log, Ticket } from '../../Types';
 import { Spinner } from '../../../components/Spinner';
 import { MdRssFeed } from 'react-icons/all';
 import { Card } from '../../../components/card/Card';
@@ -8,7 +8,7 @@ import styles from './LatestActivity.module.scss';
 import { SpinnerModal } from '../../../components/SpinnerModal';
 
 interface LatestActivity {
-  data: { latest_activity: Ticket[] };
+  data: { latest_activity: Log[] };
   handleGetAllActivity: () => void;
   showFetchAllButton: boolean;
   loading: boolean;
@@ -21,13 +21,13 @@ export const LatestActivity = (props: LatestActivity) => {
         <div className={styles.header}>Latest Activity</div>
         <div className={styles.content}>
           <SpinnerModal loading={props.loading} />
-          {props?.data?.latest_activity.map(row => {
+          {props?.data?.latest_activity?.map(row => {
             return (
               <div key={row.id} className={styles.row}>
                 <MdRssFeed className={styles.feedIcon} />
                 <div>
-                  <a href={`/tickets/${row.id}`} className={styles.link}>
-                    <span className={styles.title}>{row.subject}</span>
+                  <a className={styles.link}>
+                    <span className={styles.title}>{row.activity}</span>
                   </a>
                 </div>
                 <div className={styles.lastColumn}>
