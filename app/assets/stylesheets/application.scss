@@ -185,3 +185,22 @@
     border-color: #dee2e6;
   }
 }
+
+// spinner-grow
+.spinner-grow {
+  display: inline-block;
+  width: 1em; height: 1em;
+  background-color: rgb(77, 92, 226);
+  border-radius: 50%;
+  opacity: 0;
+  animation: 0.75s linear infinite spinner-grow;
+}
+@keyframes spinner-grow {
+  0% {
+    transform: scale(0);
+  }
+  50% {
+    opacity: 1;
+    transform: none;
+  }
+}
