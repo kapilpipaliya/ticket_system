@@ -1,8 +1,8 @@
 class TicketMailer < ApplicationMailer
   default from: 'admin@o-k.website'
 
-  def new_ticket
-    @ticket = Ticket.find(params[:ticket_id])
+  def new_ticket(ticket_id:)
+    @ticket = Ticket.find(ticket_id)
     @site_title = 'Ticket System'
     @username = ''
     @subject = @ticket.subject
@@ -18,8 +18,8 @@ class TicketMailer < ApplicationMailer
     mail(to: @ticket.email, subject: "Case ##{@ticket.id}")
   end
 
-  def ticket_status_change
-    @ticket = Ticket.find(params[:ticket_id])
+  def ticket_status_change(ticket_id:)
+    @ticket = Ticket.find(ticket_id)
     @site_title = 'Ticket System'
     @username = ''
     @subject = @ticket.subject
@@ -36,9 +36,9 @@ class TicketMailer < ApplicationMailer
     mail(to: @ticket.email, subject: "Case ##{@ticket.id}")
   end
 
-  def ticket_reply
-    @ticket = Ticket.find(params[:ticket_id])
-    @comment = Comment.find(params[:comment_id])
+  def ticket_reply(ticket_id:, comment_id:)
+    @ticket = Ticket.find(ticket_id)
+    @comment = Comment.find(comment_id)
     @site_title = 'Ticket System'
     @username = ''
     @subject = @ticket.subject
@@ -54,8 +54,8 @@ class TicketMailer < ApplicationMailer
     mail(to: @ticket.email, subject: "Case ##{@ticket.id}")
   end
 
-  def close_ticket
-    @ticket = Ticket.find(params[:ticket_id])
+  def close_ticket(ticket_id:)
+    @ticket = Ticket.find(ticket_id)
     @site_title = 'Ticket System'
     @username = ''
     @subject = @ticket.subject

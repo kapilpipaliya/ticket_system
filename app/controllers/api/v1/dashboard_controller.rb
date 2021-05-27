@@ -5,11 +5,11 @@ module Api
       before_action :authorize_actions
 
       def static
-        @dashboard_data = DashboardStatic.new.data
+        @dashboard_data = DashboardStatic.new(tickets: Ticket).data
       end
 
       def data
-        @dashboard_data = Dashboard.new(params[:from], params[:to]).data
+        @dashboard_data = Dashboard.new(tickets: Ticket, from: params[:from], to: params[:to]).data
       end
 
       private

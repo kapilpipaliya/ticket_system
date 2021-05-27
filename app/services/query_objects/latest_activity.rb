@@ -1,5 +1,5 @@
 class LatestActivity
-  def initialize(from, to, limit)
+  def initialize(from:, to:, limit:)
     @from = from ? Time.zone.at(from.to_i) : Time.zone.now.midnight
     @to = to ? Time.zone.at(to.to_i) : Time.zone.now.midnight + 1.day
     @limit = limit

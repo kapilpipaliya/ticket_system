@@ -1,12 +1,15 @@
 class Comment < ApplicationRecord
-  attr_accessor :send_notification
-
-  after_initialize { |comment| @send_notification = true }
+  attr_accessor :send_notification, :boolean
+  def send_notification
+    @send_notification.nil? ? true : @send_notification
+  end
 
   belongs_to :ticket
   belongs_to :commenter, class_name: 'User', optional: true
 
   default_scope { order(created_at: :asc) }
+  scope :apply_date_rage, ->(from, to) { where(created_at: from..to) }
+
 
   enum sentiment: %i[negative positive neutral], _suffix: true
 
@@ -21,7 +24,7 @@ class Comment < ApplicationRecord
   def send_email
     return unless @send_notification
 
-    TicketReplyJob.perform_later ticket.id, id if commenter.email != ticket.email
+    TicketReplyJob.perform_later ticket_id: ticket.id, comment_id: id if commenter.email != ticket.email
     if previously_new_record?
       Log.create({ activity: "New comment(#{id}) on ticket(#{ticket.subject}) is created" })
     elsif destroyed?
@@ -32,10 +35,10 @@ class Comment < ApplicationRecord
   end
 
   def update_ticket_last_activity
-    TicketLastActivityUpdateJob.perform_later ticket.id, Time.current
+    TicketLastActivityUpdateJob.perform_later ticket_id: ticket.id, time: Time.current
   end
 
   def update_sentiment
-    CommentSentimentJob.perform_later id
+    CommentSentimentJob.perform_later comment_id: id
   end
 end

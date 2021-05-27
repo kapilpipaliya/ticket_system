@@ -4,7 +4,7 @@ class UserPolicy < ApplicationPolicy
       if user.customer?
         scope.where(id: user.id)
       elsif user.support?
-        scope.where(role: 'support').order(created_at: :asc)
+        scope.support.order(created_at: :asc)
       else
         scope.limit(0)
       end

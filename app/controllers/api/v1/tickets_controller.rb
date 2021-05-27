@@ -11,7 +11,7 @@ module Api
       def index
         @q = policy_scope(Ticket).ransack(params[:q])
         @pagy, @tickets = pagy(@q.result)
-        @tickets = TicketWithAssigneeComment.new(@tickets).tickets
+        @tickets = TicketsWithAssigneeComment.new(tickets: @tickets).tickets
         @pagy_meta = pagy_metadata(@pagy)
       end
 

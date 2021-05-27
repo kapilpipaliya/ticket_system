@@ -1,7 +1,7 @@
 class TicketSentimentJob < ApplicationJob
   queue_as :default
 
-  def perform(ticket_id)
+  def perform(ticket_id:)
     ticket = Ticket.find(ticket_id)
     analyzer = Sentimental.new(threshold: 0.1)
     analyzer.load_defaults

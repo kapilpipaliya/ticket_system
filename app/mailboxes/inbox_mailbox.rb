@@ -12,7 +12,6 @@ class InboxMailbox < ApplicationMailbox
 
       # gmail is modifying id and removing className from email template
       doc.css('[id$="remove"]').remove
-      byebug
       email_text = doc.to_html
     else
       email_text = mail.decoded

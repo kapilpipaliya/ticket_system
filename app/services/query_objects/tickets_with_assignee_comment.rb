@@ -1,5 +1,5 @@
-class TicketWithAssigneeComment
-  def initialize(tickets)
+class TicketsWithAssigneeComment
+  def initialize(tickets:)
     @tickets = tickets
   end
 
