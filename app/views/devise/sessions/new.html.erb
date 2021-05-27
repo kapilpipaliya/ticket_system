@@ -1,42 +1,36 @@
 <% content_for :content do %>
   <div class="auth-wrapper">
-    <div class="auth-content text-center">
-      <div class="borderless card">
-        <div class="align-items-center text-center row">
-          <div class="col">
-            <div class="card-body card-body">
-              <a href="/" class="img-fluid mb-4 text-decoration-none"><h2><%= @site_title %></h2></a>
-              <h4 class="mb-3 f-w-400">Log in</h4>
+      <div class="card">
+              <a href="/"><h2><%= @site_title %></h2></a>
+              <header>Login</header>
 
               <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
-                <div class="form-group mb-3">
-<!--                  <%#= f.label :email %><br/>-->
-                  <%= f.email_field :email, placeholder: "Email", autofocus: true, autocomplete: "email", class: "form-control" %>
+                <%= render "devise/shared/error_messages", resource: resource %>
+
+                <div class="form-group ">
+                  <%= f.email_field :email, required: true, class: "form-control input" %>
+                  <%= f.label :email %>
                 </div>
 
-                <div class="form-group mb-3">
-<!--                  <%#= f.label :password %><br/>-->
-                  <%= f.password_field :password, placeholder: "Password", autocomplete: "current-password", class: "form-control" %>
+                <div class="form-group ">
+                  <%= f.password_field :password, required: true, class: "form-control input" %>
+                  <%= f.label :password %>
                 </div>
 
                 <% if devise_mapping.rememberable? %>
-                  <div class="form-group mb-3">
-                    <%= f.check_box :remember_me %>
-                    <%= f.label :remember_me %>
+                  <div class="form-group remember">
+                    <%= f.check_box :remember_me, id: 'remember_me' %>
+                    <%= f.label :remember_me, for: 'remember_me' %>
                   </div>
                 <% end %>
 
-                <div class="form-group mb-3">
-                  <%= f.submit "Log in", class: "btn-block mb-4 btn btn-primary" %>
+                <div class="form-group ">
+                  <%= f.submit "LOG IN", class: "button" %>
                 </div>
               <% end %>
 
               <%= render "devise/shared/links" %>
-            </div>
-          </div>
-        </div>
       </div>
-    </div>
   </div>
 
 <% end %>
