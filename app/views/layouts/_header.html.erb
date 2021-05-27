@@ -1,23 +1,21 @@
+<nav class="custom-navbar">
+    <%= link_to "Ticket System", user_signed_in? ? authenticated_root_path : root_path, class: "custom-navbar-brand" %>
 
-  <nav class="navbar navbar-expand-lg navbar-dark bg-blue">
-    <div class="container-fluid">
-      <%= link_to "Ticket System", user_signed_in? ? authenticated_root_path : root_path, class: "navbar-brand" %>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse justify-content-end" id="navbarText">
-        <ul class="navbar-nav mb-2 mb-lg-0">
-          <% if user_signed_in? %>
-            <li class="nav-item"><%= link_to "Dashboard", dashboard_path, class: "nav-link" %></li>
-            <li class="nav-item"><%= link_to "Tickets", tickets_path, class: "nav-link" %></li>
-            <li class="nav-item"><%= link_to "Edit Profile", edit_user_registration_path, class: "nav-link" %></li>
-            <li class="nav-item"><%= link_to 'Logout', destroy_user_session_path, method: :delete, class: "nav-link" %></li>
-          <% else %>
-            <li class="nav-item"><%= link_to 'New Ticket', new_ticket_path, class: "nav-link" %>
-            <li class="nav-item"><%= link_to 'Login', new_user_session_path, class: "nav-link" %>
-            <li class="nav-item"><%= link_to "Sign Up", new_user_registration_path, class: "nav-link" %></li>
-          <% end %>
-        </ul>
-      </div>
-    </div>
-  </nav>
+      <button class="custom-navbar-toggle" type="button">
+          𑁔
+        </button>
+
+
+      <ul class="custom-navbar-nav">
+        <% if user_signed_in? %>
+          <li class="custom-nav-item"><%= link_to "Dashboard", dashboard_path, class: "custom-nav-link" %></li>
+          <li class="custom-nav-item"><%= link_to "Tickets", tickets_path, class: "custom-nav-link" %></li>
+          <li class="custom-nav-item"><%= link_to "Edit Profile", edit_user_registration_path, class: "custom-nav-link" %></li>
+          <li class="custom-nav-item"><%= link_to 'Logout', destroy_user_session_path, method: :delete, class: "custom-nav-link" %></li>
+        <% else %>
+          <li class="custom-nav-item"><%= link_to 'New Ticket', new_ticket_path, class: "custom-nav-link" %>
+          <li class="custom-nav-item"><%= link_to 'Login', new_user_session_path, class: "custom-nav-link" %>
+          <li class="custom-nav-item"><%= link_to "Sign Up", new_user_registration_path, class: "custom-nav-link" %></li>
+        <% end %>
+      </ul>
+</nav>

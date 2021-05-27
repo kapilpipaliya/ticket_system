@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
-import styles from './Dropdown.module.scss';
 import clsx from 'clsx';
+import styles from './Dropdown.module.scss';
 
 interface DropdownProps {
   label: React.ReactElement;
@@ -21,18 +21,16 @@ export const Dropdown = (props: DropdownProps) => {
         }
       };
       document.addEventListener('click', outSideHandler);
-      return () => {
-        document.removeEventListener('click', outSideHandler);
-      };
+      return () => document.removeEventListener('click', outSideHandler);
     }
   });
-
+  const { className, children, label } = props;
   return (
-    <div ref={ref} className={clsx(styles.dropdown, props.className)}>
-      <div className={styles.dropdownLabel} onClick={() => setIsOpen(!isOpen)}>
-        {props.label}
+    <div ref={ref} className={clsx(styles.dropdown, className)}>
+      <div className={styles.dropdownLabel} onClick={() => setIsOpen(prevState => !prevState)}>
+        {label}
       </div>
-      <div className={clsx(styles.dropdownMenu, { [styles.open]: isOpen })}>{props.children}</div>
+      <div className={clsx(styles.dropdownMenu, { [styles.open]: isOpen })}>{children}</div>
     </div>
   );
 };

@@ -18,6 +18,7 @@
 
 <main role="main">
   <% if content_for?(:content) %>
+    <%= render 'layouts/flash'%>
     <%= yield(:content) %>
   <% else %>
     <%= render 'layouts/flash'%>
@@ -31,5 +32,12 @@
   <% end %>
 </main>
 <%= render 'layouts/footer' %>
+<script>
+  const navToggleButton = document.getElementsByClassName('custom-navbar-toggle')[0]
+  navToggleButton.addEventListener('click', ()=>{
+    const dropdownMenu = document.getElementsByClassName('custom-navbar-nav')[0];
+    dropdownMenu.classList.toggle('hidden');
+  })
+</script>
 </body>
 </html>

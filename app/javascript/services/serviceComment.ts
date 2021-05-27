@@ -1,4 +1,5 @@
 import { CommentType } from '../containers/Types';
+import { deleteApi, patch, post } from './apiFunctions';
 
 export const fetchCommentData = async (ticketId: string): Promise<CommentType[]> => {
   try {
@@ -11,17 +12,8 @@ export const fetchCommentData = async (ticketId: string): Promise<CommentType[]>
 };
 
 export const submitTicketReply = async (data): Promise<CommentType | null> => {
-  const csrfToken = (document.querySelector('[name=csrf-token]') as HTMLMetaElement).content;
   try {
-    const response = await fetch('/api/v1/comments', {
-      method: 'POST',
-      headers: {
-        'X-CSRF-TOKEN': csrfToken,
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-      },
-      body: JSON.stringify(data),
-    });
+    const response = await post('/api/v1/comments', data);
     return await response.json();
   } catch (err) {
     alert(err);
@@ -30,35 +22,17 @@ export const submitTicketReply = async (data): Promise<CommentType | null> => {
 };
 
 export const submitCommentEdit = async (commentId, data: { [key: string]: any }): Promise<any> => {
-  const csrfToken = (document.querySelector('[name=csrf-token]') as HTMLMetaElement).content;
   try {
-    const response = await fetch(`/api/v1/comments/${commentId}`, {
-      method: 'PATCH',
-      headers: {
-        'X-CSRF-TOKEN': csrfToken,
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-      },
-      body: JSON.stringify(data),
-    });
-    return await response.json();
+    return await patch(`/api/v1/comments/${commentId}`, data);
   } catch (err) {
     alert(err);
     return null;
   }
 };
+
 export const deleteComment = async commentId => {
-  const csrfToken = (document.querySelector('[name=csrf-token]') as HTMLMetaElement).content;
   try {
-    const response = await fetch(`/api/v1/comments/${commentId}`, {
-      method: 'DELETE',
-      headers: {
-        'X-CSRF-TOKEN': csrfToken,
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-      },
-    });
-    return await response.json();
+    return await deleteApi(`/api/v1/comments/${commentId}`);
   } catch (err) {
     alert(err);
   }

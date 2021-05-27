@@ -1,6 +1,6 @@
 <div id="remove" style="background-color: #f7f7f7; margin: 0; padding: 70px 0; width: 100%;">
   <div style="border: 3px dotted #ebecec; width: 600px; display: block; margin: 0 auto; background: #fff;">
-    <div style="padding: 15px 20px; background: #3e4095; color: #fff; font-size: 16px; font-weight: bold; text-transform: uppercase; border-bottom: 1px solid #4b4b4d;">Mentor Help Desk</div>
+    <div style="padding: 15px 20px; background: #3e4095; color: #fff; font-size: 16px; font-weight: bold; text-transform: uppercase; border-bottom: 1px solid #4b4b4d;"><%= @site_title %> Help Desk</div>
     <div style="padding: 30px; text-align: center; font-weight: bold; background: #576cf1; color: #fff; text-transform: capitalize; font-size: 22px;"><%= @site_title %>: Ticket Reply</div>
     <div style="padding: 40px 20px 20px;">
       <div style="padding-bottom: 20px; border-bottom: 1px solid #ebecec;">
@@ -19,8 +19,8 @@
         <div style="font-weight: bold; font-size: 14px; margin-bottom: 5px; color: #983133; text-transform: uppercase;">Note</div>
         <div style="color: #727376; line-height: 2;">This is an automated e-mail message sent from our support system.</div>
       </div>
-      <div style="color: #727376; line-height: 2;">This email was sent from <a href="https://www.mentor.com"><span style="color: #3e4095; display: inline-block; text-decoration: underline; cursor: pointer;">Mentor Help Desk System</span></a> to <span style="color: #606062; display: inline-block; text-decoration: underline;"><%= @email %></span></div>
+      <div style="color: #727376; line-height: 2;">This email was sent from <a href="<%= @website %>"><span style="color: #3e4095; display: inline-block; text-decoration: underline; cursor: pointer;"><%= @site_title %> Help Desk System</span></a> to <span style="color: #606062; display: inline-block; text-decoration: underline;"><%= @email %></span></div>
     </div>
-    <div style="background: #4b4b4d; padding: 20px; color: #fff; text-align: center; border-bottom: 5px solid #576cf1;">© 2014-<%= @current_year %> All rights reserved - <a href="https://www.mentor.com"><span style="color: white; display: inline-block; text-decoration: underline; cursor: pointer;">Mentor Help Desk System</span></a></div>
+    <div style="background: #4b4b4d; padding: 20px; color: #fff; text-align: center; border-bottom: 5px solid #576cf1;">© 2014-<%= @current_year %> All rights reserved - <a href="<%= @website %>"><span style="color: white; display: inline-block; text-decoration: underline; cursor: pointer;"><%= @site_title %> Help Desk System</span></a></div>
   </div>
 </div>

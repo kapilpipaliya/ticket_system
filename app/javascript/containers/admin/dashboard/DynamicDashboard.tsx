@@ -1,29 +1,25 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
+import clsx from 'clsx';
 import { fetchDashBoardData, fetchLastActivityData } from '../../../services/serviceDashBoard';
 import { DateSelectDropdown } from './DateSelectDropdown';
-import { Spinner } from '../../../components/Spinner';
 import { LatestActivity } from './LatestActivity';
-import styles from './DynamicDashboard.module.scss';
-import clsx from 'clsx';
 import { SpinnerModal } from '../../../components/SpinnerModal';
-
-const dummyFn = async () => {
-  return { data: false as any };
-};
+import { Card, CardFooter, CardHeader } from '../../../components/card/Card';
+import styles from './DynamicDashboard.module.scss';
 
 export function DynamicDashboard() {
-  const [start, setStart] = useState<Date | false>(false);
-  const [end, setEnd] = useState<Date | false>(false);
+  const [startDate, setStartDate] = useState<Date | false>(false);
+  const [endDate, setEndDate] = useState<Date | false>(false);
   const [lastActivityCount, setLastActivityCount] = useState(5);
 
   const { isLoading, error, data, refetch, isFetching } = useQuery(
-    ['dashboard_data', start, end],
+    ['dashboard_data', startDate, endDate],
     () => {
-      if (start && end) return fetchDashBoardData(start.valueOf() / 1000, end.valueOf() / 1000);
+      if (startDate && endDate) return fetchDashBoardData(startDate.valueOf() / 1000, endDate.valueOf() / 1000);
       else {
-        return dummyFn();
+        return { data: false as any };
       }
     },
     {
@@ -37,11 +33,11 @@ export function DynamicDashboard() {
     refetch: lastActivityReFetch,
     isFetching: lastActivityIsFetching,
   } = useQuery(
-    ['last_activity_data', start, end, lastActivityCount],
+    ['last_activity_data', startDate, endDate, lastActivityCount],
     () => {
-      if (start && end) return fetchLastActivityData(start.valueOf() / 1000, end.valueOf() / 1000, lastActivityCount);
+      if (startDate && endDate) return fetchLastActivityData(startDate.valueOf() / 1000, endDate.valueOf() / 1000, lastActivityCount);
       else {
-        return dummyFn();
+        return { data: false as any };
       }
     },
     {
@@ -51,25 +47,23 @@ export function DynamicDashboard() {
   );
 
   useEffect(() => {
-    if (start && end) {
+    if (startDate && endDate) {
       setLastActivityCount(5);
       refetch();
       lastActivityReFetch();
     }
-  }, [start, end]);
+  }, [startDate, endDate]);
   useEffect(() => {
     lastActivityReFetch();
   }, [lastActivityCount]);
 
   const handleOnDateChange = React.useCallback((startDate, endDate) => {
     if (startDate && endDate) {
-      setStart(startDate);
-      setEnd(endDate);
+      setStartDate(startDate);
+      setEndDate(endDate);
     }
   }, []);
-  const handleGetAllActivity = () => {
-    setLastActivityCount(0);
-  };
+  const setActivityCountZero = () => setLastActivityCount(0);
 
   return (
     <>
@@ -79,82 +73,82 @@ export function DynamicDashboard() {
         {data?.data && (
           <>
             <div className={styles.cards}>
-              <div className={styles.card}>
-                <div className={styles.cardHeader}>
+              <Card className={styles.card}>
+                <CardHeader className={styles.cardHeader}>
                   <span className={styles.warning}>{data.data.unresolved_count}</span>
-                </div>
-                <div className={clsx(styles.cardFooter, styles.bgWarning)}>
+                </CardHeader>
+                <CardFooter className={styles.bgWarning}>
                   <div>Unresolved</div>
-                </div>
-              </div>
+                </CardFooter>
+              </Card>
 
-              <div className={styles.card}>
-                <div className={styles.cardHeader}>
+              <Card className={styles.card}>
+                <CardHeader className={styles.cardHeader}>
                   <span className={styles.warning}>{data.data.new_tickets}</span>
-                </div>
-                <div className={clsx(styles.cardFooter, styles.bgWarning)}>
+                </CardHeader>
+                <CardFooter className={styles.bgWarning}>
                   <div>New Tickets</div>
-                </div>
-              </div>
+                </CardFooter>
+              </Card>
 
-              <div className={styles.card}>
-                <div className={styles.cardHeader}>
+              <Card className={styles.card}>
+                <CardHeader className={styles.cardHeader}>
                   <span className={styles.warning}>{data.data.open}</span>
-                </div>
-                <div className={clsx(styles.cardFooter, styles.bgWarning)}>
+                </CardHeader>
+                <CardFooter className={styles.bgWarning}>
                   <div>Open</div>
-                </div>
-              </div>
+                </CardFooter>
+              </Card>
 
-              <div className={styles.card}>
-                <div className={styles.cardHeader}>
+              <Card className={styles.card}>
+                <CardHeader className={styles.cardHeader}>
                   <span className={styles.warning}>{data.data.hold}</span>
-                </div>
-                <div className={clsx(styles.cardFooter, styles.bgWarning)}>
+                </CardHeader>
+                <CardFooter className={styles.bgWarning}>
                   <div>On Hold</div>
-                </div>
-              </div>
+                </CardFooter>
+              </Card>
 
-              <div className={styles.card}>
-                <div className={styles.cardHeader}>
+              <Card className={styles.card}>
+                <CardHeader className={styles.cardHeader}>
                   <span className={styles.success}>{data.data.close}</span>
-                </div>
-                <div className={clsx(styles.cardFooter, styles.bgSuccess)}>
+                </CardHeader>
+                <CardFooter className={styles.bgSuccess}>
                   <div>Closed</div>
-                </div>
-              </div>
+                </CardFooter>
+              </Card>
 
-              <div className={styles.card}>
-                <div className={styles.cardHeader}>
+              <Card className={styles.card}>
+                <CardHeader className={styles.cardHeader}>
                   <span className={styles.success}>{data.data.assigned}</span>
-                </div>
-                <div className={clsx(styles.cardFooter, styles.bgSuccess)}>
+                </CardHeader>
+                <CardFooter className={styles.bgSuccess}>
                   <div>Assigned</div>
-                </div>
-              </div>
+                </CardFooter>
+              </Card>
 
-              <div className={styles.card}>
-                <div className={styles.cardHeader}>
+              <Card className={styles.card}>
+                <CardHeader className={styles.cardHeader}>
                   <span className={styles.success}>{data.data.replies}</span>
-                </div>
-                <div className={clsx(styles.cardFooter, styles.bgSuccess)}>
+                </CardHeader>
+                <CardFooter className={styles.bgSuccess}>
                   <div>Replies</div>
-                </div>
-              </div>
+                </CardFooter>
+              </Card>
 
-              <div className={styles.card}>
-                <div className={styles.cardHeader}>
+              <Card className={styles.card}>
+                <CardHeader className={styles.cardHeader}>
                   <span className={styles.success}>{data.data.tickets_per_day}</span>
-                </div>
-                <div className={clsx(styles.cardFooter, styles.bgSuccess)}>
+                </CardHeader>
+                <CardFooter className={styles.bgSuccess}>
                   <div>Tickets per day</div>
-                </div>
-              </div>
+                </CardFooter>
+              </Card>
             </div>
 
             <LatestActivity
               data={lastActivityData?.data}
-              handleGetAllActivity={handleGetAllActivity}
+              handleGetAllActivity={setActivityCountZero}
               showFetchAllButton={lastActivityCount != 0}
               loading={lastActivityIsLoading || lastActivityIsFetching}
             />

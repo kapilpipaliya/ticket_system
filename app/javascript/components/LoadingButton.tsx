@@ -1,9 +1,10 @@
 import * as React from 'react';
-import { Button, Spinner } from 'react-bootstrap';
+import { Button } from './button/Button';
+import { Spinner } from './Spinner';
 
 interface LoadingButtonProps {
   showSpinner?: boolean;
-  variant?: string;
+  variant?: 'primary' | 'secondary' | 'warning' | 'danger';
   onClick: (e: any) => void;
   loading: boolean;
   children: React.ReactNode;
@@ -11,15 +12,11 @@ interface LoadingButtonProps {
 }
 
 export const LoadingButton = (props: LoadingButtonProps) => {
-  const { variant, onClick, loading, showSpinner, children, ...extraProps } = props;
+  const { variant = 'primary', onClick, loading, showSpinner = true, children, ...extraProps } = props;
   return (
     <Button variant={variant} onClick={onClick} {...(loading ? { disabled: true } : {})} {...extraProps}>
-      {showSpinner && loading && <Spinner as="span" animation="grow" size="sm" role="status" aria-hidden="true" />}
+      {showSpinner && loading && <Spinner />}
       {children}
     </Button>
   );
-};
-LoadingButton.defaultProps = {
-  variant: 'primary',
-  showSpinner: true,
 };

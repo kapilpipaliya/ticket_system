@@ -1,8 +1,8 @@
 <% flash.each do |key, value| %>
-  <div class="container-fluid">
-    <div class="alert <%= key == 'notice' ? 'alert-primary' : 'alert-warning' %> alert-dismissible fade show" role="alert">
+  <div class="mt-3">
+    <div class="custom-alert <%= key == 'notice' ? 'custom-alert-primary' : 'custom-alert-warning' %> alert-dismissible fade show" role="alert">
       <strong></strong> <%= value %>
-      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      <button type="button" class="custom-btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
   </div>
 <% end %>

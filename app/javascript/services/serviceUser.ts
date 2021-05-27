@@ -3,13 +3,7 @@ import { CurrentUser, User } from '../containers/Types';
 export const fetchCurrentUser = async (): Promise<CurrentUser | null> => {
   const csrfToken = (document.querySelector('[name=csrf-token]') as HTMLMetaElement).content;
   try {
-    const response = await fetch('/api/v1/users/profile', {
-      headers: {
-        'X-CSRF-TOKEN': csrfToken,
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-      },
-    });
+    const response = await fetch('/api/v1/users/profile');
     return await response.json();
   } catch (err) {
     alert(err);
@@ -18,15 +12,8 @@ export const fetchCurrentUser = async (): Promise<CurrentUser | null> => {
 };
 
 export const fetchAllUsers = async (): Promise<User[]> => {
-  const csrfToken = (document.querySelector('[name=csrf-token]') as HTMLMetaElement).content;
   try {
-    const response = await fetch('/api/v1/users', {
-      headers: {
-        'X-CSRF-TOKEN': csrfToken,
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-      },
-    });
+    const response = await fetch('/api/v1/users');
     return await response.json();
   } catch (err) {
     alert(err);

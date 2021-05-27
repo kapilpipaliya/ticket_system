@@ -1,17 +1,16 @@
 import * as React from 'react';
-import { Form } from 'react-bootstrap';
+import styles from './DisplayForm.module.scss';
 
 export const DisplayFormError = (props: { errors?: string[] }) => {
+  const { errors } = props;
   return (
     <>
-      {props.errors &&
-        props.errors.map(error => {
-          return (
-            <Form.Control.Feedback key={error} type="invalid">
-              {error}
-            </Form.Control.Feedback>
-          );
-        })}
+      {errors &&
+        errors.map(error => (
+          <div className={styles.invalid} key={error}>
+            {error}
+          </div>
+        ))}
     </>
   );
 };

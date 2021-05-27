@@ -2,15 +2,19 @@ import { CurrentUser, Ticket } from '../../Types';
 import * as React from 'react';
 import { useRef, useState } from 'react';
 import { IJodit } from 'jodit';
-import { getInitialErrorState, ticketCreate } from '../../../services/serviceTicket';
-import { Button, Col, Form, Modal, Row } from 'react-bootstrap';
 import { Trello } from 'react-feather';
 import { useMutation } from 'react-query';
 import 'jodit';
 import 'jodit/build/jodit.min.css';
 import JoditEditor from 'jodit-react';
+
+import { getInitialErrorState, ticketCreate } from '../../../services/serviceTicket';
 import { DisplayFormError } from '../../../components/DisplayFormError';
 import { LoadingButton } from '../../../components/LoadingButton';
+import { Button } from '../../../components/button/Button';
+import { Modal, ModalBody, ModalFooter, ModalHeader } from '../../../components/modal/Modal';
+import { Input } from '../../../components/input/Input';
+import styles from './TicketList.module.scss';
 
 interface NewTicketModalProps {
   show: boolean;
@@ -26,8 +30,10 @@ export const NewTicketModal = (props: NewTicketModalProps) => {
   const [description, setDescription] = useState('');
   const config: Partial<IJodit['options']> = {
     readonly: false,
+    style: { height: 300 },
   };
   const [errors, setErrors] = useState(getInitialErrorState());
+  const { show, onHide, onNewTicket, currentUser } = props;
 
   const mutation = useMutation(async () => {
     const result = await ticketCreate({
@@ -35,7 +41,7 @@ export const NewTicketModal = (props: NewTicketModalProps) => {
       name: nameOfSubmitterRef.current.value,
       email: emailOfSubmitterRef.current.value,
       description,
-      creator_id: props.currentUser ? props.currentUser.id : props.currentUser,
+      creator_id: currentUser ? currentUser.id : currentUser,
     });
     if (result.id) {
       subjectRef.current.value = '';
@@ -43,8 +49,8 @@ export const NewTicketModal = (props: NewTicketModalProps) => {
       emailOfSubmitterRef.current.value = '';
       setDescription('');
       setErrors({ ...getInitialErrorState() });
-      props.onHide();
-      props.onNewTicket(result);
+      onHide();
+      onNewTicket(result);
     } else {
       setErrors({ ...getInitialErrorState(), ...result });
     }
@@ -61,66 +67,58 @@ export const NewTicketModal = (props: NewTicketModalProps) => {
     nameOfSubmitterRef.current.value = '';
     emailOfSubmitterRef.current.value = '';
     setDescription('');
-    props.onHide();
+    onHide();
   };
 
   return (
-    <Modal show={props.show} onHide={props.onHide} size={'xl'}>
-      <Modal.Header>
-        <Modal.Title as="h5">
-          <Trello className={'me-2'} />
-          Add Ticket
-        </Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        <Row>
-          <Col sm={6} className={'mb-2'}>
-            <Form.Group controlId="formName">
-              <Form.Label>Name</Form.Label>
-              <Form.Control type="text" placeholder="Name" value={props.currentUser.first_name} ref={nameOfSubmitterRef} disabled isInvalid={errors.name.length} />
-              <DisplayFormError errors={errors.name} />
-            </Form.Group>
-          </Col>
-          <Col sm={6} className={'mb-2'}>
-            <Form.Group controlId="formEmail">
-              <Form.Label>Email</Form.Label>
-              <Form.Control type="email" placeholder="Email" value={props.currentUser.email} ref={emailOfSubmitterRef} disabled isInvalid={errors.email.length} />
-              <DisplayFormError errors={errors.email} />
-            </Form.Group>
-          </Col>
-          <Col sm={12} className={'mb-2'}>
-            <Form.Group controlId="formSubject">
-              <Form.Label>Subject</Form.Label>
-              <Form.Control type="text" placeholder="I did not received burger." ref={subjectRef} isInvalid={errors.subject.length} />
-              <DisplayFormError errors={errors.subject} />
-            </Form.Group>
-          </Col>
-          <Col sm={12} className={'mb-2'}>
-            <Form.Group controlId="formDescription">
-              <Form.Label>Description</Form.Label>
-              <JoditEditor key={2} value={description} config={config as any} onBlur={setDescription} />
-              <div className={`${errors.description.length ? 'is-invalid' : ''}`} />
-              <DisplayFormError errors={errors.description} />
-            </Form.Group>
-          </Col>
-          <Col sm={12} className={'mb-2'}>
-            <div className="form-group fill">
-              <label className="floating-label" htmlFor="Icon">
-                Image
-              </label>
-              <input type="file" className="form-control" id="Icon" placeholder="Image" />
+    <>
+      {show && (
+        <Modal>
+          <ModalBody onHide={onHide}>
+            <ModalHeader>
+              <div className={styles.newTicketTitle}>
+                <Trello />
+                Add Ticket
+              </div>
+            </ModalHeader>
+
+            <div className={styles.newTicketForm}>
+              <label>Name</label>
+              <div>
+                <Input type="text" placeholder="Name" value={currentUser.first_name} ref={nameOfSubmitterRef} disabled />
+                <DisplayFormError errors={errors.name} />
+              </div>
+
+              <label>Email</label>
+              <div>
+                <Input type="email" placeholder="Email" value={currentUser.email} ref={emailOfSubmitterRef} disabled />
+                <DisplayFormError errors={errors.email} />
+              </div>
+
+              <label>Subject</label>
+              <div>
+                <Input type="text" placeholder="I did not received burger." ref={subjectRef} />
+                <DisplayFormError errors={errors.subject} />
+              </div>
+
+              <label className={styles.descriptionLabel}>Description</label>
+              <div className={styles.description}>
+                <JoditEditor key={2} value={description} config={config as any} onBlur={setDescription} />
+                <DisplayFormError errors={errors.description} />
+              </div>
             </div>
-          </Col>
-        </Row>
-      </Modal.Body>
-      <Modal.Footer>
-        <Button variant="danger" onClick={onClear}>
-          Cancel
-        </Button>
-        <LoadingButton onClick={handleSubmitForm} loading={mutation.isLoading}>
-          Submit
-        </LoadingButton>
-      </Modal.Footer>
-    </Modal>
+
+            <ModalFooter className={styles.newTicketButtonGroup}>
+              <Button variant="danger" onClick={onClear}>
+                Cancel
+              </Button>
+              <LoadingButton onClick={handleSubmitForm} loading={mutation.isLoading}>
+                Submit
+              </LoadingButton>
+            </ModalFooter>
+          </ModalBody>
+        </Modal>
+      )}
+    </>
   );
 };

@@ -42,7 +42,7 @@ Rails.application.routes.draw do
 
     get '/dashboard', to: 'pages#dashboard'
 
-    resources :tickets, only: %i[index edit show]
+    resources :tickets, only: %i[index new edit show]
 
   end
 

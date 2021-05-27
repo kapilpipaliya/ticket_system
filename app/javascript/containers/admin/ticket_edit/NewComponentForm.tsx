@@ -2,10 +2,13 @@ import { CommentType } from '../../Types';
 import * as React from 'react';
 import { useState } from 'react';
 import { IJodit } from 'jodit';
-import { Button, Card, Col, Form, Row } from 'react-bootstrap';
-import { DisplayFormError } from '../../../components/DisplayFormError';
 import JoditEditor from 'jodit-react';
+
+import { DisplayFormError } from '../../../components/DisplayFormError';
 import { LoadingButton } from '../../../components/LoadingButton';
+import { Button } from '../../../components/button/Button';
+import { Card, CardBody } from '../../../components/card/Card';
+import styles from './TicketEdit.module.scss';
 
 export const NewComponentForm = (props: {
   comment: CommentType;
@@ -14,43 +17,41 @@ export const NewComponentForm = (props: {
   onSubmit: (data: any) => void;
   errors: { [key: string]: string[] };
 }) => {
-  const [description, setDescription] = useState(props.comment.description);
+  const { comment, loading, toggleComment, onSubmit, errors } = props;
+  const [description, setDescription] = useState(comment.description);
   const config: Partial<IJodit['options']> = {
     readonly: false,
   };
   return (
-    <Form>
+    <div>
       <Card>
-        <Card.Body>
-          <Card.Title>Reply</Card.Title>
-          <Row>
-            <Col sm={12}>
-              <Form.Group controlId="formReply">
-                <Form.Label>Description:</Form.Label>
-                <JoditEditor value={description} config={config as any} onBlur={setDescription} />
-                <div className={`${props.errors.description.length ? 'is-invalid' : ''}`} />
-                <DisplayFormError errors={props.errors.description} />
-              </Form.Group>
-            </Col>
-          </Row>
+        <CardBody>
+          <h5>Reply</h5>
           <div>
+            <label>Description:</label>
+            <JoditEditor value={description} config={config as any} onBlur={setDescription} />
+            <div className={`${errors.description.length ? 'is-invalid' : ''}`} />
+            <DisplayFormError errors={errors.description} />
+          </div>
+
+          <div className={styles.commentButtonGroup}>
             <LoadingButton
-              variant="success"
+              variant="primary"
               onClick={() =>
-                props.onSubmit({
+                onSubmit({
                   description,
                 })
               }
-              loading={props.loading}
+              loading={loading}
             >
               Send
-            </LoadingButton>{' '}
-            <Button variant="secondary" onClick={props.toggleComment}>
+            </LoadingButton>
+            <Button variant="secondary" onClick={toggleComment}>
               Cancel
             </Button>
           </div>
-        </Card.Body>
+        </CardBody>
       </Card>
-    </Form>
+    </div>
   );
 };

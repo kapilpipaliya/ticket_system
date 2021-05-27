@@ -1,16 +1,20 @@
 import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
-import { Alert, Breadcrumb, Card, Col, Container, Form, Row } from 'react-bootstrap';
 import 'jodit';
 import 'jodit/build/jodit.min.css';
 import { IJodit } from 'jodit';
 import JoditEditor from 'jodit-react';
+import { useMutation } from 'react-query';
+
 import { CurrentUser } from '../Types';
 import { DisplayFormError } from '../../components/DisplayFormError';
 import { getInitialErrorState, ticketCreate } from '../../services/serviceTicket';
 import { fetchCurrentUser } from '../../services/serviceUser';
-import { useMutation } from 'react-query';
 import { LoadingButton } from '../../components/LoadingButton';
+import { Alert } from '../../components/alert/Alert';
+import { Input } from '../../components/input/Input';
+import { Card, CardBody } from '../../components/card/Card';
+import styles from './TicketCreate.module.scss';
 
 export const TicketCreate = () => {
   const [isSuccess, setIsSuccess] = useState(null);
@@ -22,6 +26,7 @@ export const TicketCreate = () => {
   const [errors, setErrors] = useState(getInitialErrorState());
   const config: Partial<IJodit['options']> = {
     readonly: false,
+    style: { height: 300 },
   };
 
   useEffect(() => {
@@ -56,73 +61,55 @@ export const TicketCreate = () => {
 
   return (
     <>
-      <Container>
-        <Breadcrumb className={'mt-3'}>
-          <Breadcrumb.Item href="/">Home</Breadcrumb.Item>
-          <Breadcrumb.Item active>Create Ticket</Breadcrumb.Item>
-        </Breadcrumb>
-        <Row>
-          <Col sm={12}>
-            {isSuccess && (
-              <Alert variant="success">
-                <Alert.Heading>Thank you for submitting a ticket!</Alert.Heading>
+      <div className={styles.container}>
+        <div>
+          {isSuccess && (
+            <Alert variant="custom-alert-primary">
+              <div className={styles.alertContainer}>
+                <h5>Thank you for submitting a ticket!</h5>
                 <p>We will reply soon...</p>
-              </Alert>
-            )}
-            <Card>
-              <Card.Body>
-                <Form onSubmit={handleSubmitForm}>
-                  <Row>
-                    <Col sm={6}>
-                      <Form.Group controlId="formName">
-                        <Form.Label>Name</Form.Label>
-                        <Form.Control type="text" placeholder="John" ref={nameOfSubmitterRef} isInvalid={errors.name.length} />
-                        <DisplayFormError errors={errors.name} />
-                      </Form.Group>
-                    </Col>
-                    <Col sm={6}>
-                      <Form.Group controlId="formEmail">
-                        <Form.Label>Email</Form.Label>
-                        <Form.Control type="email" placeholder="john@example.com" ref={emailOfSubmitterRef} isInvalid={errors.email.length} />
-                        <DisplayFormError errors={errors.email} />
-                      </Form.Group>
-                    </Col>
-                    <Col sm={12} className={'mt-2'}>
-                      <Form.Group controlId="formSubject">
-                        <Form.Label>Subject</Form.Label>
-                        <Form.Control type="text" placeholder="I did not received burger." ref={subjectRef} isInvalid={errors.subject.length} />
-                        <DisplayFormError errors={errors.subject} />
-                      </Form.Group>
-                    </Col>
-                    <Col sm={12} className={'mt-2'}>
-                      <Form.Group controlId="formDescription">
-                        <Form.Label>Description</Form.Label>
-                        <JoditEditor key={2} value={description} config={config as any} onBlur={setDescription} />
-                        <div className={`${errors.description.length ? 'is-invalid' : ''}`} />
-                        <DisplayFormError errors={errors.description} />
-                      </Form.Group>
-                    </Col>
-                    {/*<Col sm={12}>
-                                    <div className="form-group fill">
-                                        <div className="file btn waves-effect waves-light btn-outline-primary mt-3 file-btn">
-                                            <i className="feather icon-paperclip" />
-                                            Add Attachment
-                                            <input type="file" name="file" />
-                                        </div>
-                                    </div>
-                                </Col>*/}
-                    <Col sm={12} className={'mt-3'}>
-                      <LoadingButton onClick={handleSubmitForm} loading={newTicketMutation.isLoading}>
-                        Submit
-                      </LoadingButton>
-                    </Col>
-                  </Row>
-                </Form>
-              </Card.Body>
-            </Card>
-          </Col>
-        </Row>
-      </Container>
+              </div>
+            </Alert>
+          )}
+          <Card>
+            <CardBody>
+              <form onSubmit={handleSubmitForm}>
+                <div className={styles.newTicketForm}>
+                  <label className={styles.alignCenter}>Name</label>
+                  <div>
+                    <Input type="text" placeholder="John" ref={nameOfSubmitterRef} />
+                    <DisplayFormError errors={errors.name} />
+                  </div>
+
+                  <label className={styles.alignCenter}>Email</label>
+                  <div>
+                    <Input type="email" placeholder="john@example.com" ref={emailOfSubmitterRef} />
+                    <DisplayFormError errors={errors.email} />
+                  </div>
+
+                  <label className={styles.alignCenter}>Subject</label>
+                  <div>
+                    <Input type="text" placeholder="I did not received burger." ref={subjectRef} />
+                    <DisplayFormError errors={errors.subject} />
+                  </div>
+
+                  <label className={styles.descriptionLabel}>Description</label>
+                  <div className={styles.description}>
+                    <JoditEditor key={2} value={description} config={config as any} onBlur={setDescription} />
+                    <DisplayFormError errors={errors.description} />
+                  </div>
+
+                  <div className={styles.submitButton}>
+                    <LoadingButton onClick={handleSubmitForm} loading={newTicketMutation.isLoading}>
+                      Submit
+                    </LoadingButton>
+                  </div>
+                </div>
+              </form>
+            </CardBody>
+          </Card>
+        </div>
+      </div>
     </>
   );
 };

@@ -1,8 +1,18 @@
 .button {
   border: 1px solid #4e555b;
-  padding: 5px 10px;
-  border-radius: 5px;
+  padding: 0.375rem;
+  border-radius: 0.25rem;
   font-size: 16px;
+  cursor: pointer;
+
+  &:hover {
+    box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.4);
+  }
+
+  &:focus {
+    outline: 0;
+    box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.2);
+  }
 }
 .primary {
   background-color: #0062cc;
@@ -11,4 +21,14 @@
 .secondary {
   background-color: #5a5a5a;
   color: white;
+}
+.warning {
+  color: #000;
+  background-color: #ffc107;
+  border-color: #ffc107;
+}
+.danger {
+  color: #fff;
+  background-color: #dc3545;
+  border-color: #dc3545;
 }

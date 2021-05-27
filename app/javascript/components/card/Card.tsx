@@ -1,23 +1,52 @@
 import * as React from 'react';
-import styles from './Card.module.scss';
 import clsx from 'clsx';
+import styles from './Card.module.scss';
 
 interface CardProps {
   children: React.ReactNode;
-  header?: React.ReactNode;
-  footer?: React.ReactNode;
-  style?: React.CSSProperties;
   className?: string;
-  headerClassName?: string;
-  contentClassName?: string;
-  footerClassName?: string;
 }
 export const Card = (props: CardProps) => {
+  const { className, children, ...customProps } = props;
   return (
-    <div className={clsx(styles.card, props.className)} style={props.style}>
-      {props.header && <div className={clsx(styles.header, props.headerClassName)}>{props.header}</div>}
-      {props.children && <div className={clsx(styles.content, props.contentClassName)}>{props.children}</div>}
-      {props.footer && <div className={clsx(styles.footer, props.footerClassName)}>{props.footer}</div>}
+    <div className={clsx(styles.card, className)} {...customProps}>
+      {children}
+    </div>
+  );
+};
+interface CardBodyProps {
+  children: React.ReactNode;
+  className?: string;
+}
+export const CardBody = (props: CardBodyProps) => {
+  const { className, children, ...customProps } = props;
+  return (
+    <div className={clsx(styles.cardBody, className)} {...customProps}>
+      {children}
+    </div>
+  );
+};
+interface CardHeaderProps {
+  children: React.ReactNode;
+  className?: string;
+}
+export const CardHeader = (props: CardHeaderProps) => {
+  const { className, children, ...customProps } = props;
+  return (
+    <div className={clsx(styles.cardHeader, className)} {...customProps}>
+      {children}
+    </div>
+  );
+};
+interface CardFooterProps {
+  children: React.ReactNode;
+  className?: string;
+}
+export const CardFooter = (props: CardFooterProps) => {
+  const { className, children, ...customProps } = props;
+  return (
+    <div className={clsx(styles.cardFooter, className)} {...customProps}>
+      {children}
     </div>
   );
 };

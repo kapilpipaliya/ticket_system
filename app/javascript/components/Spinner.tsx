@@ -1,5 +1,11 @@
 import * as React from 'react';
+import clsx from 'clsx';
+import styles from './Spinner.module.scss';
 
-export const Spinner = () => {
-  return <div className="spinner-grow text-info" role="status"></div>;
+interface SpinnerProps {
+  className?: string;
+}
+export const Spinner = (props: SpinnerProps) => {
+  const { className } = props;
+  return <div className={clsx(styles.spinnerGrow, className)} role="status"></div>;
 };

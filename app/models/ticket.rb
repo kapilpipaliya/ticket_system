@@ -61,9 +61,9 @@ class Ticket < ApplicationRecord
     end
     if assignee_id != assignee_id_before_last_save
       if !assignee_id_before_last_save
-        Log.create({ activity: "Ticket (#{subject}) is assigned to #{assignee.first_name}" })
+        Log.create({ activity: "Ticket (#{subject}) is assigned to #{assignee ? assignee.first_name : 'No Body'}" })
       else
-        Log.create({ activity: "Ticket (#{subject}) is reassigned to #{assignee.first_name}" })
+        Log.create({ activity: "Ticket (#{subject}) is reassigned to #{assignee ? assignee.first_name : 'No Body'}" })
       end
     end
   end

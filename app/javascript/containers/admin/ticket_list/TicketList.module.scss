@@ -1,6 +1,135 @@
+.container {
+  max-width: 1400px;
+  margin: 1rem auto;
+}
 .support-table {
   table td,
   table th {
     white-space: nowrap;
   }
+}
+.tableResponsive {
+  overflow: auto;
+}
+.table {
+  width: 100%;
+  margin-bottom: 1rem;
+  color: #212529;
+  vertical-align: top;
+  border-color: #dee2e6;
+
+  caption-side: bottom;
+  border-collapse: collapse;
+
+  thead,
+  tbody,
+  tfoot,
+  tr,
+  td,
+  th {
+    border-color: inherit;
+    border-style: solid;
+    border-width: 0;
+    padding: 0.5rem 0.5rem;
+    border-bottom-width: 1px;
+    white-space: nowrap;
+  }
+  thead tr {
+    border-bottom: 1px solid black;
+  }
+}
+.subjectTruncate {
+  max-width: 300px;
+}
+.textTruncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.actionColumn {
+  display: flex;
+  flex-wrap: nowrap;
+}
+.ticketSearchForm {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr 2fr;
+  gap: 10px;
+  padding: 15px;
+
+  label {
+    text-align: right;
+    align-self: center;
+  }
+
+  .buttonGroup {
+    text-align: center;
+    grid-column: 1 / span 4;
+  }
+}
+.newTicketForm {
+  display: grid;
+  grid-template-columns: auto 2fr auto 2fr;
+  gap: 10px;
+  padding: 15px;
+
+  label {
+    text-align: right;
+    align-self: center;
+  }
+  input {
+    width: 100%;
+  }
+  .descriptionLabel {
+    grid-column: 1 / span 1;
+  }
+  .description {
+    grid-column: 2 / span 3;
+  }
+}
+.title {
+  font-size: 1.25rem;
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  line-height: 1.2;
+}
+.titleRow {
+  display: flex;
+  justify-content: space-between;
+}
+
+.filterButton {
+  margin-right: 0.5rem;
+}
+
+.tableContainer {
+  margin-top: 1rem;
+}
+.cardBody {
+  padding: 1rem 1rem;
+}
+
+.newTicketTitle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.newTicketButtonGroup {
+  justify-content: space-between;
+}
+.pagination {
+  text-align: center;
+
+  nav {
+    display: inline-block;
+  }
+}
+.cursorPointer {
+  cursor: pointer;
+}
+.searchSubmitButton {
+  margin-right: 0.35rem;
+}
+.actionIcon {
+  margin-right: 0.25rem;
 }

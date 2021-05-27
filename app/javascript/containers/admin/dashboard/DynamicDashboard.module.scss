@@ -5,8 +5,6 @@
   gap: 10px;
 }
 .card {
-  display: flex;
-  flex-direction: column;
   width: calc(50% - 10px);
   min-width: 130px;
   box-shadow: 0 0 5px 1px #4444;
@@ -14,10 +12,8 @@
 .cardHeader {
   text-align: center;
   padding: 0.3em;
-}
-.cardFooter {
-  text-align: center;
-  padding: 0.3em;
+  background-color: white;
+  border: none;
 }
 .bgWarning {
   background-color: orange;

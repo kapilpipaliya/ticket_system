@@ -1,42 +1,43 @@
-import { Button, Modal } from 'react-bootstrap';
 import * as React from 'react';
 import { LoadingButton } from './LoadingButton';
+import { Modal, ModalBody, ModalFooter, ModalHeader, ModalTitle } from './modal/Modal';
+import { Button } from './button/Button';
+import styles from '../containers/admin/ticket_edit/TicketEdit.module.scss';
 
 interface ConfirmationDialogProps {
   show: boolean;
   setShow: (boolean) => void;
-  onSubmit: () => Promise<void>;
+  onSubmit: () => void;
   onCancel: () => void;
   title: string;
   body: string;
   okButtonLabel: string;
   loading: boolean;
-  variant?: string;
+  variant?: 'primary' | 'secondary' | 'warning' | 'danger';
 }
 
 export const ConfirmationDialog = (props: ConfirmationDialogProps) => {
   const { onCancel, show, setShow, title, body, okButtonLabel, onSubmit, loading, ...extraProps } = props;
-  const handleClose = () => onCancel();
-  const handleSubmit = () => {
-    onSubmit().then(r => {});
-  };
-
   return (
     <>
-      <Modal show={show} onHide={handleClose}>
-        <Modal.Header>
-          <Modal.Title>{title}</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>{body}</Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Close
-          </Button>
-          <LoadingButton onClick={handleSubmit} loading={loading} {...extraProps}>
-            {okButtonLabel}
-          </LoadingButton>
-        </Modal.Footer>
-      </Modal>
+      {show && (
+        <Modal>
+          <ModalBody onHide={onCancel}>
+            {body}
+            <ModalHeader>
+              <ModalTitle>{title}</ModalTitle>
+            </ModalHeader>
+            <ModalFooter className={styles.buttonGroup}>
+              <Button variant="secondary" onClick={onCancel}>
+                Close
+              </Button>
+              <LoadingButton onClick={onSubmit} loading={loading} {...extraProps}>
+                {okButtonLabel}
+              </LoadingButton>
+            </ModalFooter>{' '}
+          </ModalBody>
+        </Modal>
+      )}
     </>
   );
 };

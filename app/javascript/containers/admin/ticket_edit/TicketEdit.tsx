@@ -1,19 +1,22 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { Card, Col, Container, Form, Row } from 'react-bootstrap';
+import clsx from 'clsx';
 import { CheckCircle, FileText, Save, Trash2 } from 'react-feather';
 import { useMutation, useQuery } from 'react-query';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 import { fetchAllTicketStatus, fetchTicketData, ticketDelete, ticketUpdate } from '../../../services/serviceTicket';
 import { fetchCommentData } from '../../../services/serviceComment';
 import { fetchAllUsers } from '../../../services/serviceUser';
-
 import { ConfirmationDialog } from '../../../components/ConfirmationDialog';
 import { LoadingButton } from '../../../components/LoadingButton';
-import { isEmpty } from '../../utils';
+import { isEmptyObject } from '../../utils';
 import { CommentItem } from './CommentItem';
-import { Spinner } from '../../../components/Spinner';
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { SpinnerModal } from '../../../components/SpinnerModal';
+import { Select } from '../../../components/select/Select';
+import { Card, CardBody, CardHeader } from '../../../components/card/Card';
+import styles from './TicketEdit.module.scss';
 
 interface TicketEditProps {
   ticketId: string;
@@ -26,6 +29,8 @@ export const TicketEdit = (props: TicketEditProps) => {
   const [newAssignedToID, setNewAssignedToID] = useState<'' | number>('');
   const [ticketDeleteConfirmation, setTicketDeleteConfirmation] = useState(false);
 
+  const { ticketId } = props;
+
   const {
     isLoading: isTicketLoading,
     error: ticketError,
@@ -35,7 +40,7 @@ export const TicketEdit = (props: TicketEditProps) => {
   } = useQuery(
     'ticketData',
     async () => {
-      const resp = await fetchTicketData(props.ticketId);
+      const resp = await fetchTicketData(ticketId);
       setNewStatus(resp.status);
       setNewAssignedToID(resp.assignee_id || '');
       return resp;
@@ -54,7 +59,7 @@ export const TicketEdit = (props: TicketEditProps) => {
   } = useQuery(
     'commentsData',
     async () => {
-      return await fetchCommentData(props.ticketId);
+      return await fetchCommentData(ticketId);
     },
     {
       enabled: false,
@@ -79,33 +84,27 @@ export const TicketEdit = (props: TicketEditProps) => {
     }
   });
 
-  const handleUpdateTicket = async () => {
+  const handleUpdateTicket = () => {
     ticketUpdateMutation.mutate();
   };
 
   const ticketDeleteMutation = useMutation(async () => {
     const resp = await ticketDelete(ticketData.id);
     setTicketDeleteConfirmation(false);
-    if (isEmpty(resp)) {
+    if (isEmptyObject(resp)) {
       toast('Ticket deleted successfully');
       window.location.href = '/tickets';
     }
     return resp;
   });
 
-  const handleTicketDelete = async () => {
+  const handleTicketDelete = () => {
     ticketDeleteMutation.mutate();
   };
 
-  if (isTicketLoading)
-    return (
-      <Container className={'mt-2'}>
-        <Spinner />
-      </Container>
-    );
-  if (!ticketData && !commentsData) return <Container className={'mt-2'}>No Data found</Container>;
   return (
-    <Container className={'mt-2'}>
+    <div className={styles.container}>
+      <SpinnerModal loading={isTicketLoading || isFetching || (!ticketData && !commentsData)} />
       <ToastContainer />
       <ConfirmationDialog
         show={ticketDeleteConfirmation}
@@ -119,120 +118,117 @@ export const TicketEdit = (props: TicketEditProps) => {
         variant="danger"
       />
 
-      <Row>
-        <Col lg={8}>
-          <Card>
-            <Card.Header>
-              <h5>
-                <FileText className={'me-1'} />
-                {ticketData.subject}
-              </h5>
-            </Card.Header>
-            <Card.Body className="border-bottom">
-              <Row className="align-items-center">
-                <Col md={8}>
-                  <h6 className="d-inline-block mb-0" dangerouslySetInnerHTML={{ __html: ticketData.description }} />
-                </Col>
-                <Col md={4}></Col>
-              </Row>
-            </Card.Body>
-
-            {isCommentLoading ? (
-              <Spinner />
-            ) : (
-              commentsData.map(comment => {
-                return <CommentItem key={comment.id} ticketId={ticketData.id} comment={comment} editable={false} />;
-              })
-            )}
-          </Card>
-        </Col>
-        <Col lg={4}>
-          <Card className="hdd-right-inner">
-            <Card.Header>
-              <h5>Ticket Details</h5>
-            </Card.Header>
-            <Card.Body>
-              {!isCommentLoading && !!commentsData.length && (
-                <div className="alert alert-success d-block text-center text-uppercase">
-                  <CheckCircle className={'me-2'} />
-                  Replied
+      {ticketData && (
+        <Card className={styles.mainLayout}>
+          <div className={styles.firstColumn}>
+            <Card>
+              <CardHeader>
+                <div className={styles.title}>
+                  <FileText className={styles.marginRight2} />
+                  {ticketData.subject}
                 </div>
-              )}
-              <Form.Group controlId="ticketEdit.changeStatus">
-                <Form.Label>Status</Form.Label>
-                <Form.Control as="select" value={newStatus} onChange={event => setNewStatus(event.target.value)}>
-                  {allStatus.map(op => {
-                    return (
-                      <option key={op.id} value={op.id}>
-                        {op.label}
-                      </option>
-                    );
-                  })}
-                </Form.Control>
-              </Form.Group>
-              <Form.Group controlId="ticketEdit.changeAssignedTo" className={'mt-2'}>
-                <Form.Label>Assigned To</Form.Label>
-                <Form.Control as="select" value={newAssignedToID} onChange={event => setNewAssignedToID(event.target.value)}>
-                  {allUsers.map(user => {
-                    return (
-                      <option key={user.id} value={user.id}>
-                        {user.first_name} {user.last_name}
-                      </option>
-                    );
-                  })}
-                </Form.Control>
-              </Form.Group>
-            </Card.Body>
-            <Container>
-              <Row>
-                <Col sm={3}>
-                  <label>Name:</label>
-                </Col>
-                <Col sm={9}>
-                  <span>{ticketData.name}</span>
-                </Col>
-              </Row>
-              <Row>
-                <Col sm={3}>
-                  <label>Email:</label>
-                </Col>
-                <Col sm={9}>
-                  <span>{ticketData.email}</span>
-                </Col>
-              </Row>
-              <Row>
-                <Col sm={3}>
-                  <label className="mb-0 wid-100 me-2">Created:</label>
-                </Col>
-                <Col sm={9}>
-                  <span>{new Date(ticketData.created_at).toUTCString()}</span>
-                </Col>
-              </Row>
-              <Row>
-                <Col sm={3}>
-                  <label className="mb-0 wid-100 me-2">Response:</label>
-                </Col>
-                <Col sm={9}>
-                  <span>{new Date(ticketData.updated_at).toUTCString()}</span>
-                </Col>
-              </Row>
-            </Container>
-            <ul className="list-group list-group-flush">
-              <li className="list-group-item py-3">
-                <LoadingButton onClick={handleUpdateTicket} loading={ticketUpdateMutation.isLoading} className={'me-2'}>
-                  <Save />
-                  Update
-                </LoadingButton>
-                <LoadingButton onClick={() => setTicketDeleteConfirmation(true)} loading={ticketDeleteMutation.isLoading} variant={'danger'}>
-                  <Trash2 className={'me-2'} />
-                  Delete Ticket
-                </LoadingButton>
-              </li>
-            </ul>
+              </CardHeader>
+              <CardBody className={styles.borderBottom}>
+                <p className={styles.description} dangerouslySetInnerHTML={{ __html: ticketData.description }} />
+              </CardBody>
+              <SpinnerModal loading={isCommentLoading} />
+              {commentsData?.map(comment => (
+                <CommentItem key={comment.id} comment={comment} editable={false} />
+              ))}
+            </Card>
+          </div>
+          <Card className={styles.secondColumn}>
+            <Card>
+              <CardHeader>
+                <h5>Ticket Details</h5>
+              </CardHeader>
+              <CardBody>
+                {!isCommentLoading && !!commentsData.length && (
+                  <div className={clsx(styles.repliedContainer, 'custom-alert custom-alert-success')}>
+                    <CheckCircle className={styles.marginRight2} />
+                    Replied
+                  </div>
+                )}
+                <div>
+                  <table>
+                    <tr>
+                      <td>
+                        <label>Status</label>
+                      </td>
+                      <td>
+                        <Select value={newStatus} onChange={event => setNewStatus(event.target.value)}>
+                          {allStatus.map(op => (
+                            <option key={op.id} value={op.id}>
+                              {op.label}
+                            </option>
+                          ))}
+                        </Select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <label>Assigned To</label>
+                      </td>
+                      <td>
+                        <Select value={newAssignedToID} onChange={event => setNewAssignedToID(parseInt(event.target.value, 10))}>
+                          {allUsers.map(user => (
+                            <option key={user.id} value={user.id}>
+                              {user.first_name} {user.last_name}
+                            </option>
+                          ))}
+                        </Select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <label>Name:</label>
+                      </td>
+                      <td>
+                        <span>{ticketData.name}</span>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <label>Email:</label>
+                      </td>
+                      <td>
+                        <span>{ticketData.email}</span>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <label>Created:</label>
+                      </td>
+                      <td>
+                        <span>{new Date(ticketData.created_at).toUTCString()}</span>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <label>Response:</label>
+                      </td>
+                      <td>
+                        <span>{new Date(ticketData.updated_at).toUTCString()}</span>
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+                <div className={styles.buttonGroup}>
+                  <LoadingButton onClick={handleUpdateTicket} loading={ticketUpdateMutation.isLoading} className={styles.marginRight2}>
+                    <Save className={styles.marginRight2} />
+                    Update
+                  </LoadingButton>
+                  <LoadingButton onClick={() => setTicketDeleteConfirmation(true)} loading={ticketDeleteMutation.isLoading} variant={'danger'}>
+                    <Trash2 className={styles.marginRight2} />
+                    Delete Ticket
+                  </LoadingButton>
+                </div>
+              </CardBody>
+            </Card>
           </Card>
-        </Col>
-      </Row>
-    </Container>
+        </Card>
+      )}
+    </div>
   );
 };
 export default TicketEdit;

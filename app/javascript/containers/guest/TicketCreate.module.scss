@@ -1,0 +1,38 @@
+.container {
+  margin: 1rem auto 0;
+  padding: 1rem;
+  max-width: 1142px;
+}
+.newTicketForm {
+  display: grid;
+  grid-template-columns: 1fr; /* not working!*/
+  gap: 10px;
+  padding: 15px;
+
+  label {
+    text-align: right;
+    align-self: center;
+  }
+
+  .descriptionLabel {
+    grid-column: 1 / span 1;
+  }
+  .description {
+    grid-column: 2 / span 3;
+  }
+  .alignCenter {
+    align-self: center;
+  }
+  .submitButton {
+    grid-column: 2 / span 1;
+  }
+}
+.alertContainer {
+  padding: 20px;
+}
+@media (min-width: 500px) {
+  .newTicketForm {
+    display: grid;
+    grid-template-columns: 100px 2fr 100px 2fr;
+  }
+}

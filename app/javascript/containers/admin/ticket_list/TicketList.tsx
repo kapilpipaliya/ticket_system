@@ -1,21 +1,23 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { Button, Card, Col, Collapse, Container, Row } from 'react-bootstrap';
 import { Filter, Plus } from 'react-feather';
 import { useMutation, useQuery } from 'react-query';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 import { CurrentUser, SearchState, SortDirection, SortState, Ticket } from '../../Types';
 import { fetchAllTicketData, fetchAllTicketStatusFilter, fetchSentimentFilter, ticketDelete } from '../../../services/serviceTicket';
 import { fetchCurrentUser } from '../../../services/serviceUser';
-
 import { ConfirmationDialog } from '../../../components/ConfirmationDialog';
 import { NewTicketModal } from './NewTicketModal';
 import { TicketSearch } from './TicketSearch';
-import { isEmpty } from '../../utils';
+import { isEmptyObject } from '../../utils';
 import { TicketTable } from './TicketTable';
 import { TicketPagination } from './TicketPagination';
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import { SpinnerModal } from '../../../components/SpinnerModal';
+import { Button } from '../../../components/button/Button';
+import { Card, CardBody, CardHeader } from '../../../components/card/Card';
+import styles from './TicketList.module.scss';
 
 const searchFormInitialState = () => ({
   name: '',
@@ -77,21 +79,18 @@ export const TicketList = () => {
     setSelectedTicket(ticketId);
   };
 
-  const onTicketConfirmCancel = () => {
-    setDeleteConfirmation(false);
-  };
+  const onTicketConfirmCancel = () => setDeleteConfirmation(false);
+
   const ticketDeleteMutation = useMutation(async () => {
     const resp = await ticketDelete(selectedTicket);
     setDeleteConfirmation(false);
-    if (isEmpty(resp)) {
+    if (isEmptyObject(resp)) {
       await refetch();
       toast('Ticket deleted successfully');
     }
     return resp;
   });
-  const onTicketDelete = async () => {
-    ticketDeleteMutation.mutate();
-  };
+  const onTicketDelete = () => ticketDeleteMutation.mutate();
 
   const onNewTicket = (ticket: Ticket) => {
     setSearchState(searchFormInitialState());
@@ -99,9 +98,7 @@ export const TicketList = () => {
     toast('Ticket created successfully');
   };
 
-  const handlePageChange = (page_number: number | string) => () => {
-    setPageNo(page_number);
-  };
+  const handlePageChange = (page_number: number | string) => () => setPageNo(page_number);
 
   const handleOnSortClick = (column_id: string, order?: SortDirection) => (e?: React.MouseEvent) => {
     setPageNo(1);
@@ -138,9 +135,9 @@ export const TicketList = () => {
     setSentimentSubmit('');
     setSearchSubmitState({} as SearchState);
   };
-  const [isBasic, setIsBasic] = React.useState(false);
+  const [isCollapseOpen, setIsCollapseOpen] = React.useState(false);
   return (
-    <Container fluid className={'mt-2'}>
+    <div className={styles.container}>
       <ToastContainer />
       <ConfirmationDialog
         show={deleteConfirmation}
@@ -152,66 +149,67 @@ export const TicketList = () => {
         okButtonLabel={'Confirm'}
         loading={ticketDeleteMutation.isLoading}
       />
-      {currentUser && <NewTicketModal show={isOpen} onHide={() => setIsOpen(false)} onNewTicket={onNewTicket} currentUser={currentUser} />}
-      <Row>
-        <Col sm={12}>
-          <Card className="shadow-none">
-            <Card.Header>
-              <Row>
-                <Col>
-                  <h5>All Tickets</h5>
-                </Col>
-                <Col className="text-end">
-                  <Button type="button" className={'btn-sm me-2'} onClick={() => setIsBasic(!isBasic)} aria-controls="basic-collapse" aria-expanded={isBasic}>
-                    <Filter />
-                    Filter
-                  </Button>
-                  <Button type="button" className="btn-sm" onClick={() => setIsOpen(true)}>
-                    <Plus /> Add Ticket
-                  </Button>
-                </Col>
-              </Row>
-            </Card.Header>
 
-            <Card.Body>
-              <Collapse in={isBasic}>
-                <Card>
-                  <div id="basic-collapse">
-                    <Card.Body>
-                      <TicketSearch
-                        searchState={searchState}
-                        setSearchState={setSearchState}
-                        status={status}
-                        sentiment={sentiment}
-                        setStatus={setStatus}
-                        setSentiment={setSentiment}
-                        statusOptions={statusOptions}
-                        sentimentOptions={sentimentOptions}
-                        onSubmit={handleSearchSubmit}
-                        loading={isLoading || isFetching}
-                        onReset={handleClearSearchForm}
-                      />
-                    </Card.Body>
-                  </div>
-                </Card>
-              </Collapse>
+      <Card>
+        <CardHeader>
+          <div className={styles.titleRow}>
+            <div>
+              <h5 className={styles.title}>All Tickets</h5>
+            </div>
+            <div>
+              <Button type="button" className={styles.filterButton} onClick={() => setIsCollapseOpen(prevState => !prevState)}>
+                <Filter />
+                Filter
+              </Button>
+              <Button type="button" onClick={() => setIsOpen(true)}>
+                <Plus /> Add Ticket
+              </Button>
+            </div>
+          </div>
+        </CardHeader>
 
-              <Card className={'mt-3'}>
-                <Card.Body>
-                  <SpinnerModal loading={isLoading || isFetching} />
-                  {ticketData && (
-                    <>
-                      <TicketTable sortState={sortState} handleOnSortClick={handleOnSortClick} ticketData={ticketData} onTicketDeleteConfirm={onTicketDeleteConfirm} />
-                      <TicketPagination ticketData={ticketData} handlePageChange={handlePageChange} />
-                    </>
-                  )}
-                </Card.Body>
-              </Card>
-            </Card.Body>
+        <CardBody>
+          {isCollapseOpen && (
+            <Card>
+              <CardBody>
+                <TicketSearch
+                  searchConfig={{
+                    searchState: searchState,
+                    setSearchState: setSearchState,
+                  }}
+                  statusConfig={{
+                    status: status,
+                    setStatus: setStatus,
+                    statusOptions: statusOptions,
+                  }}
+                  sentimentConfig={{
+                    sentiment: sentiment,
+                    setSentiment: setSentiment,
+                    sentimentOptions: sentimentOptions,
+                  }}
+                  onSubmit={handleSearchSubmit}
+                  loading={isLoading || isFetching}
+                  onReset={handleClearSearchForm}
+                />
+              </CardBody>
+            </Card>
+          )}
+
+          <Card className={styles.tableContainer}>
+            <CardBody>
+              <SpinnerModal loading={isLoading || isFetching} />
+              {ticketData && (
+                <>
+                  <TicketTable sortState={sortState} handleOnSortClick={handleOnSortClick} ticketData={ticketData} onTicketDeleteConfirm={onTicketDeleteConfirm} />
+                  <TicketPagination ticketData={ticketData} handlePageChange={handlePageChange} />
+                </>
+              )}
+            </CardBody>
           </Card>
-        </Col>
-      </Row>
-    </Container>
+        </CardBody>
+      </Card>
+      {currentUser && <NewTicketModal show={isOpen} onHide={() => setIsOpen(false)} onNewTicket={onNewTicket} currentUser={currentUser} />}
+    </div>
   );
 };
 export default TicketList;

@@ -1,8 +1,6 @@
 import * as React from 'react';
-import { useState, useEffect, useCallback } from 'react';
-import { Filter } from 'react-feather';
+import { useEffect, useState } from 'react';
 import { endOfDay, startOfISOWeek, startOfMonth, startOfYear, sub } from 'date-fns';
-import styles from './DateSelectDropdown.module.scss';
 import { Select } from 'react-functional-select';
 
 interface DateSelectDropdownProps {
@@ -16,9 +14,7 @@ type Option = Readonly<{
   label: string;
 }>;
 
-type SingleSelectDemoProps = Readonly<{}>;
-
-const _cityOptions: Option[] = [
+const dateRangeOptions: Option[] = [
   { id: 'today', label: 'Today' },
   { id: 'this_week', label: 'This Week' },
   { id: 'last_week', label: 'Last Week' },
@@ -30,63 +26,65 @@ const _cityOptions: Option[] = [
 
 export const DateSelectDropdown = (props: DateSelectDropdownProps) => {
   const [isInvalid, setIsInvalid] = useState<boolean>(false);
-  const [selectedOption, setSelectedOption] = useState<Option | null>(_cityOptions[3]);
+  const [selectedOption, setSelectedOption] = useState<Option | null>(dateRangeOptions[3]);
 
-  const getOptionValue = useCallback((option: Option): string => option.id, []);
-  const onOptionChange = useCallback((option: Option | null): void => setSelectedOption(option), []);
-  const getOptionLabel = useCallback((option: Option): string => `${option.label}`, []);
+  const getOptionValue = (option: Option): string => option.id;
+  const onOptionChange = (option: Option | null): void => setSelectedOption(option);
+  const getOptionLabel = (option: Option): string => `${option.label}`;
+
+  const { handleRangeSelect, isDisabled, className } = props;
 
   useEffect(() => {
     switch (selectedOption.id) {
       case 'today': {
         const endDate = endOfDay(new Date());
-        props.handleRangeSelect(sub(endDate, { days: 1 }), endDate);
+        handleRangeSelect(sub(endDate, { days: 1 }), endDate);
         break;
       }
       case 'this_week': {
         const endDate = endOfDay(new Date());
-        props.handleRangeSelect(sub(endDate, { weeks: 1 }), endDate);
+        handleRangeSelect(sub(endDate, { weeks: 1 }), endDate);
         break;
       }
       case 'last_week': {
         const endDate = startOfISOWeek(new Date());
-        props.handleRangeSelect(sub(endDate, { weeks: 1 }), endDate);
+        handleRangeSelect(sub(endDate, { weeks: 1 }), endDate);
         break;
       }
       case 'this_month': {
         const endDate = endOfDay(new Date());
-        props.handleRangeSelect(sub(endDate, { months: 1 }), endDate);
+        handleRangeSelect(sub(endDate, { months: 1 }), endDate);
         break;
       }
       case 'last_month': {
         const endDate = startOfMonth(new Date());
-        props.handleRangeSelect(sub(endDate, { weeks: 1 }), endDate);
+        handleRangeSelect(sub(endDate, { weeks: 1 }), endDate);
         break;
       }
       case 'year_to_date': {
         const endDate = endOfDay(new Date());
-        props.handleRangeSelect(sub(endDate, { years: 1 }), endDate);
+        handleRangeSelect(sub(endDate, { years: 1 }), endDate);
         break;
       }
       case 'last_year': {
         const endDate = startOfYear(new Date());
-        props.handleRangeSelect(sub(endDate, { years: 1 }), endDate);
+        handleRangeSelect(sub(endDate, { years: 1 }), endDate);
         break;
       }
     }
   }, [selectedOption]);
 
   useEffect(() => {
-    props.isDisabled && setIsInvalid(false);
-  }, [props.isDisabled]);
+    isDisabled && setIsInvalid(false);
+  }, [isDisabled]);
 
   return (
-    <div className={props.className}>
+    <div className={className}>
       <Select
         isClearable
         isInvalid={isInvalid}
-        options={_cityOptions}
-        isDisabled={props.isDisabled}
+        options={dateRangeOptions}
+        isDisabled={isDisabled}
         onOptionChange={onOptionChange}
         getOptionValue={getOptionValue}
         getOptionLabel={getOptionLabel}
