@@ -8,6 +8,7 @@ import { Edit2, MessageSquare, Trash2 } from 'react-feather';
 import { submitCommentEdit } from '../../../services/serviceComment';
 import { NewComponentForm } from './NewComponentForm';
 import { CardBody } from '../../../components/card/Card';
+import { getLocalTimeDate } from '../../utils';
 import styles from './TicketEdit.module.scss';
 
 interface CommentItemProps {
@@ -64,7 +65,7 @@ export function CommentItem(props: CommentItemProps) {
                     </>
                   )}
                 </h4>
-                <p>{new Date(comment.created_at).toUTCString()}</p>
+                <p>{getLocalTimeDate(new Date(comment.created_at))}</p>
                 <p>
                   Sentiment: {comment.sentiment} ({comment.sentiment_score})
                 </p>

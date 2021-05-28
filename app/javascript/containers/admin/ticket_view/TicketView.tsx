@@ -11,7 +11,7 @@ import { deleteComment, fetchCommentData, submitTicketReply } from '../../../ser
 import { fetchAllUsers, fetchCurrentUser } from '../../../services/serviceUser';
 import { ConfirmationDialog } from '../../../components/dialog/ConfirmationDialog';
 import { LoadingButton } from '../../../components/button/LoadingButton';
-import { isEmptyObject } from '../../utils';
+import { getLocalTimeDate, isEmptyObject } from '../../utils';
 import { CommentItem } from '../ticket_edit/CommentItem';
 import { NewComponentForm } from '../ticket_edit/NewComponentForm';
 import { CommentType, CurrentUser } from '../../Types';
@@ -245,7 +245,7 @@ export const TicketView = (props: TicketViewProps) => {
                         <label className="mb-0 wid-100 me-2">Created:</label>
                       </td>
                       <td>
-                        <span>{new Date(ticketData.created_at).toUTCString()}</span>
+                        <span>{getLocalTimeDate(new Date(ticketData.created_at))}</span>
                       </td>
                     </tr>
                     <tr>
@@ -253,7 +253,7 @@ export const TicketView = (props: TicketViewProps) => {
                         <label className="mb-0 wid-100 me-2">Response:</label>
                       </td>
                       <td>
-                        <span>{new Date(ticketData.updated_at).toUTCString()}</span>
+                        <span>{getLocalTimeDate(new Date(ticketData.updated_at))}</span>
                       </td>
                     </tr>
                   </table>
