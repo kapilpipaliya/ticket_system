@@ -11,11 +11,11 @@ export const SpinnerModal = (props: { loading: boolean }) => {
     <>
       {loading && (
         <Modal backdrop={false}>
-          <ModalBody>
-            <Card className={styles.spinnerModal}>
+          <ModalBody className={styles.spinnerModal}>
+            <Card className={styles.spinnerCard}>
               <CardBody>
-                <Spinner />
-                Loading ...
+                <Spinner className={styles.spinnerCircle}/>
+                <span>Loading ...</span>
               </CardBody>
             </Card>
           </ModalBody>
