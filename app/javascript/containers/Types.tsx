@@ -22,7 +22,7 @@ export interface CommentType {
   id: number;
   description: string;
   ticket_id: number;
-  sentiment?: string;
+  sentiment?: 'positive' | 'negative' | 'natural';
   sentiment_score?: number;
   created_at: string;
   updated_at: string;
