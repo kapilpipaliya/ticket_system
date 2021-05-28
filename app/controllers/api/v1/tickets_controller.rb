@@ -20,7 +20,7 @@ module Api
       def show; end
 
       def create
-        @ticket = authorize Ticket.new(ticket_params)
+        @ticket = Ticket.new(ticket_params)
         if @ticket.save
           render :show, status: :created, location: api_v1_tickets_url(@ticket)
         else
@@ -29,8 +29,6 @@ module Api
       end
 
       def update
-        return user_not_authorized if customer_changed_assignee?
-
         if @ticket.update(ticket_params)
           render :show, status: :ok, location: api_v1_tickets_url(@ticket)
         else
@@ -39,13 +37,8 @@ module Api
       end
 
       def destroy
-        if supporter?
-          @ticket.destroy
-          render json: @ticket.errors.messages
-        else
-          error = { 'base' => 'only support member can delete ticket' }
-          render json: error, status: :unprocessable_entity
-        end
+        @ticket.destroy
+        render json: @ticket.errors.messages
       end
 
       def all_status
@@ -68,8 +61,14 @@ module Api
         case action_name
         when 'index', 'all_status', 'all_status_filter', 'create', 'sentiments_options_filter'
           authorize Ticket
-        when 'show', 'update', 'destroy'
+        when 'show'
           authorize @ticket
+        when 'update'
+          authorize @ticket
+          !customer_changed_assignee?
+        when 'destroy'
+          authorize @ticket
+          supporter?
         else
           raise NotImplementedError
         end

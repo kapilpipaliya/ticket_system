@@ -20,7 +20,7 @@ module Api
       def show; end
 
       def create
-        @comment = authorize Comment.new(comment_params)
+        @comment = Comment.new(comment_params)
         if @comment.save
           render :show, status: :created, location: api_v1_comments_url(@comment)
         else
