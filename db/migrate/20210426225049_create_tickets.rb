@@ -1,10 +1,10 @@
 class CreateTickets < ActiveRecord::Migration[6.1]
   def change
     create_table :tickets, id: :uuid do |t|
-      t.string :subject, null: false
-      t.text :description, null: false
-      t.string :email, null: false, index: true
-      t.string :name, null: false
+      t.string :subject
+      t.text :description
+      t.string :email, index: true
+      t.string :name
       t.integer :status, default: 0
       t.integer :sentiment
       t.float :sentiment_score, default: 0
