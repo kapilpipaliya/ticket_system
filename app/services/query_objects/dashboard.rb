@@ -16,7 +16,7 @@ class Dashboard
       unresolved_count: @tickets.apply_date_rage(@from, @to).unresolved.count,
       replies: Comment.where(ticket: Ticket.all).apply_date_rage(@from, @to).count,
       new_tickets: new_tickets_count,
-      tickets_per_day: tickets_per_day,
+      tickets_per_day: tickets_per_day
     }
   end
 end

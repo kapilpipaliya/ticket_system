@@ -1,6 +1,7 @@
 class Ticket < ApplicationRecord
   include AuthHelper
   attr_accessor :send_notification, :boolean
+
   def send_notification
     @send_notification.nil? ? true : @send_notification
   end
@@ -11,13 +12,15 @@ class Ticket < ApplicationRecord
 
   scope :tickets_from, ->(user) { where(creator: user.id) }
   scope :apply_date_rage, ->(from, to) { where(created_at: from..to) }
-  scope :unresolved, -> { where('status = :open or status = :hold', { open: Ticket.statuses[:open], hold: Ticket.statuses[:hold] }) }
+  scope :unresolved, lambda {
+                       where('status = :open or status = :hold', { open: Ticket.statuses[:open], hold: Ticket.statuses[:hold] })
+                     }
   scope :overdue, -> { where('due_date < :today', { today: Time.zone.today }).not_close_status }
   scope :due_today, -> { where(due_date: Time.zone.today).not_close_status }
   scope :assigned, -> { where.not(assignee_id: nil) }
 
-  enum status: %i[open hold close], _suffix: true
-  enum sentiment: %i[negative positive neutral], _suffix: true
+  enum status: { open: 0, hold: 1, close: 2 }, _suffix: true
+  enum sentiment: { negative: 0, positive: 1, neutral: 2 }, _suffix: true
   attribute :sentiment, :integer, default: sentiments[:negative]
   attribute :due_date, :datetime, default: Time.zone.now + 5.days
 

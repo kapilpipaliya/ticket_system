@@ -5,7 +5,8 @@ module Api
       before_action :authorize_actions
 
       def latest_activity
-        @dashboard_data = LatestActivity.new(from: params[:from], to: params[:to], limit: params[:limit]).data
+        @dashboard_data = LatestActivity.new(from: params[:from], to: params[:to],
+                                             limit: params[:limit]).data
       end
 
       private

@@ -1,5 +1,5 @@
 class InboxMailbox < ApplicationMailbox
-  TICKET_ID_MATCHER =  /.*Case #([0-9]+)/i
+  TICKET_ID_MATCHER = /.*Case #([0-9]+)/i
 
   def process
     ticket_id_ = ticket_id
@@ -20,7 +20,8 @@ class InboxMailbox < ApplicationMailbox
     if ticket_id_
       ticket = Ticket.find(ticket_id)
       if ticket
-        comment = Comment.new({ ticket: ticket, description: email_text, commenter: user_extracted_from_mail_address })
+        comment = Comment.new({ ticket: ticket, description: email_text,
+                                commenter: user_extracted_from_mail_address })
         comment.send_notification = false
         comment.save!
       end
@@ -28,7 +29,8 @@ class InboxMailbox < ApplicationMailbox
       created_at = Time.zone.now
       ticket =
         Ticket.new(
-          { subject: mail.subject, description: email_text, email: mail.from.first, name: mail.from.first.split('@').first, created_at: created_at, due_date: created_at + 5.days },
+          { subject: mail.subject, description: email_text, email: mail.from.first,
+            name: mail.from.first.split('@').first, created_at: created_at, due_date: created_at + 5.days }
         )
       ticket.save!(validate: false)
     end

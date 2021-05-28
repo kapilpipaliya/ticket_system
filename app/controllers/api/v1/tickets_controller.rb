@@ -53,8 +53,11 @@ module Api
       def all_status_filter
         render json: status_options_filter
       end
+
       def sentiments_options_filter
-        render json: Ticket.sentiments.map { |x, i| { 'id' => i, :label => x.titleize } }.prepend({ 'id' => '', :label => 'All' })
+        render json: Ticket.sentiments.map { |x, i|
+                       { 'id' => i, :label => x.titleize }
+                     }.prepend({ 'id' => '', :label => 'All' })
       end
 
       private
@@ -75,7 +78,8 @@ module Api
       end
 
       def ticket_params
-        params.require(:ticket).permit(:subject, :description, :email, :name, :status, :creator_id, :assignee_id)
+        params.require(:ticket).permit(:subject, :description, :email, :name, :status, :creator_id,
+                                       :assignee_id)
       end
 
       def check_ticket_permission
@@ -87,11 +91,13 @@ module Api
       end
 
       def status_options
-        Ticket.statuses.map { |x, i| { 'id' => x, :label => x.titleize } }
+        Ticket.statuses.map { |x, _i| { 'id' => x, :label => x.titleize } }
       end
 
       def status_options_filter
-        Ticket.statuses.map { |x, i| { 'id' => i, :label => x.titleize } }.prepend({ 'id' => '', :label => 'All' })
+        Ticket.statuses.map do |x, i|
+          { 'id' => i, :label => x.titleize }
+        end.prepend({ 'id' => '', :label => 'All' })
       end
 
       def customer_changed_assignee?

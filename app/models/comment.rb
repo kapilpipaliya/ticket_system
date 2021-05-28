@@ -1,5 +1,6 @@
 class Comment < ApplicationRecord
   attr_accessor :send_notification, :boolean
+
   def send_notification
     @send_notification.nil? ? true : @send_notification
   end
@@ -10,7 +11,7 @@ class Comment < ApplicationRecord
   default_scope { order(created_at: :asc) }
   scope :apply_date_rage, ->(from, to) { where(created_at: from..to) }
 
-  enum sentiment: %i[negative positive neutral], _suffix: true
+  enum sentiment: { negative: 0, positive: 1, neutral: 2 }, _suffix: true
   attribute :sentiment, :integer, default: sentiments[:negative]
 
   validates :description, :ticket, presence: true
