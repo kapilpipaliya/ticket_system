@@ -1,5 +1,5 @@
 class NewTicketEmailJob < ApplicationJob
-  queue_as :default
+  queue_as :mail_query
 
   def perform(ticket_id:)
     TicketMailer.new_ticket(ticket_id: ticket_id).deliver_later

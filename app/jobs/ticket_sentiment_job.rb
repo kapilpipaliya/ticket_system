@@ -1,5 +1,5 @@
 class TicketSentimentJob < ApplicationJob
-  queue_as :default
+  queue_as :sentiment_analysis_query
 
   def perform(ticket_id:)
     ticket = Ticket.find(ticket_id)

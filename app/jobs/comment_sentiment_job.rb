@@ -1,5 +1,5 @@
 class CommentSentimentJob < ApplicationJob
-  queue_as :default
+  queue_as :sentiment_analysis_query
   before_perform :analyser
 
   def perform(comment_id:)
