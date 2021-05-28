@@ -7,8 +7,9 @@ AllCops:
     - 'db/**/*'
     - 'script/**/*'
     - 'bin/**/*'
+    - 'node_modules/**/*'
 Metrics/LineLength:
-  Max: 100
+  Max: 120
 
 Metrics/BlockLength:
   Exclude:
