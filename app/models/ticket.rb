@@ -26,6 +26,7 @@ class Ticket < ApplicationRecord
   enum status: { open: 0, hold: 1, close: 2 }, _suffix: true
   enum sentiment: { negative: 0, positive: 1, neutral: 2 }, _suffix: true
   attribute :sentiment, :integer, default: sentiments[:negative]
+  attribute :sentiment_score, :integer, default: 0
   attribute :due_date, :datetime, default: Time.zone.now + 5.days
 
   validates :subject, presence: true, length: { minimum: 10 }

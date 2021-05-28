@@ -3,7 +3,7 @@ class CreateComments < ActiveRecord::Migration[6.1]
     create_table :comments, id: :uuid do |t|
       t.text :description
       t.integer :sentiment
-      t.float :sentiment_score, default: 0
+      t.float :sentiment_score
       t.belongs_to :ticket, type: :uuid, foreign_key: { on_delete: :cascade }
       t.references :commenter, type: :uuid, null: true, foreign_key: {to_table: :users}
 

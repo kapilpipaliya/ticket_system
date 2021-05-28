@@ -5,9 +5,9 @@ class CreateTickets < ActiveRecord::Migration[6.1]
       t.text :description
       t.string :email, index: true
       t.string :name
-      t.integer :status, default: 0
+      t.integer :status
       t.integer :sentiment
-      t.float :sentiment_score, default: 0
+      t.float :sentiment_score
       t.datetime :last_activity
       t.date :due_date
       t.references :creator, type: :uuid, null: true, foreign_key: {to_table: :users}
