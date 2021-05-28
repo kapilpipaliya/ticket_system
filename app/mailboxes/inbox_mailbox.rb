@@ -1,4 +1,6 @@
 class InboxMailbox < ApplicationMailbox
+  TICKET_ID_MATCHER =  /.*Case #([0-9]+)/i
+
   def process
     ticket_id_ = ticket_id
     email_text = ''
@@ -35,7 +37,7 @@ class InboxMailbox < ApplicationMailbox
   private
 
   def ticket_id
-    match = /.*Case #([0-9]+)/i.match(mail.subject)
+    match = TICKET_ID_MATCHER.match(mail.subject)
     match &&= match[1]
     match
   end
