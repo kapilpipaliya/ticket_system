@@ -11,7 +11,7 @@ import { fetchCommentData } from '../../../services/serviceComment';
 import { fetchAllUsers } from '../../../services/serviceUser';
 import { ConfirmationDialog } from '../../../components/dialog/ConfirmationDialog';
 import { LoadingButton } from '../../../components/button/LoadingButton';
-import { isEmptyObject } from '../../utils';
+import { getLocalTimeDate, isEmptyObject } from '../../utils';
 import { CommentItem } from './CommentItem';
 import { SpinnerModal } from '../../../components/spinner/SpinnerModal';
 import { Select } from '../../../components/select/Select';
@@ -195,7 +195,7 @@ export const TicketEdit = (props: TicketEditProps) => {
                         <label>Created:</label>
                       </td>
                       <td>
-                        <span>{new Date(ticketData.created_at).toUTCString()}</span>
+                        <span>{getLocalTimeDate(new Date(ticketData.created_at))}</span>
                       </td>
                     </tr>
                     <tr>
@@ -203,7 +203,7 @@ export const TicketEdit = (props: TicketEditProps) => {
                         <label>Response:</label>
                       </td>
                       <td>
-                        <span>{new Date(ticketData.updated_at).toUTCString()}</span>
+                        <span>{getLocalTimeDate(new Date(ticketData.updated_at))}</span>
                       </td>
                     </tr>
                   </table>
