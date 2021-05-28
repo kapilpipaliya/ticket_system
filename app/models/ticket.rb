@@ -19,6 +19,7 @@ class Ticket < ApplicationRecord
   enum status: %i[open hold close], _suffix: true
   enum sentiment: %i[negative positive neutral], _suffix: true
   attribute :sentiment, :integer, default: sentiments[:negative]
+  attribute :due_date, :datetime, default: Time.zone.now + 5.days
 
   validates :subject, presence: true, length: { minimum: 10 }
   validates :description, presence: true, length: { minimum: 10 }
@@ -30,7 +31,6 @@ class Ticket < ApplicationRecord
   validates :creator, absence: true, if: :guest?
   validates :creator, presence: true, on: :create, if: -> { supporter? || customer? }
 
-  before_create :set_due_date
   after_create_commit :new_ticket
   after_update_commit :update_ticket
 
@@ -38,10 +38,6 @@ class Ticket < ApplicationRecord
   after_destroy_commit :after_destroy_log
 
   private
-
-  def set_due_date
-    self.due_date ||= Time.zone.now + 5.days
-  end
 
   def new_ticket
     NewTicketEmailJob.perform_later id: id if @send_notification

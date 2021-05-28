@@ -1,6 +1,4 @@
 class InboxMailbox < ApplicationMailbox
-  before_processing :find_user
-
   def process
     ticket_id_ = ticket_id
     email_text = ''
@@ -20,7 +18,7 @@ class InboxMailbox < ApplicationMailbox
     if ticket_id_
       ticket = Ticket.find(ticket_id)
       if ticket
-        comment = Comment.new({ ticket: ticket, description: email_text, commenter: @user })
+        comment = Comment.new({ ticket: ticket, description: email_text, commenter: user_extracted_from_mail_address })
         comment.send_notification = false
         comment.save!
       end
@@ -42,7 +40,7 @@ class InboxMailbox < ApplicationMailbox
     match
   end
 
-  def find_user
-    @user = User.find_by(email: mail.from.first)
+  def user_extracted_from_mail_address
+    User.find_by(email: mail.from.first)
   end
 end

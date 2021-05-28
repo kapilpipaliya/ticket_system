@@ -5,12 +5,9 @@ class User < ApplicationRecord
   has_many :tickets
 
   enum role: %i[customer support]
-  before_create :set_default_role, if: :new_record?
+  attribute :role, :integer, default: roles[:customer]
 
   validates :first_name, presence: true
   validates :role, presence: true, inclusion: { in: roles.keys }
 
-  def set_default_role
-    self.role ||= :customer
-  end
 end
