@@ -25,7 +25,7 @@ class Comment < ApplicationRecord
   def send_email
     return unless @send_notification
 
-    TicketReplyJob.perform_later ticket_id: ticket.id, comment_id: id if commenter.email != ticket.email
+    TicketReplyJob.perform_later ticket_id: ticket.id, comment_id: id if ticket_owner_comment?
     if previously_new_record?
       Log.create({ activity: "New comment(#{id}) on ticket(#{ticket.subject}) is created" })
     elsif destroyed?
@@ -33,6 +33,10 @@ class Comment < ApplicationRecord
     else
       Log.create({ activity: "Comment(#{id}) on ticket(#{ticket.subject}) is updated" })
     end
+  end
+
+  def ticket_owner_comment?
+    commenter.email != ticket.email
   end
 
   def update_ticket_last_activity

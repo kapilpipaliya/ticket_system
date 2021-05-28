@@ -27,7 +27,7 @@ module Api
       end
 
       def update
-        return user_not_authorized if customer? && !params[:assignee_id].empty? && params[:assignee_id].to_i != @ticket.assignee_id
+        return user_not_authorized if customer_changed_assignee?
 
         if @ticket.update(ticket_params)
           render :show, status: :ok, location: api_v1_tickets_url(@ticket)
@@ -79,7 +79,11 @@ module Api
       end
 
       def check_ticket_permission
-        user_not_authorized if customer? && @ticket.creator_id != current_user.id
+        user_not_authorized if customer_own_ticket?
+      end
+
+      def customer_own_ticket?
+        customer? && @ticket.creator_id != current_user.id
       end
 
       def status_options
@@ -88,6 +92,10 @@ module Api
 
       def status_options_filter
         Ticket.statuses.map { |x, i| { 'id' => i, :label => x.titleize } }.prepend({ 'id' => '', :label => 'All' })
+      end
+
+      def customer_changed_assignee?
+        customer? && !params[:assignee_id].empty? && params[:assignee_id].to_i != @ticket.assignee_id
       end
     end
   end
