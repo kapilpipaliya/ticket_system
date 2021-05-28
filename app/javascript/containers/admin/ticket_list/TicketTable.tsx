@@ -4,6 +4,7 @@ import { Edit, Eye, Trash2 } from 'react-feather';
 
 import { Pagy, SortDirection, SortState, Ticket } from '../../Types';
 import { getLocalTimeDate } from '../../utils';
+import { SentimentEmoji } from "../../../components/sentiment_emoji/SentimentEmoji";
 import styles from './TicketList.module.scss';
 
 interface TicketItemProps {
@@ -16,6 +17,7 @@ export const TicketItem = (props: TicketItemProps) => {
 
   return (
     <>
+      <td title={ticket.sentiment}><SentimentEmoji variant={ticket.sentiment}/></td>
       <td>{ticket.name}</td>
       <td>{ticket.email}</td>
       <td className={clsx(styles.subjectTruncate, styles.textTruncate)} title={ticket.description}>
@@ -23,7 +25,6 @@ export const TicketItem = (props: TicketItemProps) => {
       </td>
       <td>{ticket.assignee_name}</td>
       <td>{ticket.status}</td>
-      <td>{ticket.sentiment}</td>
       <td>{ticket.assignee_comments}</td>
       <td>{getLocalTimeDate(new Date(ticket.created_at))}</td>
       <td>{getLocalTimeDate(new Date(ticket.last_activity))}</td>
@@ -61,6 +62,9 @@ export const TicketTable = (props: TicketTableProps) => {
       <table className={styles.table}>
         <thead>
           <tr>
+            <th onClick={handleOnSortClick('sentiment')}>
+              Sentiment <SortIcon id={'sentiment'} />
+            </th>
             <th onClick={handleOnSortClick('name')}>
               Name <SortIcon id={'name'} />
             </th>
@@ -75,9 +79,6 @@ export const TicketTable = (props: TicketTableProps) => {
             </th>
             <th onClick={handleOnSortClick('status')}>
               Status <SortIcon id={'status'} />
-            </th>
-            <th onClick={handleOnSortClick('sentiment')}>
-              Sentiment <SortIcon id={'sentiment'} />
             </th>
             <th onClick={handleOnSortClick('assignee_comments')}>
               Comments <SortIcon id={'assignee_comments'} />

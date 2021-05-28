@@ -9,6 +9,7 @@ import { submitCommentEdit } from '../../../services/serviceComment';
 import { NewComponentForm } from './NewComponentForm';
 import { CardBody } from '../../../components/card/Card';
 import { getLocalTimeDate } from '../../utils';
+import { SentimentEmoji } from "../../../components/sentiment_emoji/SentimentEmoji";
 import styles from './TicketEdit.module.scss';
 
 interface CommentItemProps {
@@ -66,9 +67,9 @@ export function CommentItem(props: CommentItemProps) {
                   )}
                 </h4>
                 <p>{getLocalTimeDate(new Date(comment.created_at))}</p>
-                <p>
-                  Sentiment: {comment.sentiment} ({comment.sentiment_score})
-                </p>
+                <div className={styles.sentimentLine}>
+                  Sentiment: <SentimentEmoji variant={comment.sentiment}/>  ({comment.sentiment_score})
+                </div>
               </div>
               <div dangerouslySetInnerHTML={{ __html: comment.description }}></div>
             </div>
