@@ -1,4 +1,5 @@
 import { Ticket } from '../containers/Types';
+import { routes } from './routes';
 
 interface DashboardData {
   data: {
@@ -15,7 +16,7 @@ interface DashboardData {
 
 export const fetchDashBoardData = async (from_date: number, to_date: number): Promise<DashboardData> => {
   try {
-    const response = await fetch(`/api/v1/dashboard/data.json?from=${from_date}&to=${to_date}`);
+    const response = await fetch(`${routes.routes['dashboard_data']}.json?from=${from_date}&to=${to_date}`);
     return await response.json();
   } catch (err) {
     alert(err);
@@ -30,7 +31,7 @@ export interface LastActivityData {
 export const fetchLastActivityData = async (from_date: number, to_date: number, limit: number = 5): Promise<LastActivityData> => {
   try {
     const limitQuery = limit ? `&limit=${limit}` : '';
-    const response = await fetch(`/api/v1/logs/latest_activity.json?from=${from_date}&to=${to_date}${limitQuery}`);
+    const response = await fetch(`${routes.routes['latest_activity']}.json?from=${from_date}&to=${to_date}${limitQuery}`);
     return await response.json();
   } catch (err) {
     alert(err);
@@ -44,7 +45,7 @@ interface DashBordStaticData {
 
 export const fetchDashBoardStaticData = async (): Promise<DashBordStaticData> => {
   try {
-    const response = await fetch(`/api/v1/dashboard/static.json`);
+    const response = await fetch(`${routes.routes['dashboard_static_data']}.json`);
     return await response.json();
   } catch (err) {
     alert(err);

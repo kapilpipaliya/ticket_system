@@ -1,5 +1,5 @@
 <% content_for :content do %>
-<%= react_component('dashboard', {}) %>
+<%= react_component('dashboard', routes: routes) %>
 <%= javascript_pack_tag 'support/Dashboard' %>
 <%= stylesheet_pack_tag 'support/Dashboard' %>
 <% end %>
