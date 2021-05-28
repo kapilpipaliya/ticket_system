@@ -3,21 +3,26 @@
   padding: 20px;
   max-width: 900px;
 }
+
 .hero {
   display: flex;
   align-items: center;
 }
+
 .firstColumn {
   margin-bottom: 5px;
 }
+
 .secondColumn {
   display: none;
   position: relative;
 }
+
 .buttonGroup {
   display: flex;
   flex-wrap: wrap;
 }
+
 .button {
   border: 1px solid #4e555b;
   padding: 10px;
@@ -29,15 +34,18 @@
     color: white;
   }
 }
+
 .primaryButton {
   background-color: #0062cc;
   color: white;
   margin-right: 4px;
 }
+
 .secondaryButton {
   background-color: #5a5a5a;
   color: white;
 }
+
 .firstImage {
   display: none;
   position: absolute;
@@ -46,10 +54,12 @@
   right: 0;
   max-width: 100%;
 }
+
 .secondImage {
   position: relative;
   max-width: 100%;
 }
+
 .thirdImage {
   display: none;
   position: absolute;
@@ -58,6 +68,7 @@
   left: 0;
   max-width: 100%;
 }
+
 @media (min-width: 560px) {
   .secondColumn {
     display: block;

@@ -61,25 +61,23 @@ export const ticketCreate = async (data: { [key: string]: any }) => {
     return await post('/api/v1/tickets', data);
   } catch (err) {
     alert(err);
-    return {};
+    return {} as { [p: string]: any };
   }
 };
 
-export const getInitialTicketState = (): Ticket => {
-  return {
-    id: 0,
-    subject: '',
-    description: '',
-    email: '',
-    name: '',
-    assignee_id: null,
-    creator_id: null,
-    status: 'open',
-    created_at: '',
-    updated_at: '',
-    url: '',
-    assignee_name: '',
-  };
+export const emptyTicketState: Ticket = {
+  id: 0,
+  subject: '',
+  description: '',
+  email: '',
+  name: '',
+  assignee_id: null,
+  creator_id: null,
+  status: 'open',
+  created_at: '',
+  updated_at: '',
+  url: '',
+  assignee_name: '',
 };
 
 export const fetchTicketData = async (ticketId: string): Promise<Ticket> => {
@@ -88,7 +86,7 @@ export const fetchTicketData = async (ticketId: string): Promise<Ticket> => {
     return await response.json();
   } catch (err) {
     alert(err);
-    return getInitialTicketState();
+    return { ...emptyTicketState };
   }
 };
 
@@ -141,11 +139,9 @@ export const ticketDelete = async ticketId => {
   }
 };
 
-export const getInitialErrorState = () => {
-  return {
-    subject: [] as string[],
-    name: [] as string[],
-    email: [] as string[],
-    description: [] as string[],
-  };
+export const emptyErrorState = {
+  subject: [] as string[],
+  name: [] as string[],
+  email: [] as string[],
+  description: [] as string[],
 };

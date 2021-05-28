@@ -8,9 +8,9 @@ import 'jodit';
 import 'jodit/build/jodit.min.css';
 import JoditEditor from 'jodit-react';
 
-import { getInitialErrorState, ticketCreate } from '../../../services/serviceTicket';
-import { DisplayFormError } from '../../../components/DisplayFormError';
-import { LoadingButton } from '../../../components/LoadingButton';
+import { emptyErrorState, ticketCreate } from '../../../services/serviceTicket';
+import { DisplayFormError } from '../../../components/input_errors/DisplayFormError';
+import { LoadingButton } from '../../../components/button/LoadingButton';
 import { Button } from '../../../components/button/Button';
 import { Modal, ModalBody, ModalFooter, ModalHeader } from '../../../components/modal/Modal';
 import { Input } from '../../../components/input/Input';
@@ -28,12 +28,12 @@ export const NewTicketModal = (props: NewTicketModalProps) => {
   const nameOfSubmitterRef = useRef<HTMLInputElement>(null);
   const emailOfSubmitterRef = useRef<HTMLInputElement>(null);
   const [description, setDescription] = useState('');
+  const [errors, setErrors] = useState({ ...emptyErrorState });
+  const { show, onHide, onNewTicket, currentUser } = props;
   const config: Partial<IJodit['options']> = {
     readonly: false,
     style: { height: 300 },
   };
-  const [errors, setErrors] = useState(getInitialErrorState());
-  const { show, onHide, onNewTicket, currentUser } = props;
 
   const mutation = useMutation(async () => {
     const result = await ticketCreate({
@@ -48,11 +48,11 @@ export const NewTicketModal = (props: NewTicketModalProps) => {
       nameOfSubmitterRef.current.value = '';
       emailOfSubmitterRef.current.value = '';
       setDescription('');
-      setErrors({ ...getInitialErrorState() });
+      setErrors({ ...emptyErrorState });
       onHide();
-      onNewTicket(result);
+      onNewTicket(result as Ticket);
     } else {
-      setErrors({ ...getInitialErrorState(), ...result });
+      setErrors({ ...emptyErrorState, ...result });
     }
     return result;
   });

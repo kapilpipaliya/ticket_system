@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Button } from './button/Button';
-import { Spinner } from './Spinner';
+import { Button } from './Button';
+import { Spinner } from '../spinner/Spinner';
 
 interface LoadingButtonProps {
   showSpinner?: boolean;
@@ -13,6 +13,7 @@ interface LoadingButtonProps {
 
 export const LoadingButton = (props: LoadingButtonProps) => {
   const { variant = 'primary', onClick, loading, showSpinner = true, children, ...extraProps } = props;
+
   return (
     <Button variant={variant} onClick={onClick} {...(loading ? { disabled: true } : {})} {...extraProps}>
       {showSpinner && loading && <Spinner />}

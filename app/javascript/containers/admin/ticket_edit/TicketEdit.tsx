@@ -9,11 +9,11 @@ import 'react-toastify/dist/ReactToastify.css';
 import { fetchAllTicketStatus, fetchTicketData, ticketDelete, ticketUpdate } from '../../../services/serviceTicket';
 import { fetchCommentData } from '../../../services/serviceComment';
 import { fetchAllUsers } from '../../../services/serviceUser';
-import { ConfirmationDialog } from '../../../components/ConfirmationDialog';
-import { LoadingButton } from '../../../components/LoadingButton';
+import { ConfirmationDialog } from '../../../components/dialog/ConfirmationDialog';
+import { LoadingButton } from '../../../components/button/LoadingButton';
 import { isEmptyObject } from '../../utils';
 import { CommentItem } from './CommentItem';
-import { SpinnerModal } from '../../../components/SpinnerModal';
+import { SpinnerModal } from '../../../components/spinner/SpinnerModal';
 import { Select } from '../../../components/select/Select';
 import { Card, CardBody, CardHeader } from '../../../components/card/Card';
 import styles from './TicketEdit.module.scss';
@@ -23,13 +23,12 @@ interface TicketEditProps {
 }
 
 export const TicketEdit = (props: TicketEditProps) => {
+  const { ticketId } = props;
   const [allStatus, setAllStatus] = useState([]);
   const [allUsers, setAllUsers] = useState([]);
   const [newStatus, setNewStatus] = useState('open');
   const [newAssignedToID, setNewAssignedToID] = useState<'' | number>('');
   const [ticketDeleteConfirmation, setTicketDeleteConfirmation] = useState(false);
-
-  const { ticketId } = props;
 
   const {
     isLoading: isTicketLoading,
@@ -84,9 +83,7 @@ export const TicketEdit = (props: TicketEditProps) => {
     }
   });
 
-  const handleUpdateTicket = () => {
-    ticketUpdateMutation.mutate();
-  };
+  const handleUpdateTicket = () => ticketUpdateMutation.mutate();
 
   const ticketDeleteMutation = useMutation(async () => {
     const resp = await ticketDelete(ticketData.id);
@@ -98,9 +95,7 @@ export const TicketEdit = (props: TicketEditProps) => {
     return resp;
   });
 
-  const handleTicketDelete = () => {
-    ticketDeleteMutation.mutate();
-  };
+  const handleTicketDelete = () => ticketDeleteMutation.mutate();
 
   return (
     <div className={styles.container}>
@@ -231,4 +226,3 @@ export const TicketEdit = (props: TicketEditProps) => {
     </div>
   );
 };
-export default TicketEdit;

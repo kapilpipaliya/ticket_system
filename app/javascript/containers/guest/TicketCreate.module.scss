@@ -1,8 +1,6 @@
 .container {
-  margin: 1rem auto 0;
-  padding: 1rem;
-  max-width: 1142px;
 }
+
 .newTicketForm {
   display: grid;
   grid-template-columns: 1fr; /* not working!*/
@@ -27,9 +25,11 @@
     grid-column: 2 / span 1;
   }
 }
+
 .alertContainer {
   padding: 20px;
 }
+
 @media (min-width: 500px) {
   .newTicketForm {
     display: grid;

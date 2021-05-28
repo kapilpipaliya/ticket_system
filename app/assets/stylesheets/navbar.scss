@@ -1,0 +1,56 @@
+.custom-navbar {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.custom-navbar-brand {
+  padding: 0.3125rem;
+  margin-right: 1rem;
+  font-size: 1.25rem;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.custom-navbar-toggle {
+  padding: 0 0.5rem;
+  max-width: 50px;
+  justify-self: flex-end;
+  margin: 0 1rem;
+  border: none;
+  font-size: 1.5rem;
+}
+
+.custom-navbar-nav {
+  grid-column: 1 / span 2;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  align-items: center;
+}
+
+.custom-nav-link {
+  display: block;
+  padding: 0.5rem 1rem;
+  color: #0d6efd;
+  text-decoration: none;
+  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
+}
+
+@media (min-width: 500px) {
+  .custom-navbar {
+    grid-template-columns: 1fr 2fr;
+  }
+  .custom-navbar-toggle {
+    display: none;
+  }
+  .custom-navbar-nav {
+    grid-column: none;
+    flex-direction: row;
+  }
+}

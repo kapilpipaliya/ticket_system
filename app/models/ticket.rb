@@ -11,10 +11,10 @@ class Ticket < ApplicationRecord
 
   scope :tickets_from, ->(user) { where(creator: user.id) }
   scope :apply_date_rage, ->(from, to) { where(created_at: from..to) }
-  scope :unresolved, ->() { where('status = :open or status = :hold', { open: Ticket.statuses[:open], hold: Ticket.statuses[:hold] }) }
-  scope :overdue, ->() { where('due_date < :today', { today: Time.zone.today }).not_close_status }
-  scope :due_today, ->() { where(due_date: Time.zone.today).not_close_status }
-  scope :assigned, ->() {where.not(assignee_id: nil) }
+  scope :unresolved, -> { where('status = :open or status = :hold', { open: Ticket.statuses[:open], hold: Ticket.statuses[:hold] }) }
+  scope :overdue, -> { where('due_date < :today', { today: Time.zone.today }).not_close_status }
+  scope :due_today, -> { where(due_date: Time.zone.today).not_close_status }
+  scope :assigned, -> { where.not(assignee_id: nil) }
 
   enum status: %i[open hold close], _suffix: true
   enum sentiment: %i[negative positive neutral], _suffix: true

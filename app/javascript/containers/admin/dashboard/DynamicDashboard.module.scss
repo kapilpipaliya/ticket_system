@@ -1,34 +1,40 @@
-// Card
 .cards {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
 }
+
 .card {
   width: calc(50% - 10px);
   min-width: 130px;
   box-shadow: 0 0 5px 1px #4444;
 }
+
 .cardHeader {
   text-align: center;
   padding: 0.3em;
   background-color: white;
   border: none;
 }
+
 .bgWarning {
   background-color: orange;
   color: white;
 }
+
 .bgSuccess {
   background-color: #1e7e34;
   color: white;
 }
+
 .warning {
   color: orange;
 }
+
 .success {
   color: #1e7e34;
 }
+
 @media (min-width: 560px) {
   .card {
     width: unset;
@@ -36,7 +42,6 @@
   }
 }
 
-// Filter Button
 .filterButton {
   margin: 1em 0 0.5em 0;
   max-width: 300px;

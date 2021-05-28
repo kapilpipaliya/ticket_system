@@ -7,10 +7,10 @@ import JoditEditor from 'jodit-react';
 import { useMutation } from 'react-query';
 
 import { CurrentUser } from '../Types';
-import { DisplayFormError } from '../../components/DisplayFormError';
-import { getInitialErrorState, ticketCreate } from '../../services/serviceTicket';
+import { DisplayFormError } from '../../components/input_errors/DisplayFormError';
+import { emptyErrorState, ticketCreate } from '../../services/serviceTicket';
 import { fetchCurrentUser } from '../../services/serviceUser';
-import { LoadingButton } from '../../components/LoadingButton';
+import { LoadingButton } from '../../components/button/LoadingButton';
 import { Alert } from '../../components/alert/Alert';
 import { Input } from '../../components/input/Input';
 import { Card, CardBody } from '../../components/card/Card';
@@ -23,7 +23,7 @@ export const TicketCreate = () => {
   const emailOfSubmitterRef = useRef<HTMLInputElement>(null);
   const [description, setDescription] = useState('');
   const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
-  const [errors, setErrors] = useState(getInitialErrorState());
+  const [errors, setErrors] = useState({ ...emptyErrorState });
   const config: Partial<IJodit['options']> = {
     readonly: false,
     style: { height: 300 },
@@ -48,9 +48,9 @@ export const TicketCreate = () => {
       setDescription('');
       setIsSuccess(true);
       setTimeout(() => setIsSuccess(false), 5000);
-      setErrors({ ...getInitialErrorState() });
+      setErrors({ ...emptyErrorState });
     } else {
-      setErrors({ ...getInitialErrorState(), ...result });
+      setErrors({ ...emptyErrorState, ...result });
     }
   });
 
@@ -60,56 +60,54 @@ export const TicketCreate = () => {
   };
 
   return (
-    <>
-      <div className={styles.container}>
-        <div>
-          {isSuccess && (
-            <Alert variant="custom-alert-primary">
-              <div className={styles.alertContainer}>
-                <h5>Thank you for submitting a ticket!</h5>
-                <p>We will reply soon...</p>
-              </div>
-            </Alert>
-          )}
-          <Card>
-            <CardBody>
-              <form onSubmit={handleSubmitForm}>
-                <div className={styles.newTicketForm}>
-                  <label className={styles.alignCenter}>Name</label>
-                  <div>
-                    <Input type="text" placeholder="John" ref={nameOfSubmitterRef} />
-                    <DisplayFormError errors={errors.name} />
-                  </div>
-
-                  <label className={styles.alignCenter}>Email</label>
-                  <div>
-                    <Input type="email" placeholder="john@example.com" ref={emailOfSubmitterRef} />
-                    <DisplayFormError errors={errors.email} />
-                  </div>
-
-                  <label className={styles.alignCenter}>Subject</label>
-                  <div>
-                    <Input type="text" placeholder="I did not received burger." ref={subjectRef} />
-                    <DisplayFormError errors={errors.subject} />
-                  </div>
-
-                  <label className={styles.descriptionLabel}>Description</label>
-                  <div className={styles.description}>
-                    <JoditEditor key={2} value={description} config={config as any} onBlur={setDescription} />
-                    <DisplayFormError errors={errors.description} />
-                  </div>
-
-                  <div className={styles.submitButton}>
-                    <LoadingButton onClick={handleSubmitForm} loading={newTicketMutation.isLoading}>
-                      Submit
-                    </LoadingButton>
-                  </div>
+    <div className={styles.container}>
+      <div>
+        {isSuccess && (
+          <Alert variant="custom-alert-primary">
+            <div className={styles.alertContainer}>
+              <h5>Thank you for submitting a ticket!</h5>
+              <p>We will reply soon...</p>
+            </div>
+          </Alert>
+        )}
+        <Card>
+          <CardBody>
+            <form onSubmit={handleSubmitForm}>
+              <div className={styles.newTicketForm}>
+                <label className={styles.alignCenter}>Name</label>
+                <div>
+                  <Input type="text" placeholder="John" ref={nameOfSubmitterRef} />
+                  <DisplayFormError errors={errors.name} />
                 </div>
-              </form>
-            </CardBody>
-          </Card>
-        </div>
+
+                <label className={styles.alignCenter}>Email</label>
+                <div>
+                  <Input type="email" placeholder="john@example.com" ref={emailOfSubmitterRef} />
+                  <DisplayFormError errors={errors.email} />
+                </div>
+
+                <label className={styles.alignCenter}>Subject</label>
+                <div>
+                  <Input type="text" placeholder="I did not received burger." ref={subjectRef} />
+                  <DisplayFormError errors={errors.subject} />
+                </div>
+
+                <label className={styles.descriptionLabel}>Description</label>
+                <div className={styles.description}>
+                  <JoditEditor key={2} value={description} config={config as any} onBlur={setDescription} />
+                  <DisplayFormError errors={errors.description} />
+                </div>
+
+                <div className={styles.submitButton}>
+                  <LoadingButton onClick={handleSubmitForm} loading={newTicketMutation.isLoading}>
+                    Submit
+                  </LoadingButton>
+                </div>
+              </div>
+            </form>
+          </CardBody>
+        </Card>
       </div>
-    </>
+    </div>
   );
 };

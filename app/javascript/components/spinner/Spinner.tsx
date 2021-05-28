@@ -6,5 +6,6 @@ interface SpinnerProps {
 }
 export const Spinner = (props: SpinnerProps) => {
   const { className } = props;
-  return <div className={clsx("spinner-grow", className)} role="status"></div>;
+
+  return <div className={clsx('spinner-grow', className)} role="status"></div>;
 };

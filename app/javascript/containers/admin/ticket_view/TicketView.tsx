@@ -9,13 +9,13 @@ import clsx from 'clsx';
 import { fetchTicketData, ticketDelete } from '../../../services/serviceTicket';
 import { deleteComment, fetchCommentData, submitTicketReply } from '../../../services/serviceComment';
 import { fetchAllUsers, fetchCurrentUser } from '../../../services/serviceUser';
-import { ConfirmationDialog } from '../../../components/ConfirmationDialog';
-import { LoadingButton } from '../../../components/LoadingButton';
+import { ConfirmationDialog } from '../../../components/dialog/ConfirmationDialog';
+import { LoadingButton } from '../../../components/button/LoadingButton';
 import { isEmptyObject } from '../../utils';
 import { CommentItem } from '../ticket_edit/CommentItem';
 import { NewComponentForm } from '../ticket_edit/NewComponentForm';
 import { CommentType, CurrentUser } from '../../Types';
-import { SpinnerModal } from '../../../components/SpinnerModal';
+import { SpinnerModal } from '../../../components/spinner/SpinnerModal';
 import { Button } from '../../../components/button/Button';
 import { Card, CardBody, CardHeader } from '../../../components/card/Card';
 import styles from '../ticket_edit/TicketEdit.module.scss';
@@ -77,6 +77,7 @@ export const TicketView = (props: TicketViewProps) => {
     fetchCurrentUser().then(resp => setCurrentUser(resp));
     fetchAllUsers().then(resp => setAllUsers(resp));
   }, []);
+
   const newCommentMutation = useMutation(async (data: any) => {
     const result = await submitTicketReply({
       description: data.description,
@@ -93,6 +94,7 @@ export const TicketView = (props: TicketViewProps) => {
     }
     return result;
   });
+
   const commentDeleteMutation = useMutation(async () => {
     const result = await deleteComment(selectedComment);
     setCommentDeleteConfirmation(false);
@@ -103,13 +105,14 @@ export const TicketView = (props: TicketViewProps) => {
       toast('Comment deleted successfully');
     }
   });
-  const handleDeleteComment = async () => {
-    commentDeleteMutation.mutate();
-  };
+
+  const handleDeleteComment = async () => commentDeleteMutation.mutate();
+
   const handleDeleteConfirmation = commentId => () => {
     setCommentDeleteConfirmation(true);
     setSelectedComment(commentId);
   };
+
   const ticketDeleteMutation = useMutation(async () => {
     const resp = await ticketDelete(ticketData.id);
     setTicketDeleteConfirmation(false);
@@ -120,9 +123,7 @@ export const TicketView = (props: TicketViewProps) => {
     return resp;
   });
 
-  const handleTicketDelete = async () => {
-    ticketDeleteMutation.mutate();
-  };
+  const handleTicketDelete = async () => ticketDeleteMutation.mutate();
 
   const displayUserName = id => {
     const user = allUsers.find(x => x.id == id);
@@ -175,12 +176,7 @@ export const TicketView = (props: TicketViewProps) => {
               ))}
               <div className={styles.buttonGroup}>
                 <div>
-                  <Button
-                    variant="secondary"
-                    onClick={() => {
-                      setIsReplyEditorOpen(!isReplyEditorOpen);
-                    }}
-                  >
+                  <Button variant="secondary" onClick={() => setIsReplyEditorOpen(!isReplyEditorOpen)}>
                     <MessageSquare className={styles.marginRight2} />
                     Post a reply
                   </Button>
@@ -193,7 +189,7 @@ export const TicketView = (props: TicketViewProps) => {
                   onSubmit={newCommentMutation.mutate}
                   errors={{ description: [] }}
                   loading={newCommentMutation.isLoading}
-                  toggleComment={() => setIsReplyEditorOpen(!isReplyEditorOpen)}
+                  toggleComment={() => setIsReplyEditorOpen(prevState => !prevState)}
                 />
               )}
             </Card>
@@ -280,4 +276,3 @@ export const TicketView = (props: TicketViewProps) => {
     </div>
   );
 };
-export default TicketView;

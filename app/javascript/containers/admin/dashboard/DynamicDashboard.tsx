@@ -5,7 +5,7 @@ import clsx from 'clsx';
 import { fetchDashBoardData, fetchLastActivityData } from '../../../services/serviceDashBoard';
 import { DateSelectDropdown } from './DateSelectDropdown';
 import { LatestActivity } from './LatestActivity';
-import { SpinnerModal } from '../../../components/SpinnerModal';
+import { SpinnerModal } from '../../../components/spinner/SpinnerModal';
 import { Card, CardFooter, CardHeader } from '../../../components/card/Card';
 import styles from './DynamicDashboard.module.scss';
 
@@ -27,6 +27,7 @@ export function DynamicDashboard() {
       keepPreviousData: true,
     },
   );
+
   const {
     isLoading: lastActivityIsLoading,
     data: lastActivityData,
@@ -53,6 +54,7 @@ export function DynamicDashboard() {
       lastActivityReFetch();
     }
   }, [startDate, endDate]);
+
   useEffect(() => {
     lastActivityReFetch();
   }, [lastActivityCount]);
@@ -63,6 +65,7 @@ export function DynamicDashboard() {
       setEndDate(endDate);
     }
   }, []);
+
   const setActivityCountZero = () => setLastActivityCount(0);
 
   return (

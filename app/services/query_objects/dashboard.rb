@@ -19,5 +19,4 @@ class Dashboard
       tickets_per_day: tickets_per_day,
     }
   end
-  
 end

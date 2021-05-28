@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { LoadingButton } from './LoadingButton';
-import { Modal, ModalBody, ModalFooter, ModalHeader, ModalTitle } from './modal/Modal';
-import { Button } from './button/Button';
-import styles from '../containers/admin/ticket_edit/TicketEdit.module.scss';
+import { LoadingButton } from '../button/LoadingButton';
+import { Modal, ModalBody, ModalFooter, ModalHeader, ModalTitle } from '../modal/Modal';
+import { Button } from '../button/Button';
+import styles from '../../containers/admin/ticket_edit/TicketEdit.module.scss';
 
 interface ConfirmationDialogProps {
   show: boolean;
@@ -18,6 +18,7 @@ interface ConfirmationDialogProps {
 
 export const ConfirmationDialog = (props: ConfirmationDialogProps) => {
   const { onCancel, show, setShow, title, body, okButtonLabel, onSubmit, loading, ...extraProps } = props;
+
   return (
     <>
       {show && (
@@ -34,7 +35,7 @@ export const ConfirmationDialog = (props: ConfirmationDialogProps) => {
               <LoadingButton onClick={onSubmit} loading={loading} {...extraProps}>
                 {okButtonLabel}
               </LoadingButton>
-            </ModalFooter>{' '}
+            </ModalFooter>
           </ModalBody>
         </Modal>
       )}

@@ -1,22 +1,17 @@
 import { useQuery } from 'react-query';
 import * as React from 'react';
 import { useEffect } from 'react';
+
 import { fetchDashBoardStaticData } from '../../../services/serviceDashBoard';
-import styles from './DynamicDashboard.module.scss';
-import { SpinnerModal } from '../../../components/SpinnerModal';
+import { SpinnerModal } from '../../../components/spinner/SpinnerModal';
 import { Card, CardFooter, CardHeader } from '../../../components/card/Card';
+import styles from './DynamicDashboard.module.scss';
 
 export const FixedDashboard = () => {
-  const { isLoading, error, data, refetch, isFetching } = useQuery(
-    ['dashboard_data'],
-    () => {
-      return fetchDashBoardStaticData();
-    },
-    {
-      enabled: false,
-      keepPreviousData: true,
-    },
-  );
+  const { isLoading, error, data, refetch, isFetching } = useQuery(['dashboard_data'], fetchDashBoardStaticData, {
+    enabled: false,
+    keepPreviousData: true,
+  });
 
   useEffect(() => {
     refetch();

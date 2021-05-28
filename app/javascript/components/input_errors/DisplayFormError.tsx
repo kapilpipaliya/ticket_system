@@ -3,6 +3,7 @@ import styles from './DisplayForm.module.scss';
 
 export const DisplayFormError = (props: { errors?: string[] }) => {
   const { errors } = props;
+
   return (
     <>
       {errors &&

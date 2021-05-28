@@ -25,14 +25,13 @@ const dateRangeOptions: Option[] = [
 ];
 
 export const DateSelectDropdown = (props: DateSelectDropdownProps) => {
+  const { handleRangeSelect, isDisabled, className } = props;
   const [isInvalid, setIsInvalid] = useState<boolean>(false);
   const [selectedOption, setSelectedOption] = useState<Option | null>(dateRangeOptions[3]);
 
   const getOptionValue = (option: Option): string => option.id;
   const onOptionChange = (option: Option | null): void => setSelectedOption(option);
   const getOptionLabel = (option: Option): string => `${option.label}`;
-
-  const { handleRangeSelect, isDisabled, className } = props;
 
   useEffect(() => {
     switch (selectedOption.id) {

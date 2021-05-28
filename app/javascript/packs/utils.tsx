@@ -3,6 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { QueryClient, QueryClientProvider } from 'react-query';
 
 const queryClient = new QueryClient();
+
 export function mount(Component, mountNodeId) {
   document.addEventListener('DOMContentLoaded', () => {
     const mountNode = document.getElementById(mountNodeId);

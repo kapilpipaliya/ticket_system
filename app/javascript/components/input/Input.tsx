@@ -6,7 +6,9 @@ interface InputProps extends React.DetailedHTMLProps<React.InputHTMLAttributes<H
   style?: React.CSSProperties;
   className?: string;
 }
+
 export const Input = React.forwardRef<HTMLInputElement, InputProps>((props, ref) => {
   const { className, children, ...customProps } = props;
+
   return <input className={clsx(styles.input, className)} ref={ref} {...customProps} />;
 });

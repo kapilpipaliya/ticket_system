@@ -1,18 +1,17 @@
 import * as React from 'react';
 
 import { SearchState } from '../../Types';
-import { LoadingButton } from '../../../components/LoadingButton';
+import { LoadingButton } from '../../../components/button/LoadingButton';
 import { Button } from '../../../components/button/Button';
 import { Input } from '../../../components/input/Input';
 import { Select } from '../../../components/select/Select';
 import styles from './TicketList.module.scss';
 
-export const TicketSearch = (props: {
+interface TicketSearchProps {
   searchConfig: {
     searchState: SearchState;
     setSearchState: React.Dispatch<React.SetStateAction<SearchState>>;
   };
-
   statusConfig: {
     status: string | number;
     setStatus: React.Dispatch<React.SetStateAction<string | number>>;
@@ -23,11 +22,12 @@ export const TicketSearch = (props: {
     setSentiment: React.Dispatch<React.SetStateAction<string | number>>;
     sentimentOptions: any[];
   };
-
   onSubmit: () => void;
   loading: boolean;
   onReset: () => void;
-}) => {
+}
+
+export const TicketSearch = (props: TicketSearchProps) => {
   const {
     searchConfig: { searchState, setSearchState },
     statusConfig: { status, setStatus, statusOptions },
@@ -36,6 +36,7 @@ export const TicketSearch = (props: {
     loading,
     onReset,
   } = props;
+
   return (
     <div className={styles.ticketSearchForm}>
       <label>Name</label>

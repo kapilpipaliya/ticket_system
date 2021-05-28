@@ -13,6 +13,7 @@ interface TicketItemProps {
 
 export const TicketItem = (props: TicketItemProps) => {
   const { ticket, onDelete } = props;
+
   return (
     <>
       <td>{ticket.name}</td>
@@ -48,11 +49,13 @@ interface TicketTableProps {
 
 export const TicketTable = (props: TicketTableProps) => {
   const { sortState, handleOnSortClick, onTicketDeleteConfirm, ticketData } = props;
+
   const SortIcon = (p: { id: string }) => {
     if (sortState[p.id] === SortDirection.Ascending) return <>▲</>;
     if (sortState[p.id] === SortDirection.Descending) return <>▼</>;
     return <></>;
   };
+
   return (
     <div className={styles.tableResponsive}>
       <table className={styles.table}>

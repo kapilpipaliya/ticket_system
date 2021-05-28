@@ -1,16 +1,18 @@
 .container {
-  max-width: 1400px;
   margin: 1rem auto;
 }
+
 .support-table {
   table td,
   table th {
     white-space: nowrap;
   }
 }
+
 .tableResponsive {
   overflow: auto;
 }
+
 .table {
   width: 100%;
   margin-bottom: 1rem;
@@ -38,18 +40,22 @@
     border-bottom: 1px solid black;
   }
 }
+
 .subjectTruncate {
   max-width: 300px;
 }
+
 .textTruncate {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
 .actionColumn {
   display: flex;
   flex-wrap: nowrap;
 }
+
 .ticketSearchForm {
   display: grid;
   grid-template-columns: 1fr 2fr 1fr 2fr;
@@ -66,6 +72,7 @@
     grid-column: 1 / span 4;
   }
 }
+
 .newTicketForm {
   display: grid;
   grid-template-columns: auto 2fr auto 2fr;
@@ -86,6 +93,7 @@
     grid-column: 2 / span 3;
   }
 }
+
 .title {
   font-size: 1.25rem;
   margin-top: 0;
@@ -93,6 +101,7 @@
   font-weight: 500;
   line-height: 1.2;
 }
+
 .titleRow {
   display: flex;
   justify-content: space-between;
@@ -105,6 +114,7 @@
 .tableContainer {
   margin-top: 1rem;
 }
+
 .cardBody {
   padding: 1rem 1rem;
 }
@@ -114,9 +124,11 @@
   align-items: center;
   gap: 10px;
 }
+
 .newTicketButtonGroup {
   justify-content: space-between;
 }
+
 .pagination {
   text-align: center;
 
@@ -124,12 +136,15 @@
     display: inline-block;
   }
 }
+
 .cursorPointer {
   cursor: pointer;
 }
+
 .searchSubmitButton {
   margin-right: 0.35rem;
 }
+
 .actionIcon {
   margin-right: 0.25rem;
 }

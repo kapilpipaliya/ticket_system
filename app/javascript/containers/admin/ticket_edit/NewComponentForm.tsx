@@ -4,24 +4,28 @@ import { useState } from 'react';
 import { IJodit } from 'jodit';
 import JoditEditor from 'jodit-react';
 
-import { DisplayFormError } from '../../../components/DisplayFormError';
-import { LoadingButton } from '../../../components/LoadingButton';
+import { DisplayFormError } from '../../../components/input_errors/DisplayFormError';
+import { LoadingButton } from '../../../components/button/LoadingButton';
 import { Button } from '../../../components/button/Button';
 import { Card, CardBody } from '../../../components/card/Card';
 import styles from './TicketEdit.module.scss';
 
-export const NewComponentForm = (props: {
+interface NewComponentFormProps {
   comment: CommentType;
   loading: boolean;
   toggleComment: () => void;
   onSubmit: (data: any) => void;
   errors: { [key: string]: string[] };
-}) => {
+}
+
+export const NewComponentForm = (props: NewComponentFormProps) => {
   const { comment, loading, toggleComment, onSubmit, errors } = props;
+
   const [description, setDescription] = useState(comment.description);
   const config: Partial<IJodit['options']> = {
     readonly: false,
   };
+
   return (
     <div>
       <Card>

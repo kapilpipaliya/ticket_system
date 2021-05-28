@@ -1,5 +1,4 @@
 .container {
-  max-width: 1200px;
   margin: 1rem auto;
   .mainLayout {
     display: flex;
@@ -12,6 +11,7 @@
 .firstColumn {
   flex: 1 0 500px;
 }
+
 .secondColumn {
   flex: 0 1 380px;
 }
@@ -19,9 +19,11 @@
 .borderBottom {
   border-bottom: 1px solid #dee2e6;
 }
+
 .description {
   margin-bottom: 0;
 }
+
 .commentContainer {
   .editDel {
     opacity: 0;
@@ -50,6 +52,7 @@
   display: flex;
   gap: 10px;
 }
+
 .editButton {
   display: inline-block;
   border: 1px solid #4e555b;
@@ -65,21 +68,27 @@
     color: white;
   }
 }
+
 .marginRight2 {
   margin-right: 0.5rem;
 }
+
 .commentId {
   white-space: nowrap;
 }
+
 .commentAction {
   display: inline-block;
 }
+
 .commentActionIcon {
   cursor: pointer;
 }
+
 .firstCommentAction {
   margin-right: 0.25rem;
 }
+
 .mutatedText {
   color: #6c757d;
 }
@@ -89,6 +98,7 @@
   margin-top: 1rem;
   justify-content: space-between;
 }
+
 .commentButtonGroup {
   display: flex;
   justify-content: space-between;
@@ -99,6 +109,7 @@
   text-align: center;
   text-transform: uppercase;
 }
+
 .title {
   display: flex;
   align-items: center;

@@ -11,6 +11,7 @@ import 'channels';
 Rails.start();
 // Turbolinks.start()
 ActiveStorage.start();
+
 document.addEventListener('DOMContentLoaded', function () {
   const alertCloseButtons = document.getElementsByClassName('custom-btn-close');
   Array.from(alertCloseButtons).map(x => x.addEventListener('click', () => x.parentElement.parentElement.remove()));

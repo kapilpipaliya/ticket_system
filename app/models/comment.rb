@@ -10,10 +10,10 @@ class Comment < ApplicationRecord
   default_scope { order(created_at: :asc) }
   scope :apply_date_rage, ->(from, to) { where(created_at: from..to) }
 
-
   enum sentiment: %i[negative positive neutral], _suffix: true
 
   validates :description, :ticket, presence: true
+
   # validates :commenter, presence: true, on: :create, if: -> { supporter? || customer? }
   # validates :sentiment, inclusion: { in: sentiments.keys }
 

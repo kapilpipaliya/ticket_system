@@ -9,6 +9,7 @@ interface ModalProps {
 
 export const Modal = (props: ModalProps) => {
   const { children, backdrop = true } = props;
+
   return (
     <div>
       {backdrop && <div className={styles.modalBackdrop}></div>}
@@ -16,6 +17,7 @@ export const Modal = (props: ModalProps) => {
     </div>
   );
 };
+
 interface ModalBodyProps {
   children: React.ReactNode;
   style?: React.CSSProperties;
@@ -25,6 +27,7 @@ interface ModalBodyProps {
 
 export const ModalBody = (props: ModalBodyProps) => {
   const { className, children, onHide, ...customProps } = props;
+
   return (
     <div className={clsx(styles.modalBody, className)} {...customProps}>
       {onHide && (
@@ -36,39 +39,48 @@ export const ModalBody = (props: ModalBodyProps) => {
     </div>
   );
 };
+
 interface ModalHeaderProps {
   children: React.ReactNode;
   style?: React.CSSProperties;
   className?: string;
 }
+
 export const ModalHeader = (props: ModalHeaderProps) => {
   const { className, children, ...customProps } = props;
+
   return (
     <div className={clsx(styles.modalHeader, className)} {...customProps}>
       {children}
     </div>
   );
 };
+
 interface ModalFooterProps {
   children: React.ReactNode;
   style?: React.CSSProperties;
   className?: string;
 }
+
 export const ModalFooter = (props: ModalFooterProps) => {
   const { className, children, ...customProps } = props;
+
   return (
     <div className={clsx(styles.modalFooter, className)} {...customProps}>
       {children}
     </div>
   );
 };
+
 interface ModalTitleProps {
   children: React.ReactNode;
   style?: React.CSSProperties;
   className?: string;
 }
+
 export const ModalTitle = (props: ModalTitleProps) => {
   const { className, children, ...customProps } = props;
+
   return (
     <div className={clsx(styles.modalTitle, className)} {...customProps}>
       {children}

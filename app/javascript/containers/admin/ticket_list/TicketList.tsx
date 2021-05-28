@@ -8,34 +8,32 @@ import 'react-toastify/dist/ReactToastify.css';
 import { CurrentUser, SearchState, SortDirection, SortState, Ticket } from '../../Types';
 import { fetchAllTicketData, fetchAllTicketStatusFilter, fetchSentimentFilter, ticketDelete } from '../../../services/serviceTicket';
 import { fetchCurrentUser } from '../../../services/serviceUser';
-import { ConfirmationDialog } from '../../../components/ConfirmationDialog';
+import { ConfirmationDialog } from '../../../components/dialog/ConfirmationDialog';
 import { NewTicketModal } from './NewTicketModal';
 import { TicketSearch } from './TicketSearch';
 import { isEmptyObject } from '../../utils';
 import { TicketTable } from './TicketTable';
 import { TicketPagination } from './TicketPagination';
-import { SpinnerModal } from '../../../components/SpinnerModal';
+import { SpinnerModal } from '../../../components/spinner/SpinnerModal';
 import { Button } from '../../../components/button/Button';
 import { Card, CardBody, CardHeader } from '../../../components/card/Card';
 import styles from './TicketList.module.scss';
 
-const searchFormInitialState = () => ({
+const searchFormInitialState = {
   name: '',
   email: '',
   subject: '',
   description: '',
-});
+};
 
 export const TicketList = () => {
   const [isOpen, setIsOpen] = useState(false);
-
   const [deleteConfirmation, setDeleteConfirmation] = useState(false);
   const [selectedTicket, setSelectedTicket] = useState(0);
-
   const [pageNo, setPageNo] = useState<number | string>(1);
   const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
   const [sortState, setSortState] = useState<SortState>({});
-  const [searchState, setSearchState] = useState<SearchState>(searchFormInitialState());
+  const [searchState, setSearchState] = useState<SearchState>({ ...searchFormInitialState });
   const [searchSubmitState, setSearchSubmitState] = useState<SearchState>({} as SearchState);
   const [status, setStatus] = useState<number | string>('');
   const [sentiment, setSentiment] = useState<number | string>('');
@@ -43,6 +41,7 @@ export const TicketList = () => {
   const [sentimentSubmit, setSentimentSubmit] = useState<number | string>('');
   const [statusOptions, setStatusOptions] = useState([]);
   const [sentimentOptions, setSentimentOptions] = useState([]);
+  const [isCollapseOpen, setIsCollapseOpen] = React.useState(false);
 
   useEffect(() => {
     fetchCurrentUser().then(resp => setCurrentUser(resp));
@@ -64,14 +63,11 @@ export const TicketList = () => {
   }, [pageNo, sortState, searchSubmitState, statusSubmit]);
 
   useEffect(() => {
-    fetchAllTicketStatusFilter().then(resp => {
-      setStatusOptions(resp);
-    });
+    fetchAllTicketStatusFilter().then(resp => setStatusOptions(resp));
   }, []);
+
   useEffect(() => {
-    fetchSentimentFilter().then(resp => {
-      setSentimentOptions(resp);
-    });
+    fetchSentimentFilter().then(resp => setSentimentOptions(resp));
   }, []);
 
   const onTicketDeleteConfirm = (ticketId: number) => () => {
@@ -90,10 +86,11 @@ export const TicketList = () => {
     }
     return resp;
   });
+
   const onTicketDelete = () => ticketDeleteMutation.mutate();
 
   const onNewTicket = (ticket: Ticket) => {
-    setSearchState(searchFormInitialState());
+    setSearchState({ ...searchFormInitialState });
     refetch();
     toast('Ticket created successfully');
   };
@@ -120,22 +117,24 @@ export const TicketList = () => {
       }
     });
   };
+
   const handleSearchSubmit = () => {
     setPageNo(1);
     setSearchSubmitState({ ...searchState });
     setStatusSubmit(status);
     setSentimentSubmit(sentiment);
   };
+
   const handleClearSearchForm = () => {
     setPageNo(1);
-    setSearchState(searchFormInitialState());
+    setSearchState({ ...searchFormInitialState });
     setStatus('');
     setSentiment('');
     setStatusSubmit('');
     setSentimentSubmit('');
     setSearchSubmitState({} as SearchState);
   };
-  const [isCollapseOpen, setIsCollapseOpen] = React.useState(false);
+
   return (
     <div className={styles.container}>
       <ToastContainer />
@@ -212,4 +211,3 @@ export const TicketList = () => {
     </div>
   );
 };
-export default TicketList;

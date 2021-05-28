@@ -21,6 +21,7 @@
   left: 0;
   background-color: rgba(0, 0, 0, 0.5);
 }
+
 .modalBody {
   position: fixed;
   top: 3em;
@@ -32,6 +33,7 @@
   border-radius: 10px;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
+
 .modalHeader {
   display: flex;
   flex-shrink: 0;
@@ -42,6 +44,7 @@
   border-top-left-radius: calc(0.3rem - 1px);
   border-top-right-radius: calc(0.3rem - 1px);
 }
+
 .modalFooter {
   display: flex;
   flex-wrap: wrap;
@@ -53,6 +56,7 @@
   border-bottom-right-radius: calc(0.3rem - 1px);
   border-bottom-left-radius: calc(0.3rem - 1px);
 }
+
 .modalTitle {
   margin-bottom: 0;
   line-height: 1.5;

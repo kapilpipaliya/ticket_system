@@ -18,10 +18,10 @@ interface CommentItemProps {
 }
 
 export function CommentItem(props: CommentItemProps) {
+  const { comment, onClick, reFetchComment, editable } = props;
   const [isEditing, setIsEditing] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string[] }>({});
 
-  const { comment, onClick, reFetchComment, editable } = props;
   const editCommentMutation = useMutation(async (data: any) => {
     const result = await submitCommentEdit(comment.id, {
       description: data.description,
@@ -35,6 +35,7 @@ export function CommentItem(props: CommentItemProps) {
     }
     return result;
   });
+
   return (
     <>
       {editable && isEditing ? (

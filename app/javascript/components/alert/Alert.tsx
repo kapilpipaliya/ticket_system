@@ -6,8 +6,10 @@ interface AlertProps {
   variant?: 'custom-alert-primary' | 'custom-alert-warning';
   className?: string;
 }
+
 export const Alert = (props: AlertProps) => {
   const { className, children, variant, ...customProps } = props;
+
   return (
     <div className={clsx('custom-alert', variant, className)} {...customProps}>
       {children}

@@ -8,9 +8,11 @@ interface DropdownProps {
   children: React.ReactNode;
   className?: string;
 }
+
 export const Dropdown = (props: DropdownProps) => {
   const ref = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
+  const { className, children, label } = props;
 
   useEffect(() => {
     if (isOpen) {
@@ -24,7 +26,7 @@ export const Dropdown = (props: DropdownProps) => {
       return () => document.removeEventListener('click', outSideHandler);
     }
   });
-  const { className, children, label } = props;
+
   return (
     <div ref={ref} className={clsx(styles.dropdown, className)}>
       <div className={styles.dropdownLabel} onClick={() => setIsOpen(prevState => !prevState)}>

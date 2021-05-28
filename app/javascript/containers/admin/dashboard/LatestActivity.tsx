@@ -1,10 +1,11 @@
 import * as React from 'react';
 import { Log } from '../../Types';
 import { MdRssFeed } from 'react-icons/all';
+
 import { Button } from '../../../components/button/Button';
-import styles from './LatestActivity.module.scss';
-import { SpinnerModal } from '../../../components/SpinnerModal';
+import { SpinnerModal } from '../../../components/spinner/SpinnerModal';
 import { getLocalTimeDate } from '../../utils';
+import styles from './LatestActivity.module.scss';
 
 interface LatestActivity {
   data: { latest_activity: Log[] };
@@ -15,6 +16,7 @@ interface LatestActivity {
 
 export const LatestActivity = (props: LatestActivity) => {
   const { data, handleGetAllActivity, showFetchAllButton, loading } = props;
+
   return (
     <>
       <div className={styles.container}>
