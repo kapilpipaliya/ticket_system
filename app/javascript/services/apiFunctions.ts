@@ -1,6 +1,6 @@
 export const post = async (url: string, data: { [key: string]: any }) => {
   const csrfToken = (document.querySelector('[name=csrf-token]') as HTMLMetaElement).content;
-  return await fetch(url, {
+  const response = await fetch(url, {
     method: 'POST',
     headers: {
       'X-CSRF-TOKEN': csrfToken,
@@ -9,6 +9,7 @@ export const post = async (url: string, data: { [key: string]: any }) => {
     },
     body: JSON.stringify(data),
   });
+  return await response.json();
 };
 
 export const patch = async (url: string, data: { [key: string]: any }) => {

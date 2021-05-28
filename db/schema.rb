@@ -13,6 +13,7 @@
 ActiveRecord::Schema.define(version: 2021_05_24_072912) do
 
   # These are extensions that must be enabled in order to support this database
+  enable_extension "pgcrypto"
   enable_extension "plpgsql"
 
   create_table "action_mailbox_inbound_emails", force: :cascade do |t|
@@ -52,25 +53,25 @@ ActiveRecord::Schema.define(version: 2021_05_24_072912) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
-  create_table "comments", force: :cascade do |t|
+  create_table "comments", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.text "description", null: false
     t.integer "sentiment", default: 0
     t.float "sentiment_score", default: 0.0
-    t.bigint "ticket_id", null: false
-    t.bigint "commenter_id"
+    t.uuid "ticket_id", null: false
+    t.uuid "commenter_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["commenter_id"], name: "index_comments_on_commenter_id"
     t.index ["ticket_id"], name: "index_comments_on_ticket_id"
   end
 
-  create_table "logs", force: :cascade do |t|
+  create_table "logs", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "activity", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
 
-  create_table "tickets", force: :cascade do |t|
+  create_table "tickets", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "subject", null: false
     t.text "description", null: false
     t.string "email", null: false
@@ -80,8 +81,8 @@ ActiveRecord::Schema.define(version: 2021_05_24_072912) do
     t.float "sentiment_score", default: 0.0
     t.datetime "last_activity"
     t.date "due_date"
-    t.bigint "creator_id"
-    t.bigint "assignee_id"
+    t.uuid "creator_id"
+    t.uuid "assignee_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["assignee_id"], name: "index_tickets_on_assignee_id"
@@ -89,7 +90,7 @@ ActiveRecord::Schema.define(version: 2021_05_24_072912) do
     t.index ["email"], name: "index_tickets_on_email"
   end
 
-  create_table "users", force: :cascade do |t|
+  create_table "users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "first_name", default: "", null: false
     t.string "last_name", default: "", null: false
     t.integer "role", null: false

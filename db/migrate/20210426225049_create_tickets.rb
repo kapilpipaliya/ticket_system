@@ -1,6 +1,6 @@
 class CreateTickets < ActiveRecord::Migration[6.1]
   def change
-    create_table :tickets do |t|
+    create_table :tickets, id: :uuid do |t|
       t.string :subject, null: false
       t.text :description, null: false
       t.string :email, null: false, index: true
@@ -10,8 +10,8 @@ class CreateTickets < ActiveRecord::Migration[6.1]
       t.float :sentiment_score, default: 0
       t.datetime :last_activity
       t.date :due_date
-      t.references :creator, null: true, foreign_key: {to_table: :users}
-      t.references :assignee, null: true, foreign_key: {to_table: :users}
+      t.references :creator, type: :uuid, null: true, foreign_key: {to_table: :users}
+      t.references :assignee, type: :uuid, null: true, foreign_key: {to_table: :users}
 
       t.timestamps
     end

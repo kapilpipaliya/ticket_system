@@ -27,7 +27,7 @@ export const TicketEdit = (props: TicketEditProps) => {
   const [allStatus, setAllStatus] = useState([]);
   const [allUsers, setAllUsers] = useState([]);
   const [newStatus, setNewStatus] = useState('open');
-  const [newAssignedToID, setNewAssignedToID] = useState<'' | number>('');
+  const [newAssignedToID, setNewAssignedToID] = useState<string>('');
   const [ticketDeleteConfirmation, setTicketDeleteConfirmation] = useState(false);
 
   const {
@@ -41,7 +41,7 @@ export const TicketEdit = (props: TicketEditProps) => {
     async () => {
       const resp = await fetchTicketData(ticketId);
       setNewStatus(resp.status);
-      setNewAssignedToID(resp.assignee_id || '');
+      setNewAssignedToID(`${resp.assignee_id}`);
       return resp;
     },
     {
@@ -165,7 +165,7 @@ export const TicketEdit = (props: TicketEditProps) => {
                         <label>Assigned To</label>
                       </td>
                       <td>
-                        <Select value={newAssignedToID} onChange={event => setNewAssignedToID(parseInt(event.target.value, 10))}>
+                        <Select value={newAssignedToID} onChange={event => setNewAssignedToID(event.target.value)}>
                           {allUsers.map(user => (
                             <option key={user.id} value={user.id}>
                               {user.first_name} {user.last_name}

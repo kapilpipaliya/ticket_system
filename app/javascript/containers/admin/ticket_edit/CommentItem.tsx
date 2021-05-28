@@ -52,7 +52,7 @@ export function CommentItem(props: CommentItemProps) {
           <div className={styles.comment}>
             <div>
               <p className={styles.commentId}>
-                <MessageSquare /> {comment.id}
+                <MessageSquare />
               </p>
             </div>
             <div>
