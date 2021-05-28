@@ -18,6 +18,7 @@ class Ticket < ApplicationRecord
 
   enum status: %i[open hold close], _suffix: true
   enum sentiment: %i[negative positive neutral], _suffix: true
+  attribute :sentiment, :integer, default: sentiments[:negative]
 
   validates :subject, presence: true, length: { minimum: 10 }
   validates :description, presence: true, length: { minimum: 10 }

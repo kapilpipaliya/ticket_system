@@ -6,7 +6,7 @@ class CreateTickets < ActiveRecord::Migration[6.1]
       t.string :email, null: false, index: true
       t.string :name, null: false
       t.integer :status, default: 0
-      t.integer :sentiment, default: 0
+      t.integer :sentiment
       t.float :sentiment_score, default: 0
       t.datetime :last_activity
       t.date :due_date

@@ -11,6 +11,7 @@ class Comment < ApplicationRecord
   scope :apply_date_rage, ->(from, to) { where(created_at: from..to) }
 
   enum sentiment: %i[negative positive neutral], _suffix: true
+  attribute :sentiment, :integer, default: sentiments[:negative]
 
   validates :description, :ticket, presence: true
 
