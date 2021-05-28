@@ -13,8 +13,7 @@ export const fetchCommentData = async (ticketId: string): Promise<CommentType[]>
 
 export const submitTicketReply = async (data): Promise<CommentType | null> => {
   try {
-    const response = await post('/api/v1/comments', data);
-    return await response.json();
+    return await post('/api/v1/comments', data);
   } catch (err) {
     alert(err);
     return null;
