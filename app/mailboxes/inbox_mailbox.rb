@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class InboxMailbox < ApplicationMailbox
   TICKET_ID_MATCHER = /.*Case #([0-9]+)/i
 

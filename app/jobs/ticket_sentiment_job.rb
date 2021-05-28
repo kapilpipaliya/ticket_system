@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class TicketSentimentJob < ApplicationJob
   queue_as :sentiment_analysis_query
 

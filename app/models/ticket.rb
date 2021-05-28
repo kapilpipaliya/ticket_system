@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Ticket < ApplicationRecord
   include AuthHelper
   attr_accessor :send_notification, :boolean

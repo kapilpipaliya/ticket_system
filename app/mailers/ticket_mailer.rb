@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class TicketMailer < ApplicationMailer
   default from: 'admin@o-k.website'
 

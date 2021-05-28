@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class NewTicketEmailJob < ApplicationJob
   queue_as :mail_query
 

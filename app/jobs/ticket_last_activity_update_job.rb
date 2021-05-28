@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class TicketLastActivityUpdateJob < ApplicationJob
   queue_as :audit_query
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 json.extract! ticket, :id, :subject, :description, :email, :name, :status, :creator_id,
               :assignee_id, :created_at, :updated_at, :last_activity, :sentiment, :sentiment_score
 json.set! :assignee_name, ticket.assignee ? ticket.assignee.first_name : ''

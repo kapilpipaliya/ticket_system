@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Dashboard
   def initialize(tickets:, from:, to:)
     @tickets = tickets

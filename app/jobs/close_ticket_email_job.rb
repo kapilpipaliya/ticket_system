@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CloseTicketEmailJob < ApplicationJob
   queue_as :mail_query
 

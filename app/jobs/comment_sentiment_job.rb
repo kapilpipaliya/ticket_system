@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CommentSentimentJob < ApplicationJob
   queue_as :sentiment_analysis_query
   before_perform :analyser
