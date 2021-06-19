@@ -12,11 +12,9 @@ class TicketsController < ApplicationController
   def new; end
 
   def edit
-    ticket
   end
 
   def show
-    ticket
   end
 
   private
@@ -37,6 +35,6 @@ class TicketsController < ApplicationController
   end
 
   def check_ticket_permission
-    user_not_authorized if customer? && @ticket.creator_id != current_user.id
+    user_not_authorized if customer? && ticket.creator_id != current_user.id
   end
 end

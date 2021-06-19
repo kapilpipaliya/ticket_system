@@ -65,10 +65,9 @@ module Api
           authorize @ticket
         when 'update'
           authorize @ticket
-          !customer_changed_assignee?
+          raise Pundit::NotAuthorizedError unless customer_changed_assignee?
         when 'destroy'
           authorize @ticket
-          supporter?
         else
           raise NotImplementedError
         end

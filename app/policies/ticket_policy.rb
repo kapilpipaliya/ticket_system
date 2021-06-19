@@ -4,7 +4,7 @@ class TicketPolicy < ApplicationPolicy
   class Scope < Scope
     def resolve
       if user.customer?
-        scope.tickets_from(current_user)
+        scope.tickets_from(user)
       elsif user.support?
         scope
       else
