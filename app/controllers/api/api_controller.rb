@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Api
   class ApiController < ActionController::API
     include AuthHelper
@@ -9,12 +11,10 @@ module Api
     private
 
     def set_current_user
-      begin
-        Current.current_user = current_user
-        yield
-      ensure
-        Current.current_user = nil
-      end
+      Current.current_user = current_user
+      yield
+    ensure
+      Current.current_user = nil
     end
   end
 end

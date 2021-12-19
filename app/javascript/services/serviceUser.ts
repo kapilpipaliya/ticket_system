@@ -1,9 +1,9 @@
 import { CurrentUser, User } from '../containers/Types';
+import { routes } from './routes';
 
 export const fetchCurrentUser = async (): Promise<CurrentUser | null> => {
-  const csrfToken = (document.querySelector('[name=csrf-token]') as HTMLMetaElement).content;
   try {
-    const response = await fetch('/api/v1/users/profile');
+    const response = await fetch(routes.routes['profile']);
     return await response.json();
   } catch (err) {
     alert(err);
@@ -13,7 +13,7 @@ export const fetchCurrentUser = async (): Promise<CurrentUser | null> => {
 
 export const fetchAllUsers = async (): Promise<User[]> => {
   try {
-    const response = await fetch('/api/v1/users');
+    const response = await fetch(routes.routes['users']);
     return await response.json();
   } catch (err) {
     alert(err);

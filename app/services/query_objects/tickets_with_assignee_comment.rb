@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class TicketsWithAssigneeComment
   def initialize(tickets:)
     @tickets = tickets

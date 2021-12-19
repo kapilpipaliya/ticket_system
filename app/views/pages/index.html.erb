@@ -1,5 +1,5 @@
 <% content_for :content do %>
-<%= react_component('home_page', {}) %>
+<%= react_component('home_page', routes: routes) %>
 <%= javascript_pack_tag 'index' %>
 <%= stylesheet_pack_tag 'index' %>
 <% end %>

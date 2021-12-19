@@ -1,5 +1,6 @@
 import { Pagy, SearchState, SortDirection, SortState, Ticket, TicketStatus } from '../containers/Types';
 import { deleteApi, patch, post } from './apiFunctions';
+import { routes } from './routes';
 
 const sortDirectionToString = (d: SortDirection) => {
   switch (d) {
@@ -47,7 +48,9 @@ export const fetchAllTicketData = async (
     const search_query = searchQuery(search_state);
     const sort_query = sortQuery(sort_state);
     const response = await fetch(
-      `/api/v1/tickets.json?page=${page_number}${search_query ? `&${search_query}` : ''}${sort_query ? `&${sort_query}` : ''}&q[status_eq]=${status}&q[sentiment_eq]=${sentiment}`,
+      `${routes.routes['tickets']}.json?page=${page_number}${search_query ? `&${search_query}` : ''}${
+        sort_query ? `&${sort_query}` : ''
+      }&q[status_eq]=${status}&q[sentiment_eq]=${sentiment}`,
     );
     return await response.json();
   } catch (err) {
@@ -58,7 +61,7 @@ export const fetchAllTicketData = async (
 
 export const ticketCreate = async (data: { [key: string]: any }) => {
   try {
-    return await post('/api/v1/tickets', data);
+    return await post(routes.routes['tickets'], data);
   } catch (err) {
     alert(err);
     return {} as { [p: string]: any };
@@ -82,7 +85,7 @@ export const emptyTicketState: Ticket = {
 
 export const fetchTicketData = async (ticketId: string): Promise<Ticket> => {
   try {
-    const response = await fetch(`/api/v1/tickets/${ticketId}.json`);
+    const response = await fetch(`${routes.routes['ticket'].replace(':id', ticketId)}.json`);
     return await response.json();
   } catch (err) {
     alert(err);
@@ -92,7 +95,7 @@ export const fetchTicketData = async (ticketId: string): Promise<Ticket> => {
 
 export const ticketUpdate = async (ticketId, data: { [key: string]: any }) => {
   try {
-    return await patch(`/api/v1/tickets/${ticketId}`, data);
+    return await patch(`${routes.routes['ticket'].replace(':id', ticketId)}.json`, data);
   } catch (err) {
     alert(err);
     return {};
@@ -101,7 +104,7 @@ export const ticketUpdate = async (ticketId, data: { [key: string]: any }) => {
 
 export const fetchAllTicketStatus = async (): Promise<TicketStatus[]> => {
   try {
-    const response = await fetch(`/api/v1/tickets/all_status.json`);
+    const response = await fetch(routes.routes['all_status']);
     return await response.json();
   } catch (err) {
     alert(err);
@@ -111,7 +114,7 @@ export const fetchAllTicketStatus = async (): Promise<TicketStatus[]> => {
 
 export const fetchAllTicketStatusFilter = async (): Promise<TicketStatus[]> => {
   try {
-    const response = await fetch(`/api/v1/tickets/all_status_filter.json`);
+    const response = await fetch(routes.routes['all_status_filter']);
     return await response.json();
   } catch (err) {
     alert(err);
@@ -120,7 +123,7 @@ export const fetchAllTicketStatusFilter = async (): Promise<TicketStatus[]> => {
 };
 export const fetchSentimentFilter = async (): Promise<TicketStatus[]> => {
   try {
-    const response = await fetch(`/api/v1/tickets/sentiments_options_filter.json`);
+    const response = await fetch(routes.routes['sentiments_options_filter']);
     return await response.json();
   } catch (err) {
     alert(err);
@@ -129,7 +132,7 @@ export const fetchSentimentFilter = async (): Promise<TicketStatus[]> => {
 };
 export const ticketDelete = async ticketId => {
   try {
-    const result = await deleteApi(`/api/v1/tickets/${ticketId}`);
+    const result = await deleteApi(`${routes.routes['ticket'].replace(':id', ticketId)}.json`);
     if (result.base) {
       alert(result.base);
     }

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Rails.application.routes.draw do
   devise_for :users
 
@@ -36,14 +38,12 @@ Rails.application.routes.draw do
             get 'latest_activity'
           end
         end
-
       end
     end
 
     get '/dashboard', to: 'pages#dashboard'
 
     resources :tickets, only: %i[index new edit show]
-
   end
 
   unauthenticated do
@@ -61,6 +61,5 @@ Rails.application.routes.draw do
     end
 
     resources :tickets, only: %i[new]
-
   end
 end

@@ -1,10 +1,33 @@
+# frozen_string_literal: true
+
 class InboxMailbox < ApplicationMailbox
-  before_processing :find_user
+  TICKET_ID_MATCHER = /.*Case #([0-9]+)/i
 
   def process
     ticket_id_ = ticket_id
-    email_text = ''
+    if ticket_id_
+      ticket = Ticket.find(ticket_id)
+      if ticket
+        comment = Comment.new({ ticket: ticket, description: email_body,
+                                commenter: user_extracted_from_mail_address })
+        comment.send_notification = false
+        comment.save!
+      end
+    else
+      created_at = Time.zone.now
+      ticket =
+        Ticket.new(
+          { subject: mail.subject, description: email_body, email: mail.from.first,
+            name: mail.from.first.split('@').first, created_at: created_at, due_date: created_at + 5.days }
+        )
+      ticket.save!(validate: false)
+    end
+  end
 
+  private
+
+  def email_body
+    email_text = ''
     if mail.multipart?
       part = mail.html_part || mail.text_part
       html = part.body.decoded
@@ -16,33 +39,16 @@ class InboxMailbox < ApplicationMailbox
     else
       email_text = mail.decoded
     end
-
-    if ticket_id_
-      ticket = Ticket.find(ticket_id)
-      if ticket
-        comment = Comment.new({ ticket: ticket, description: email_text, commenter: @user })
-        comment.send_notification = false
-        comment.save!
-      end
-    else
-      created_at = Time.zone.now
-      ticket =
-        Ticket.new(
-          { subject: mail.subject, description: email_text, email: mail.from.first, name: mail.from.first.split('@').first, created_at: created_at, due_date: created_at + 5.days },
-        )
-      ticket.save!(validate: false)
-    end
+    email_text
   end
 
-  private
-
   def ticket_id
-    match = /.*Case #([0-9]+)/i.match(mail.subject)
+    match = TICKET_ID_MATCHER.match(mail.subject)
     match &&= match[1]
     match
   end
 
-  def find_user
-    @user = User.find_by(email: mail.from.first)
+  def user_extracted_from_mail_address
+    User.find_by(email: mail.from.first)
   end
 end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Api
   module V1
     class LogsController < Api::ApiController
@@ -5,7 +7,8 @@ module Api
       before_action :authorize_actions
 
       def latest_activity
-        @dashboard_data = LatestActivity.new(from: params[:from], to: params[:to], limit: params[:limit]).data
+        @dashboard_data = LatestActivity.new(from: params[:from], to: params[:to],
+                                             limit: params[:limit]).data
       end
 
       private

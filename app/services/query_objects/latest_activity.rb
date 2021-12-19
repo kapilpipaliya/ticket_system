@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class LatestActivity
   def initialize(from:, to:, limit:)
     @from = from ? Time.zone.at(from.to_i) : Time.zone.now.midnight

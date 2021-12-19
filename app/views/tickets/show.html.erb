@@ -1,5 +1,5 @@
 <% content_for :content do %>
-<%= react_component('ticket_show', ticketId: @ticket.id) %>
+<%= react_component('ticket_show', routes: routes, ticketId: @ticket.id) %>
 <%= javascript_pack_tag 'support/TicketView' %>
 <%= stylesheet_pack_tag 'support/TicketView' %>
 <% end %>

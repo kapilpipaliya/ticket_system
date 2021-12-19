@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Api
   module V1
     class TicketsController < Api::ApiController
@@ -18,7 +20,7 @@ module Api
       def show; end
 
       def create
-        @ticket = authorize Ticket.new(ticket_params)
+        @ticket = Ticket.new(ticket_params)
         if @ticket.save
           render :show, status: :created, location: api_v1_tickets_url(@ticket)
         else
@@ -27,8 +29,6 @@ module Api
       end
 
       def update
-        return user_not_authorized if customer? && !params[:assignee_id].empty? && params[:assignee_id].to_i != @ticket.assignee_id
-
         if @ticket.update(ticket_params)
           render :show, status: :ok, location: api_v1_tickets_url(@ticket)
         else
@@ -37,13 +37,8 @@ module Api
       end
 
       def destroy
-        if supporter?
-          @ticket.destroy
-          render json: @ticket.errors.messages
-        else
-          error = { 'base' => 'only support member can delete ticket' }
-          render json: error, status: :unprocessable_entity
-        end
+        @ticket.destroy
+        render json: @ticket.errors.messages
       end
 
       def all_status
@@ -53,8 +48,11 @@ module Api
       def all_status_filter
         render json: status_options_filter
       end
+
       def sentiments_options_filter
-        render json: Ticket.sentiments.map { |x, i| { 'id' => i, :label => x.titleize } }.prepend({ 'id' => '', :label => 'All' })
+        render json: Ticket.sentiments.map { |x, i|
+                       { 'id' => i, :label => x.titleize }
+                     }.prepend({ 'id' => '', :label => 'All' })
       end
 
       private
@@ -63,7 +61,12 @@ module Api
         case action_name
         when 'index', 'all_status', 'all_status_filter', 'create', 'sentiments_options_filter'
           authorize Ticket
-        when 'show', 'update', 'destroy'
+        when 'show'
+          authorize @ticket
+        when 'update'
+          authorize @ticket
+          raise Pundit::NotAuthorizedError unless customer_changed_assignee?
+        when 'destroy'
           authorize @ticket
         else
           raise NotImplementedError
@@ -75,19 +78,30 @@ module Api
       end
 
       def ticket_params
-        params.require(:ticket).permit(:subject, :description, :email, :name, :status, :creator_id, :assignee_id)
+        params.require(:ticket).permit(:subject, :description, :email, :name, :status, :creator_id,
+                                       :assignee_id)
       end
 
       def check_ticket_permission
-        user_not_authorized if customer? && @ticket.creator_id != current_user.id
+        user_not_authorized if customer_own_ticket?
+      end
+
+      def customer_own_ticket?
+        customer? && @ticket.creator_id != current_user.id
       end
 
       def status_options
-        Ticket.statuses.map { |x, i| { 'id' => x, :label => x.titleize } }
+        Ticket.statuses.map { |x, _i| { 'id' => x, :label => x.titleize } }
       end
 
       def status_options_filter
-        Ticket.statuses.map { |x, i| { 'id' => i, :label => x.titleize } }.prepend({ 'id' => '', :label => 'All' })
+        Ticket.statuses.map do |x, i|
+          { 'id' => i, :label => x.titleize }
+        end.prepend({ 'id' => '', :label => 'All' })
+      end
+
+      def customer_changed_assignee?
+        customer? && !params[:assignee_id].empty? && params[:assignee_id].to_i != @ticket.assignee_id
       end
     end
   end
